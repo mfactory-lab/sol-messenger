@@ -13,7 +13,7 @@ pub struct AddToChannel<'info> {
         has_one = channel,
         seeds = [channel.key().as_ref(), inviter.key().as_ref()],
         bump,
-        constraint = inviter.key() == inviter_aca.owner
+        constraint = inviter_aca.owner == inviter.key()
     )]
     pub inviter_aca: Account<'info, AssociatedChannelAccount>,
     /// CHECK:

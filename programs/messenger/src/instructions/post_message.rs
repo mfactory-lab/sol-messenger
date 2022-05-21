@@ -12,7 +12,7 @@ pub struct PostMessage<'info> {
         has_one = channel,
         seeds = [channel.key().as_ref(), sender.key().as_ref()],
         bump,
-        constraint = sender.key() == associated_channel_account.owner
+        constraint = associated_channel_account.owner == sender.key()
     )]
     pub associated_channel_account: Account<'info, AssociatedChannelAccount>,
     #[account(mut)]
