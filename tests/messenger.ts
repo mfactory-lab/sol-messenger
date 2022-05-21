@@ -1,5 +1,4 @@
 import * as anchor from "@project-serum/anchor";
-import { Keypair, PublicKey } from "@solana/web3.js";
 import { Messenger } from "../target/types/messenger";
 import { generateCEK, decryptCEK, encryptCEK, encryptMessage, decryptMessage } from "../app/crypto";
 import * as assert from "assert";
@@ -9,7 +8,7 @@ describe("messenger", () => {
     const program = anchor.workspace.Messenger as anchor.Program<Messenger>;
 
     // const sender = anchor.web3.Keypair.generate();
-    const sender = Keypair.fromSecretKey(
+    const sender = anchor.web3.Keypair.fromSecretKey(
         new Uint8Array([
             96, 255, 91, 60, 84, 34, 32, 0, 115, 218, 156, 246, 56, 44, 70, 197, 193, 3, 46, 45, 156,
             192, 45, 144, 179, 247, 90, 255, 131, 147, 185, 134, 13, 63, 43, 161, 221, 53, 226, 96, 188,
