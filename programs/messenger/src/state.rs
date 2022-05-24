@@ -32,7 +32,7 @@ impl Channel {
 
     /// Calculate channel space
     pub fn space(max_messages: u16) -> usize {
-        return 8
+        return 8 // discriminator
             + 4
             + MAX_CHANNEL_NAME_LENGTH
             + 32
