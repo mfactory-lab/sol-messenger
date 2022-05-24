@@ -1,24 +1,32 @@
 {
   "scripts": {
+    "dev": "vite --port 3333",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2",
+    "@solana/wallet-adapter-wallets": "^0.16.1",
     "@solana/web3.js": "^1.42.0",
     "@stablelib/random": "^1.0.1",
     "@stablelib/sha256": "^1.0.1",
     "@stablelib/x25519": "^1.0.2",
     "@stablelib/xchacha20poly1305": "^1.0.1",
-    "ed2curve-esm": "0.3.0-alpha-1"
+    "ed2curve-esm": "0.3.0-alpha-1",
+    "solana-wallets-vue": "^0.3.2",
+    "tweetnacl": "^1.0.3",
+    "vue": "^3.2.36"
   },
   "devDependencies": {
+    "@babel/runtime": ">=7.0.0 <8.0.0",
     "@types/bn.js": "^5.1.0",
     "@types/mocha": "^9.1.1",
+    "@vitejs/plugin-vue": "^2.3.3",
     "mocha": "^10.0.0",
     "prettier": "^2.6.2",
     "ts-mocha": "^10.0.0",
     "typescript": "^4.6.4",
-    "uint8arrays": "^3.0.0"
+    "uint8arrays": "^3.0.0",
+    "vite": "^2.9.9"
   }
 }
