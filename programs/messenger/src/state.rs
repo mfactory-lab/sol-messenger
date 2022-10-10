@@ -1,6 +1,5 @@
 use crate::utils::push_into_deque;
-use anchor_lang::prelude::*;
-use anchor_lang::solana_program::program_pack::IsInitialized;
+use anchor_lang::{prelude::*, solana_program::program_pack::IsInitialized};
 
 pub const MAX_CHANNEL_NAME_LENGTH: usize = 32;
 pub const MAX_MESSAGE_LENGTH: usize = 400; // ~ 255 bytes (no encryption)
@@ -23,24 +22,23 @@ pub struct Channel {
 }
 
 impl Channel {
-    /// Post a message to the channel
-    pub fn post(&mut self, mut message: Message) {
-        let clock = Clock::get().unwrap();
-        message.created_at = clock.unix_timestamp;
-        self.messages = push_into_deque(self.messages.clone(), message, self.max_messages as usize);
-    }
-
     /// Calculate channel space
     pub fn space(max_messages: u16) -> usize {
         return 8 // discriminator
-            + 4
-            + MAX_CHANNEL_NAME_LENGTH
+            + (4 + MAX_CHANNEL_NAME_LENGTH)
             + 32
             + 8
             + 2
             + 2
             + 4
             + (Message::SIZE * max_messages as usize);
+    }
+
+    /// Post a message to the channel
+    pub fn post(&mut self, mut message: Message) {
+        let clock = Clock::get().unwrap();
+        message.created_at = clock.unix_timestamp;
+        self.messages = push_into_deque(self.messages.clone(), message, self.max_messages as usize);
     }
 }
 
@@ -94,7 +92,7 @@ pub struct Message {
 }
 
 impl Message {
-    pub const SIZE: usize = 32 + 8 + 4 + MAX_MESSAGE_LENGTH;
+    pub const SIZE: usize = 32 + 8 + (4 + MAX_MESSAGE_LENGTH);
 
     pub fn new(sender: Pubkey, content: String) -> Self {
         Self {

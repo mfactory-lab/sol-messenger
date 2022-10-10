@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "@antfu/eslint-config-vue"
+  ],
+  "rules": {
+    "curly": ["error", "all"],
+    "antfu/if-newline": "off",
+    "@typescript-eslint/brace-style": ["error", "1tbs"],
+    "no-console": "off"
+  }
+}

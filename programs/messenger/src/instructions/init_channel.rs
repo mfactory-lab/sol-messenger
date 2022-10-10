@@ -1,38 +1,5 @@
-use crate::error::ErrorCode;
-use crate::state::*;
-use anchor_lang::prelude::*;
-use anchor_lang::solana_program::program_pack::IsInitialized;
-
-#[derive(Accounts)]
-#[instruction(
-    data: InitChannelData,
-)]
-pub struct InitChannel<'info> {
-    #[account(
-        init,
-        payer = authority,
-        space = Channel::space(data.max_messages),
-    )]
-    channel: Box<Account<'info, Channel>>,
-    #[account(
-        init,
-        seeds = [channel.key().as_ref(), authority.key().as_ref()],
-        bump,
-        payer = authority,
-        space = AssociatedChannelAccount::space()
-    )]
-    pub associated_channel_account: Account<'info, AssociatedChannelAccount>,
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    pub system_program: Program<'info, System>,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct InitChannelData {
-    pub name: String,
-    pub max_messages: u16,
-    pub cek: CEKData,
-}
+use crate::{error::ErrorCode, state::*};
+use anchor_lang::{prelude::*, solana_program::program_pack::IsInitialized};
 
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     if data.name.len() > MAX_CHANNEL_NAME_LENGTH {
@@ -70,4 +37,35 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     aca.cek = data.cek;
 
     Ok(())
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+pub struct InitChannelData {
+    pub name: String,
+    pub max_messages: u16,
+    pub cek: CEKData,
+}
+
+#[derive(Accounts)]
+#[instruction(
+  data: InitChannelData,
+)]
+pub struct InitChannel<'info> {
+    #[account(
+      init,
+      payer = authority,
+      space = Channel::space(data.max_messages),
+    )]
+    channel: Box<Account<'info, Channel>>,
+    #[account(
+      init,
+      seeds = [channel.key().as_ref(), authority.key().as_ref()],
+      bump,
+      payer = authority,
+      space = AssociatedChannelAccount::space()
+    )]
+    pub associated_channel_account: Account<'info, AssociatedChannelAccount>,
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    pub system_program: Program<'info, System>,
 }
