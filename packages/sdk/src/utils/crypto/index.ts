@@ -1,13 +1,9 @@
-// import { VerificationMethod } from 'did-resolver/src/resolver';
-// import { DIDDocument } from 'did-resolver';
-
 import { randomBytes } from '@stablelib/random'
-
 import * as u8a from 'uint8arrays'
-
 import { convertPublicKey, convertSecretKey } from 'ed2curve-esm'
 import type { PublicKey } from '@solana/web3.js'
 import { Keypair } from '@solana/web3.js'
+import type { CEKData } from '../../generated'
 import {
   XC20P_IV_LENGTH,
   XC20P_TAG_LENGTH,
@@ -15,8 +11,7 @@ import {
   x25519xc20pKeyWrap,
   xc20pDecrypter,
   xc20pEncrypter,
-} from './xc20pEncryption'
-import type { CEKData } from './models'
+} from './xc20p'
 import {
   base58ToBytes,
   base64ToBytes,

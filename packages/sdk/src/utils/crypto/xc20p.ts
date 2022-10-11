@@ -1,8 +1,4 @@
-import {
-  NONCE_LENGTH,
-  TAG_LENGTH,
-  XChaCha20Poly1305,
-} from '@stablelib/xchacha20poly1305'
+import { NONCE_LENGTH, TAG_LENGTH, XChaCha20Poly1305 } from '@stablelib/xchacha20poly1305'
 import { generateKeyPair, sharedKey } from '@stablelib/x25519'
 import { randomBytes } from '@stablelib/random'
 import * as u8a from 'uint8arrays'

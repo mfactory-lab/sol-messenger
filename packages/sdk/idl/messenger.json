@@ -1,0 +1,324 @@
+{
+  "version": "0.1.0",
+  "name": "messenger",
+  "instructions": [
+    {
+      "name": "initChannel",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "associatedChannelAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "InitChannelData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addToChannel",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "inviter",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "inviterAca",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "invitee",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "inviteeAca",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "AddToChannelData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "postMessage",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "associatedChannelAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sender",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Channel",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "docs": [
+              "The channel name"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "The channel authority"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "createdAt",
+            "docs": [
+              "Creation date"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "memberCount",
+            "docs": [
+              "Number of channel members"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "maxMessages",
+            "docs": [
+              "Max messages in this channel"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "messages",
+            "docs": [
+              "All of the messages in the channel"
+            ],
+            "type": {
+              "vec": {
+                "defined": "Message"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssociatedChannelAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "channel",
+            "docs": [
+              "The channel address"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "The owner that can decrypt the CEK in this account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "cek",
+            "docs": [
+              "The CEK for the channel"
+            ],
+            "type": {
+              "defined": "CEKData"
+            }
+          },
+          {
+            "name": "createdAt",
+            "docs": [
+              "Creation date"
+            ],
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "AddToChannelData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "cek",
+            "type": {
+              "defined": "CEKData"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitChannelData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "maxMessages",
+            "type": "u16"
+          },
+          {
+            "name": "cek",
+            "type": {
+              "defined": "CEKData"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CEKData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "header",
+            "docs": [
+              "The header information for the CEK"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "encryptedKey",
+            "docs": [
+              "The CEK itself"
+            ],
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Message",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "sender",
+            "docs": [
+              "The message sender id"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "createdAt",
+            "docs": [
+              "The unix timestamp at which the message was received"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "content",
+            "docs": [
+              "The (typically encrypted) message content"
+            ],
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NameTooLong",
+      "msg": "Name too long"
+    },
+    {
+      "code": 6001,
+      "name": "MessageTooLong",
+      "msg": "Message too long"
+    },
+    {
+      "code": 6002,
+      "name": "AlreadyInUse",
+      "msg": "Already in use"
+    },
+    {
+      "code": 6003,
+      "name": "UninitializedAccount",
+      "msg": "Uninitialized account"
+    }
+  ],
+  "metadata": {
+    "address": "6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm",
+    "origin": "anchor",
+    "binaryVersion": "0.25.0",
+    "libVersion": "0.25.0"
+  }
+}
