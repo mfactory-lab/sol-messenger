@@ -1,8 +1,8 @@
-use crate::error::ErrorCode;
-use crate::state::Channel;
-use anchor_lang::prelude::*;
-use anchor_lang::solana_program::program_pack::IsInitialized;
 use std::collections::VecDeque;
+
+use anchor_lang::{prelude::*, solana_program::program_pack::IsInitialized};
+
+use crate::{error::ErrorCode, state::Channel};
 
 // /// The seed string used to derive a program address for a Solarium channel (for direct channels)
 // pub const CHANNEL_ADDRESS_SEED: &[u8; 7] = br"channel";

@@ -1,7 +1,6 @@
-use crate::error::ErrorCode;
-use crate::state::*;
-use crate::utils::check_channel;
 use anchor_lang::prelude::*;
+
+use crate::{error::ErrorCode, state::*, utils::check_channel};
 
 #[derive(Accounts)]
 pub struct PostMessage<'info> {
@@ -26,11 +25,7 @@ pub fn handler(ctx: Context<PostMessage>, message: String) -> Result<()> {
     check_channel(channel)?;
 
     if message.len() > MAX_MESSAGE_LENGTH {
-        msg!(
-            "Message to long (size: {}, max: {})",
-            message.len(),
-            MAX_MESSAGE_LENGTH
-        );
+        msg!("Message to long (size: {}, max: {})", message.len(), MAX_MESSAGE_LENGTH);
         return Err(ErrorCode::MessageTooLong.into());
     }
 
@@ -38,7 +33,7 @@ pub fn handler(ctx: Context<PostMessage>, message: String) -> Result<()> {
 
     let sender = ctx.accounts.sender.key;
 
-    channel.post(Message::new(*sender, message));
+    channel.add_message(Message::new(*sender, message));
 
     Ok(())
 }

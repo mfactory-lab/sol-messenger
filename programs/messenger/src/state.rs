@@ -1,5 +1,6 @@
-use crate::utils::push_into_deque;
 use anchor_lang::{prelude::*, solana_program::program_pack::IsInitialized};
+
+use crate::utils::push_into_deque;
 
 pub const MAX_CHANNEL_NAME_LENGTH: usize = 32;
 pub const MAX_MESSAGE_LENGTH: usize = 400; // ~ 255 bytes (no encryption)
@@ -24,18 +25,17 @@ pub struct Channel {
 impl Channel {
     /// Calculate channel space
     pub fn space(max_messages: u16) -> usize {
-        return 8 // discriminator
+        8 // discriminator
             + (4 + MAX_CHANNEL_NAME_LENGTH)
             + 32
             + 8
             + 2
             + 2
-            + 4
-            + (Message::SIZE * max_messages as usize);
+            + (4 + (Message::SIZE * max_messages as usize))
     }
 
     /// Post a message to the channel
-    pub fn post(&mut self, mut message: Message) {
+    pub fn add_message(&mut self, mut message: Message) {
         let clock = Clock::get().unwrap();
         message.created_at = clock.unix_timestamp;
         self.messages = push_into_deque(self.messages.clone(), message, self.max_messages as usize);
@@ -55,21 +55,23 @@ pub struct AssociatedChannelAccount {
     pub channel: Pubkey,
     /// The owner that can decrypt the CEK in this account
     pub owner: Pubkey,
-    // /// Inviter address
-    // pub invited_by: Optional(Pubkey),
+    // /// Chanel participant name
+    // pub name: String,
     /// The CEK for the channel
     pub cek: CEKData,
+    // /// Inviter address
+    // pub invited_by: Option<Pubkey>,
     /// Creation date
     pub created_at: i64,
 }
 
 impl AssociatedChannelAccount {
     pub fn space() -> usize {
-        return 8 + 32 + 32 + CEKData::SIZE + 8;
+        8 + 32 + 32 + CEKData::SIZE + 8
     }
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
 pub struct CEKData {
     /// The header information for the CEK
     pub header: String, // iv + tag + key (24 + 16 + 32)
@@ -78,10 +80,10 @@ pub struct CEKData {
 }
 
 impl CEKData {
-    pub const SIZE: usize = 4 + 72 + 4 + MAX_CEK_LENGTH;
+    pub const SIZE: usize = (4 + 72) + (4 + MAX_CEK_LENGTH);
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
 pub struct Message {
     /// The message sender id
     pub sender: Pubkey,
