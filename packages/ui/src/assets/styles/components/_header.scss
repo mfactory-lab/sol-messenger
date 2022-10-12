@@ -1,0 +1,148 @@
+$app-header-color: #333 !default;
+$app-header-bg-color: #eee !default;
+$app-header-height: 80px !default;
+$app-header-logo: '~/assets/img/logo.svg' !default;
+$app-header-btn-shadow: $shadow-3 !default;
+
+.app-header {
+  background-color: $app-header-bg-color;
+  color: $app-header-color;
+  min-height: $app-header-height;
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: $app-header-height;
+  }
+
+  &__nav {
+    a {
+      color: rgba($app-header-color, 0.8);
+      font-size: 12px;
+      text-transform: uppercase;
+      text-decoration: none;
+      margin: 0 10px;
+
+      &:hover {
+        text-decoration: underline;
+        color: $app-header-color;
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  &__logo {
+    align-self: center;
+    position: relative;
+    top: -10px;
+    min-width: 100px;
+
+    a {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 30px;
+      font-weight: 900;
+      text-decoration: none;
+      line-height: 100%;
+      color: #000;
+    }
+
+    svg {
+      position: relative;
+      z-index: 2;
+    }
+  }
+
+  &__buttons {
+    box-shadow: $app-header-btn-shadow;
+    border-radius: 28px;
+  }
+
+  &__cluster-btn {
+    position: relative;
+    min-height: auto;
+    font-weight: 400;
+    padding-top: 5px;
+    font-size: 14px;
+    height: 32px;
+    z-index: 1;
+  }
+
+  &__wallet-btn {
+    font-size: 14px;
+    height: 32px;
+    min-height: auto;
+    font-weight: 400;
+    padding-top: 5px;
+    min-width: 120px;
+    background-color: $primary;
+  }
+}
+
+@media(min-width: $breakpoint-sm) {
+  .app-header {
+    &__wallet-btn {
+      margin-left: -25px;
+      padding-left: 38px;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .q-toolbar {
+    padding: 1rem 0;
+  }
+  .app-header {
+    &__logo {
+      min-width: 120px;
+      top: 0;
+
+      a {
+        position: static;
+      }
+
+      svg {
+        max-height: 80px;
+      }
+    }
+
+    &__buttons {
+      box-shadow: none;
+      margin-top: -5px;
+
+      .q-btn {
+        margin-top: 5px;
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-xs) {
+  .q-toolbar {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .app-header {
+    &__logo {
+      width: 100%;
+      text-align: center;
+    }
+
+    &__nav {
+      width: 100%;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    &__buttons {
+      justify-content: left;
+    }
+  }
+}

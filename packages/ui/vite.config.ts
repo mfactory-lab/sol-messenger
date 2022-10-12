@@ -60,7 +60,7 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: '@import "~/assets/scss/global.scss";',
+          additionalData: '@import "@/assets/styles/global.scss";',
         },
       },
     },
@@ -94,7 +94,7 @@ export default defineConfig(({ mode }) => {
         '@solana/web3.js',
       ],
       alias: {
-        '~/': `${resolve(__dirname, 'src')}/`,
+        '@/': `${resolve(__dirname, 'src')}/`,
       },
     },
 
