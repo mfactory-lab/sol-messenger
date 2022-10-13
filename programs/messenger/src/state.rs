@@ -1,44 +1,73 @@
+use std::collections::VecDeque;
+
 use anchor_lang::{prelude::*, solana_program::program_pack::IsInitialized};
 
-use crate::utils::push_into_deque;
+use crate::ErrorCode;
 
 pub const MAX_CHANNEL_NAME_LENGTH: usize = 32;
-pub const MAX_MESSAGE_LENGTH: usize = 400; // ~ 255 bytes (no encryption)
-pub const MAX_CEK_LENGTH: usize = 100; // ~ 32 bytes
+pub const MAX_MEMBER_NAME_LENGTH: usize = 32;
+pub const MAX_MESSAGE_LENGTH: usize = 400; // ~ 255 raw bytes
+pub const MAX_CEK_LENGTH: usize = 100; // ~ 32 raw bytes
 
 #[account]
 pub struct Channel {
-    /// The channel name
+    /// Name of the channel
     pub name: String,
-    /// The channel authority
-    pub authority: Pubkey,
+    /// Channel creator
+    pub creator: Pubkey,
     /// Creation date
     pub created_at: i64,
-    /// Number of channel members
+    /// Number of members
     pub member_count: u16,
-    /// Max messages in this channel
+    /// Message counter
+    pub message_count: u32,
+    /// The maximum number of messages that are stored in [messages]
     pub max_messages: u16,
-    /// All of the messages in the channel
-    pub messages: Vec<Message>,
+    /// List of messages
+    pub messages: VecDeque<Message>,
 }
 
 impl Channel {
     /// Calculate channel space
     pub fn space(max_messages: u16) -> usize {
         8 // discriminator
-            + (4 + MAX_CHANNEL_NAME_LENGTH)
-            + 32
-            + 8
-            + 2
-            + 2
-            + (4 + (Message::SIZE * max_messages as usize))
+        + (4 + MAX_CHANNEL_NAME_LENGTH) // name
+        + 32 // creator key
+        + 8 // creation date
+        + 2 + 4 // member_count + message_count
+        + 2 + (4 + (Message::SIZE * max_messages as usize)) // max_messages + messages
     }
 
     /// Post a message to the channel
-    pub fn add_message(&mut self, mut message: Message) {
-        let clock = Clock::get().unwrap();
-        message.created_at = clock.unix_timestamp;
-        self.messages = push_into_deque(self.messages.clone(), message, self.max_messages as usize);
+    pub fn add_message(&mut self, content: String, sender: &Pubkey) -> Result<()> {
+        if content.len() > MAX_MESSAGE_LENGTH {
+            msg!("Message to long (size: {}, max: {})", content.len(), MAX_MESSAGE_LENGTH);
+            return Err(ErrorCode::MessageTooLong.into());
+        }
+
+        self.message_count = self.message_count.saturating_add(1);
+
+        let message = Message {
+            id: self.message_count,
+            sender: *sender,
+            created_at: Clock::get()?.unix_timestamp,
+            content,
+        };
+
+        self.messages.push_back(message);
+        if self.messages.len() > self.max_messages as usize {
+            self.messages.pop_front();
+        }
+
+        Ok(())
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        if !self.is_initialized() {
+            msg!("Channel account is not initialized");
+            return Err(ErrorCode::UninitializedAccount.into());
+        }
+        Ok(())
     }
 }
 
@@ -51,40 +80,70 @@ impl IsInitialized for Channel {
 
 #[account]
 pub struct AssociatedChannelAccount {
-    /// The channel address
+    /// Associated [Channel] address
     pub channel: Pubkey,
-    /// The owner that can decrypt the CEK in this account
-    pub owner: Pubkey,
-    // /// Chanel participant name
-    // pub name: String,
-    /// The CEK for the channel
+    /// Authority account
+    pub authority: Pubkey,
+    /// The public key used to encrypt the `CEK`
+    pub cek_key: Pubkey,
+    /// The content encryption key (CEK) of the channel
     pub cek: CEKData,
-    // /// Inviter address
-    // pub invited_by: Option<Pubkey>,
+    /// Status of membership
+    pub status: ACAStatus,
+    /// Name of the channel member
+    pub name: String,
+    /// Inviter address
+    pub invited_by: Option<Pubkey>,
     /// Creation date
     pub created_at: i64,
+    /// Bump seed for deriving PDA seeds
+    pub bump: u8,
 }
 
 impl AssociatedChannelAccount {
     pub fn space() -> usize {
-        8 + 32 + 32 + CEKData::SIZE + 8
+        8 // discriminator
+        + 32 + 32 + 32 // channel + authority + cek_key
+        + CEKData::SIZE + ACAStatus::SIZE
+        + (4 + MAX_MEMBER_NAME_LENGTH) // name
+        + (1 + 32) + 8 + 1 // invited_by + created_at + bump
     }
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+pub enum ACAStatus {
+    Authorized { by: Option<Pubkey> },
+    Pending { authority: Option<Pubkey> },
+}
+
+impl ACAStatus {
+    const SIZE: usize = 34;
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
 pub struct CEKData {
     /// The header information for the CEK
-    pub header: String, // iv + tag + key (24 + 16 + 32)
+    pub header: String,
     /// The CEK itself
     pub encrypted_key: String,
 }
 
 impl CEKData {
-    pub const SIZE: usize = (4 + 72) + (4 + MAX_CEK_LENGTH);
+    pub const HEADER_SIZE: usize = 72; // iv + tag + key (24 + 16 + 32)
+    pub const SIZE: usize = (4 + Self::HEADER_SIZE) + (4 + MAX_CEK_LENGTH);
+
+    pub fn empty() -> Self {
+        Self {
+            header: "".to_string(),
+            encrypted_key: "".to_string(),
+        }
+    }
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
 pub struct Message {
+    /// Uniq message id
+    pub id: u32,
     /// The message sender id
     pub sender: Pubkey,
     /// The unix timestamp at which the message was received
@@ -94,13 +153,15 @@ pub struct Message {
 }
 
 impl Message {
-    pub const SIZE: usize = 32 + 8 + (4 + MAX_MESSAGE_LENGTH);
+    pub const SIZE: usize = 4 + 32 + 8 + (4 + MAX_MESSAGE_LENGTH);
+}
 
-    pub fn new(sender: Pubkey, content: String) -> Self {
-        Self {
-            created_at: 0,
-            sender,
-            content,
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test() {
+        unimplemented!();
     }
 }

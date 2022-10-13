@@ -1,10 +1,10 @@
-use crate::instructions::*;
 use anchor_lang::prelude::*;
+use instructions::*;
 
-mod error;
+mod events;
 mod instructions;
 mod state;
-mod utils;
+// mod utils;
 
 declare_id!("6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm");
 
@@ -16,11 +16,49 @@ pub mod messenger {
         init_channel::handler(ctx, data)
     }
 
-    pub fn add_to_channel(ctx: Context<AddToChannel>, data: AddToChannelData) -> Result<()> {
-        add_to_channel::handler(ctx, data)
+    pub fn add_member(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
+        add_member::handler(ctx, data)
+    }
+
+    pub fn authorize_member(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Result<()> {
+        authorize_member::handler(ctx, data)
+    }
+
+    pub fn delete_member(ctx: Context<DeleteMember>) -> Result<()> {
+        delete_member::handler(ctx)
+    }
+
+    pub fn join_channel(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
+        join_channel::handler(ctx, data)
     }
 
     pub fn post_message(ctx: Context<PostMessage>, message: String) -> Result<()> {
         post_message::handler(ctx, message)
     }
 }
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("Name too long")]
+    NameTooLong,
+
+    #[msg("Message too long")]
+    MessageTooLong,
+
+    #[msg("Already in use")]
+    AlreadyInUse,
+
+    #[msg("Uninitialized account")]
+    UninitializedAccount,
+}
+
+// #[macro_export]
+// macro_rules! print_error {
+//     ($err:expr) => {{
+//         || {
+//             let error_code: ErrorCode = $err;
+//             msg!("{:?} thrown at {}:{}", error_code, file!(), line!());
+//             $err
+//         }
+//     }};
+// }
