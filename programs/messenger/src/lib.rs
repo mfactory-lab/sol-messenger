@@ -39,6 +39,9 @@ pub mod messenger {
 
 #[error_code]
 pub enum ErrorCode {
+    #[msg("Unauthorized")]
+    Unauthorized,
+
     #[msg("Name too long")]
     NameTooLong,
 

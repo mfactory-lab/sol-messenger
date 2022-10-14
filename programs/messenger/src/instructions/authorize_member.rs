@@ -1,24 +1,34 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::AuthorizeMemberEvent, state::*};
+use crate::{events::AuthorizeMemberEvent, state::*, ErrorCode};
 
 pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Result<()> {
     let channel = &ctx.accounts.channel;
     let aca = &mut ctx.accounts.aca;
+    let auth = &ctx.accounts.authority;
+
+    match aca.status {
+        ACAStatus::Pending { authority } => {
+            if let Some(authority) = authority {
+                if authority.key() != auth.key() {
+                    return Err(ErrorCode::Unauthorized.into());
+                }
+            }
+        }
+        _ => {
+            return Err(ErrorCode::Unauthorized.into());
+        }
+    }
 
     aca.cek = data.cek;
-    aca.status = ACAStatus::Authorized {
-        by: Some(ctx.accounts.authority.key()),
-    };
-
-    let authority = &ctx.accounts.authority;
+    aca.status = ACAStatus::Authorized { by: Some(auth.key()) };
 
     let timestamp = Clock::get()?.unix_timestamp;
 
     emit!(AuthorizeMemberEvent {
         channel: channel.key(),
         aca: aca.key(),
-        by: authority.key(),
+        by: auth.key(),
         timestamp,
     });
 

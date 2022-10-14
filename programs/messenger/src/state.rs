@@ -39,7 +39,7 @@ impl Channel {
     }
 
     /// Post a message to the channel
-    pub fn add_message(&mut self, content: String, sender: &Pubkey) -> Result<()> {
+    pub fn add_message(&mut self, content: String, sender: &Pubkey) -> Result<Message> {
         if content.len() > MAX_MESSAGE_LENGTH {
             msg!("Message to long (size: {}, max: {})", content.len(), MAX_MESSAGE_LENGTH);
             return Err(ErrorCode::MessageTooLong.into());
@@ -54,12 +54,12 @@ impl Channel {
             content,
         };
 
-        self.messages.push_back(message);
+        self.messages.push_back(message.to_owned());
         if self.messages.len() > self.max_messages as usize {
             self.messages.pop_front();
         }
 
-        Ok(())
+        Ok(message)
     }
 
     pub fn validate(&self) -> Result<()> {

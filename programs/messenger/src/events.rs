@@ -1,4 +1,4 @@
-use crate::*;
+use crate::{state::Message, *};
 
 #[event]
 pub struct NewChannelEvent {
@@ -13,8 +13,7 @@ pub struct NewChannelEvent {
 pub struct NewMessageEvent {
     #[index]
     pub channel: Pubkey,
-    pub message: String,
-    pub timestamp: i64,
+    pub message: Message,
 }
 
 #[event]

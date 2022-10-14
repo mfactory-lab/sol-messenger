@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use anchor_lang::prelude::*;
 
-use crate::{state::*, ErrorCode};
+use crate::{events::NewChannelEvent, state::*, ErrorCode};
 
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     data.validate()?;
@@ -17,7 +17,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     let authority = &ctx.accounts.authority;
 
     let channel = &mut ctx.accounts.channel;
-    channel.name = data.name;
+    channel.name = data.name.to_owned();
     channel.creator = authority.key();
     channel.created_at = clock.unix_timestamp;
     channel.member_count = 1;
@@ -34,6 +34,13 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     aca.cek = data.cek;
     aca.created_at = clock.unix_timestamp;
     aca.bump = ctx.bumps["aca"];
+
+    emit!(NewChannelEvent {
+        channel: channel.key(),
+        creator: channel.creator,
+        name: data.name,
+        timestamp: channel.created_at,
+    });
 
     Ok(())
 }

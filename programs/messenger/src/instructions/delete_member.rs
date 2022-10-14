@@ -1,10 +1,15 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::DeleteMemberEvent, state::*};
+use crate::{events::DeleteMemberEvent, state::*, ErrorCode};
 
 pub fn handler(ctx: Context<DeleteMember>) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
+    let authority = &ctx.accounts.authority;
     let aca = &ctx.accounts.aca;
+
+    if aca.authority.key() == authority.key() {
+        return Err(ErrorCode::Unauthorized.into());
+    }
 
     channel.member_count = channel.member_count.saturating_sub(1);
 

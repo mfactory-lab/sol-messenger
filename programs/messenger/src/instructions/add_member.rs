@@ -53,6 +53,7 @@ impl AddMemberData {
 }
 
 #[derive(Accounts)]
+#[instruction(data: AddMemberData)]
 pub struct AddMember<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
@@ -62,7 +63,7 @@ pub struct AddMember<'info> {
 
     #[account(
         init,
-        seeds = [channel.key().as_ref(), invitee.key().as_ref()],
+        seeds = [channel.key().as_ref(), data.cek_key.unwrap_or_else(|| invitee.key()).as_ref()],
         bump,
         payer = inviter,
         space = AssociatedChannelAccount::space()

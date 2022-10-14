@@ -2,21 +2,18 @@ use anchor_lang::prelude::*;
 
 use crate::{events::NewMessageEvent, state::*};
 
-pub fn handler(ctx: Context<PostMessage>, message: String) -> Result<()> {
+pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
 
     channel.validate()?;
 
     let aca = &ctx.accounts.associated_channel_account;
 
-    channel.add_message(message.to_owned(), &aca.authority)?;
-
-    let timestamp = Clock::get()?.unix_timestamp;
+    let message = channel.add_message(content, &aca.authority)?;
 
     emit!(NewMessageEvent {
         channel: channel.key(),
         message,
-        timestamp,
     });
 
     Ok(())
