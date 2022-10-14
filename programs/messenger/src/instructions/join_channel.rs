@@ -10,26 +10,25 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
     channel.validate()?;
 
     let timestamp = Clock::get()?.unix_timestamp;
-    let authority = &ctx.accounts.authority;
 
-    let aca = &mut ctx.accounts.aca;
-    aca.channel = channel.key();
-    aca.authority = authority.key();
-    aca.cek_key = data.cek_key.unwrap_or_else(|| authority.key());
-    aca.cek = CEKData::empty();
-    aca.status = ACAStatus::Pending {
+    let membership = &mut ctx.accounts.membership;
+    membership.channel = channel.key();
+    membership.authority = ctx.accounts.authority.key();
+    membership.key = ctx.accounts.key.key();
+    membership.cek = CEKData::empty();
+    membership.name = data.name;
+    membership.invited_by = None;
+    membership.created_at = timestamp;
+    membership.status = ChannelMembershipStatus::Pending {
         authority: data.authority,
     };
-    aca.name = data.name;
-    aca.invited_by = None;
-    aca.created_at = timestamp;
-    aca.bump = ctx.bumps["aca"];
+    membership.bump = ctx.bumps["membership"];
 
     channel.member_count = channel.member_count.saturating_add(1);
 
     emit!(JoinChannelEvent {
         channel: channel.key(),
-        aca: aca.key(),
+        membership: membership.key(),
         timestamp,
     });
 
@@ -39,7 +38,6 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct JoinChannelData {
     pub name: String,
-    pub cek_key: Option<Pubkey>,
     pub authority: Option<Pubkey>,
 }
 
@@ -57,19 +55,19 @@ pub struct JoinChannel<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
 
+    #[account(
+        init,
+        seeds = [channel.key().as_ref(), key.key().as_ref()],
+        bump,
+        payer = authority,
+        space = ChannelMembership::space()
+    )]
+    pub membership: Account<'info, ChannelMembership>,
+
     #[account(mut)]
     pub authority: Signer<'info>,
 
-    pub cek_key: Signer<'info>,
-
-    #[account(
-        init,
-        seeds = [channel.key().as_ref(), cek_key.key().as_ref()],
-        bump,
-        payer = authority,
-        space = AssociatedChannelAccount::space()
-    )]
-    pub aca: Account<'info, AssociatedChannelAccount>,
+    pub key: Signer<'info>,
 
     pub system_program: Program<'info, System>,
 }

@@ -11,25 +11,25 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
 
     let timestamp = Clock::get()?.unix_timestamp;
 
-    let aca = &mut ctx.accounts.invitee_aca;
+    let membership = &mut ctx.accounts.invitee_membership;
 
-    aca.channel = channel.key();
-    aca.authority = ctx.accounts.invitee.key();
-    aca.cek_key = data.cek_key.unwrap_or_else(|| ctx.accounts.invitee.key());
-    aca.name = data.name;
-    aca.cek = data.cek;
-    aca.status = ACAStatus::Authorized {
-        by: Some(ctx.accounts.inviter.key()),
+    membership.channel = channel.key();
+    membership.authority = ctx.accounts.invitee.key();
+    membership.key = data.key.unwrap_or_else(|| ctx.accounts.invitee.key());
+    membership.name = data.name;
+    membership.cek = data.cek;
+    membership.invited_by = Some(ctx.accounts.authority.key());
+    membership.created_at = timestamp;
+    membership.status = ChannelMembershipStatus::Authorized {
+        by: Some(ctx.accounts.authority.key()),
     };
-    aca.invited_by = Some(ctx.accounts.inviter.key());
-    aca.created_at = timestamp;
-    aca.bump = ctx.bumps["invitee_aca"];
+    membership.bump = ctx.bumps["invitee_membership"];
 
     channel.member_count = channel.member_count.saturating_add(1);
 
     emit!(AddMemberEvent {
         channel: channel.key(),
-        aca: aca.key(),
+        membership: membership.key(),
         timestamp,
     });
 
@@ -40,7 +40,7 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
 pub struct AddMemberData {
     pub name: String,
     pub cek: CEKData,
-    pub cek_key: Option<Pubkey>,
+    pub key: Option<Pubkey>,
 }
 
 impl AddMemberData {
@@ -63,22 +63,18 @@ pub struct AddMember<'info> {
 
     #[account(
         init,
-        seeds = [channel.key().as_ref(), data.cek_key.unwrap_or_else(|| invitee.key()).as_ref()],
+        seeds = [channel.key().as_ref(), data.key.unwrap_or_else(|| invitee.key()).as_ref()],
         bump,
-        payer = inviter,
-        space = AssociatedChannelAccount::space()
+        payer = authority,
+        space = ChannelMembership::space()
     )]
-    pub invitee_aca: Account<'info, AssociatedChannelAccount>,
+    pub invitee_membership: Account<'info, ChannelMembership>,
+
+    #[account(mut, has_one = channel, has_one = authority)]
+    pub authority_membership: Account<'info, ChannelMembership>,
 
     #[account(mut)]
-    pub inviter: Signer<'info>,
-
-    #[account(
-        mut,
-        has_one = channel,
-        constraint = inviter_aca.authority == inviter.key()
-    )]
-    pub inviter_aca: Account<'info, AssociatedChannelAccount>,
+    pub authority: Signer<'info>,
 
     pub system_program: Program<'info, System>,
 }

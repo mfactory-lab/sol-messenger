@@ -7,9 +7,9 @@ pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
 
     channel.validate()?;
 
-    let aca = &ctx.accounts.associated_channel_account;
+    let membership = &ctx.accounts.membership;
 
-    let message = channel.add_message(content, &aca.authority)?;
+    let message = channel.add_message(content, &membership.authority)?;
 
     emit!(NewMessageEvent {
         channel: channel.key(),
@@ -23,14 +23,8 @@ pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
 pub struct PostMessage<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
-    #[account(
-        mut,
-        has_one = channel,
-        seeds = [channel.key().as_ref(), sender.key().as_ref()],
-        bump,
-        constraint = associated_channel_account.cek_key == sender.key()
-    )]
-    pub associated_channel_account: Account<'info, AssociatedChannelAccount>,
-    pub sender: Signer<'info>,
+    #[account(mut, has_one = channel, has_one = authority)]
+    pub membership: Account<'info, ChannelMembership>,
+    pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }

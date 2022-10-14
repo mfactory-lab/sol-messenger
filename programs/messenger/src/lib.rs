@@ -16,6 +16,14 @@ pub mod messenger {
         init_channel::handler(ctx, data)
     }
 
+    pub fn delete_channel(ctx: Context<DeleteChannel>) -> Result<()> {
+        delete_channel::handler(ctx)
+    }
+
+    pub fn join_channel(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
+        join_channel::handler(ctx, data)
+    }
+
     pub fn add_member(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
         add_member::handler(ctx, data)
     }
@@ -26,10 +34,6 @@ pub mod messenger {
 
     pub fn delete_member(ctx: Context<DeleteMember>) -> Result<()> {
         delete_member::handler(ctx)
-    }
-
-    pub fn join_channel(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
-        join_channel::handler(ctx, data)
     }
 
     pub fn post_message(ctx: Context<PostMessage>, message: String) -> Result<()> {

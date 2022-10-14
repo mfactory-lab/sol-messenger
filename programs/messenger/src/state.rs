@@ -24,7 +24,7 @@ pub struct Channel {
     /// The maximum number of messages that are stored in [messages]
     pub max_messages: u16,
     /// List of messages
-    pub messages: VecDeque<Message>,
+    pub messages: Vec<Message>,
 }
 
 impl Channel {
@@ -54,10 +54,13 @@ impl Channel {
             content,
         };
 
-        self.messages.push_back(message.to_owned());
-        if self.messages.len() > self.max_messages as usize {
-            self.messages.pop_front();
+        let mut deque = VecDeque::from(self.messages.to_owned());
+        deque.push_back(message.to_owned());
+        if deque.len() > self.max_messages as usize {
+            deque.pop_front();
         }
+
+        self.messages = deque.into();
 
         Ok(message)
     }
@@ -79,17 +82,17 @@ impl IsInitialized for Channel {
 }
 
 #[account]
-pub struct AssociatedChannelAccount {
+pub struct ChannelMembership {
     /// Associated [Channel] address
     pub channel: Pubkey,
-    /// Authority account
+    /// Authority of membership
     pub authority: Pubkey,
     /// The public key used to encrypt the `CEK`
-    pub cek_key: Pubkey,
+    pub key: Pubkey,
     /// The content encryption key (CEK) of the channel
     pub cek: CEKData,
     /// Status of membership
-    pub status: ACAStatus,
+    pub status: ChannelMembershipStatus,
     /// Name of the channel member
     pub name: String,
     /// Inviter address
@@ -100,23 +103,23 @@ pub struct AssociatedChannelAccount {
     pub bump: u8,
 }
 
-impl AssociatedChannelAccount {
+impl ChannelMembership {
     pub fn space() -> usize {
         8 // discriminator
         + 32 + 32 + 32 // channel + authority + cek_key
-        + CEKData::SIZE + ACAStatus::SIZE
+        + CEKData::SIZE + ChannelMembershipStatus::SIZE
         + (4 + MAX_MEMBER_NAME_LENGTH) // name
         + (1 + 32) + 8 + 1 // invited_by + created_at + bump
     }
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub enum ACAStatus {
+pub enum ChannelMembershipStatus {
     Authorized { by: Option<Pubkey> },
     Pending { authority: Option<Pubkey> },
 }
 
-impl ACAStatus {
+impl ChannelMembershipStatus {
     const SIZE: usize = 34;
 }
 

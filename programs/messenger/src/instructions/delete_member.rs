@@ -5,9 +5,9 @@ use crate::{events::DeleteMemberEvent, state::*, ErrorCode};
 pub fn handler(ctx: Context<DeleteMember>) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
     let authority = &ctx.accounts.authority;
-    let aca = &ctx.accounts.aca;
+    let membership = &ctx.accounts.membership;
 
-    if aca.authority.key() == authority.key() {
+    if membership.authority.key() == authority.key() {
         return Err(ErrorCode::Unauthorized.into());
     }
 
@@ -17,7 +17,7 @@ pub fn handler(ctx: Context<DeleteMember>) -> Result<()> {
 
     emit!(DeleteMemberEvent {
         channel: channel.key(),
-        aca: aca.key(),
+        membership: membership.key(),
         timestamp,
     });
 
@@ -30,13 +30,13 @@ pub struct DeleteMember<'info> {
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(mut, has_one = channel, close = authority)]
-    pub aca: Account<'info, AssociatedChannelAccount>,
+    pub membership: Account<'info, ChannelMembership>,
 
     #[account(mut)]
     pub authority: Signer<'info>,
 
     #[account(mut, has_one = channel, has_one = authority)]
-    pub authority_aca: Account<'info, AssociatedChannelAccount>,
+    pub authority_membership: Account<'info, ChannelMembership>,
 
     pub system_program: Program<'info, System>,
 }
