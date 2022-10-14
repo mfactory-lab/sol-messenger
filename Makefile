@@ -9,7 +9,7 @@ cwd = $(shell pwd)
 #cluster = devnet
 cluster = https://devnet.genesysgo.net
 
-program = jpludex
+program = messenger
 program_id = $(shell sed -n 's/^ *${program}.*=.*"\([^"]*\)".*/\1/p' Anchor.toml | head -1)
 
 .DEFAULT_GOAL: help
