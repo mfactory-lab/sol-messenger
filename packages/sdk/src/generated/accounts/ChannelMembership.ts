@@ -10,63 +10,82 @@ import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
 import type { CEKData } from '../types/CEKData'
 import { cEKDataBeet } from '../types/CEKData'
+import type { ChannelMembershipStatus } from '../types/ChannelMembershipStatus'
+import {
+  channelMembershipStatusBeet,
+} from '../types/ChannelMembershipStatus'
 
 /**
- * Arguments used to create {@link AssociatedChannelAccount}
+ * Arguments used to create {@link ChannelMembership}
  * @category Accounts
  * @category generated
  */
-export interface AssociatedChannelAccountArgs {
+export interface ChannelMembershipArgs {
   channel: web3.PublicKey
-  owner: web3.PublicKey
+  authority: web3.PublicKey
+  key: web3.PublicKey
   cek: CEKData
+  status: ChannelMembershipStatus
+  name: string
+  invitedBy: beet.COption<web3.PublicKey>
   createdAt: beet.bignum
+  bump: number
 }
 
-export const associatedChannelAccountDiscriminator = [
-  23, 153, 43, 92, 29, 0, 106, 1,
+export const channelMembershipDiscriminator = [
+  238, 149, 255, 251, 116, 131, 86, 170,
 ]
 /**
- * Holds the data for the {@link AssociatedChannelAccount} Account and provides de/serialization
+ * Holds the data for the {@link ChannelMembership} Account and provides de/serialization
  * functionality for that data
  *
  * @category Accounts
  * @category generated
  */
-export class AssociatedChannelAccount implements AssociatedChannelAccountArgs {
+export class ChannelMembership implements ChannelMembershipArgs {
   private constructor(
     readonly channel: web3.PublicKey,
-    readonly owner: web3.PublicKey,
+    readonly authority: web3.PublicKey,
+    readonly key: web3.PublicKey,
     readonly cek: CEKData,
+    readonly status: ChannelMembershipStatus,
+    readonly name: string,
+    readonly invitedBy: beet.COption<web3.PublicKey>,
     readonly createdAt: beet.bignum,
+    readonly bump: number,
   ) {}
 
   /**
-   * Creates a {@link AssociatedChannelAccount} instance from the provided args.
+   * Creates a {@link ChannelMembership} instance from the provided args.
    */
-  static fromArgs(args: AssociatedChannelAccountArgs) {
-    return new AssociatedChannelAccount(
+  static fromArgs(args: ChannelMembershipArgs) {
+    return new ChannelMembership(
       args.channel,
-      args.owner,
+      args.authority,
+      args.key,
       args.cek,
+      args.status,
+      args.name,
+      args.invitedBy,
       args.createdAt,
+      args.bump,
     )
   }
 
   /**
-   * Deserializes the {@link AssociatedChannelAccount} from the data of the provided {@link web3.AccountInfo}.
+   * Deserializes the {@link ChannelMembership} from the data of the provided {@link web3.AccountInfo}.
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
   static fromAccountInfo(
     accountInfo: web3.AccountInfo<Buffer>,
     offset = 0,
-  ): [AssociatedChannelAccount, number] {
-    return AssociatedChannelAccount.deserialize(accountInfo.data, offset)
+  ): [ChannelMembership, number] {
+    return ChannelMembership.deserialize(accountInfo.data, offset)
   }
 
   /**
    * Retrieves the account info from the provided address and deserializes
-   * the {@link AssociatedChannelAccount} from its data.
+   * the {@link ChannelMembership} from its data.
    *
    * @throws Error if no account info is found at the address or if deserialization fails
    */
@@ -74,17 +93,15 @@ export class AssociatedChannelAccount implements AssociatedChannelAccountArgs {
     connection: web3.Connection,
     address: web3.PublicKey,
     commitmentOrConfig?: web3.Commitment | web3.GetAccountInfoConfig,
-  ): Promise<AssociatedChannelAccount> {
+  ): Promise<ChannelMembership> {
     const accountInfo = await connection.getAccountInfo(
       address,
       commitmentOrConfig,
     )
     if (accountInfo == null) {
-      throw new Error(
-        `Unable to find AssociatedChannelAccount account at ${address}`,
-      )
+      throw new Error(`Unable to find ChannelMembership account at ${address}`)
     }
-    return AssociatedChannelAccount.fromAccountInfo(accountInfo, 0)[0]
+    return ChannelMembership.fromAccountInfo(accountInfo, 0)[0]
   }
 
   /**
@@ -98,77 +115,75 @@ export class AssociatedChannelAccount implements AssociatedChannelAccountArgs {
       '6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm',
     ),
   ) {
-    return beetSolana.GpaBuilder.fromStruct(
-      programId,
-      associatedChannelAccountBeet,
-    )
+    return beetSolana.GpaBuilder.fromStruct(programId, channelMembershipBeet)
   }
 
   /**
-   * Deserializes the {@link AssociatedChannelAccount} from the provided data Buffer.
+   * Deserializes the {@link ChannelMembership} from the provided data Buffer.
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
-  static deserialize(
-    buf: Buffer,
-    offset = 0,
-  ): [AssociatedChannelAccount, number] {
-    return associatedChannelAccountBeet.deserialize(buf, offset)
+  static deserialize(buf: Buffer, offset = 0): [ChannelMembership, number] {
+    return channelMembershipBeet.deserialize(buf, offset)
   }
 
   /**
-   * Serializes the {@link AssociatedChannelAccount} into a Buffer.
+   * Serializes the {@link ChannelMembership} into a Buffer.
    * @returns a tuple of the created Buffer and the offset up to which the buffer was written to store it.
    */
   serialize(): [Buffer, number] {
-    return associatedChannelAccountBeet.serialize({
-      accountDiscriminator: associatedChannelAccountDiscriminator,
+    return channelMembershipBeet.serialize({
+      accountDiscriminator: channelMembershipDiscriminator,
       ...this,
     })
   }
 
   /**
    * Returns the byteSize of a {@link Buffer} holding the serialized data of
-   * {@link AssociatedChannelAccount} for the provided args.
+   * {@link ChannelMembership} for the provided args.
    *
    * @param args need to be provided since the byte size for this account
    * depends on them
    */
-  static byteSize(args: AssociatedChannelAccountArgs) {
-    const instance = AssociatedChannelAccount.fromArgs(args)
-    return associatedChannelAccountBeet.toFixedFromValue({
-      accountDiscriminator: associatedChannelAccountDiscriminator,
+  static byteSize(args: ChannelMembershipArgs) {
+    const instance = ChannelMembership.fromArgs(args)
+    return channelMembershipBeet.toFixedFromValue({
+      accountDiscriminator: channelMembershipDiscriminator,
       ...instance,
     }).byteSize
   }
 
   /**
    * Fetches the minimum balance needed to exempt an account holding
-   * {@link AssociatedChannelAccount} data from rent
+   * {@link ChannelMembership} data from rent
    *
    * @param args need to be provided since the byte size for this account
    * depends on them
    * @param connection used to retrieve the rent exemption information
    */
   static async getMinimumBalanceForRentExemption(
-    args: AssociatedChannelAccountArgs,
+    args: ChannelMembershipArgs,
     connection: web3.Connection,
     commitment?: web3.Commitment,
   ): Promise<number> {
     return connection.getMinimumBalanceForRentExemption(
-      AssociatedChannelAccount.byteSize(args),
+      ChannelMembership.byteSize(args),
       commitment,
     )
   }
 
   /**
-   * Returns a readable version of {@link AssociatedChannelAccount} properties
+   * Returns a readable version of {@link ChannelMembership} properties
    * and can be used to convert to JSON and/or logging
    */
   pretty() {
     return {
       channel: this.channel.toBase58(),
-      owner: this.owner.toBase58(),
+      authority: this.authority.toBase58(),
+      key: this.key.toBase58(),
       cek: this.cek,
+      status: this.status.__kind,
+      name: this.name,
+      invitedBy: this.invitedBy,
       createdAt: (() => {
         const x = <{ toNumber: () => number }> this.createdAt
         if (typeof x.toNumber === 'function') {
@@ -180,6 +195,7 @@ export class AssociatedChannelAccount implements AssociatedChannelAccountArgs {
         }
         return x
       })(),
+      bump: this.bump,
     }
   }
 }
@@ -188,19 +204,24 @@ export class AssociatedChannelAccount implements AssociatedChannelAccountArgs {
  * @category Accounts
  * @category generated
  */
-export const associatedChannelAccountBeet = new beet.FixableBeetStruct<
-  AssociatedChannelAccount,
-  AssociatedChannelAccountArgs & {
+export const channelMembershipBeet = new beet.FixableBeetStruct<
+  ChannelMembership,
+  ChannelMembershipArgs & {
     accountDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
     ['channel', beetSolana.publicKey],
-    ['owner', beetSolana.publicKey],
+    ['authority', beetSolana.publicKey],
+    ['key', beetSolana.publicKey],
     ['cek', cEKDataBeet],
+    ['status', channelMembershipStatusBeet],
+    ['name', beet.utf8String],
+    ['invitedBy', beet.coption(beetSolana.publicKey)],
     ['createdAt', beet.i64],
+    ['bump', beet.u8],
   ],
-  AssociatedChannelAccount.fromArgs,
-  'AssociatedChannelAccount',
+  ChannelMembership.fromArgs,
+  'ChannelMembership',
 )

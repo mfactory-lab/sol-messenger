@@ -7,104 +7,97 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { AddToChannelData } from '../types/AddToChannelData'
+import type { AuthorizeMemberData } from '../types/AuthorizeMemberData'
 import {
-  addToChannelDataBeet,
-} from '../types/AddToChannelData'
+  authorizeMemberDataBeet,
+} from '../types/AuthorizeMemberData'
 
 /**
  * @category Instructions
- * @category AddToChannel
+ * @category AuthorizeMember
  * @category generated
  */
-export interface AddToChannelInstructionArgs {
-  data: AddToChannelData
+export interface AuthorizeMemberInstructionArgs {
+  data: AuthorizeMemberData
 }
 /**
  * @category Instructions
- * @category AddToChannel
+ * @category AuthorizeMember
  * @category generated
  */
-export const addToChannelStruct = new beet.FixableBeetArgsStruct<
-  AddToChannelInstructionArgs & {
+export const authorizeMemberStruct = new beet.FixableBeetArgsStruct<
+  AuthorizeMemberInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['data', addToChannelDataBeet],
+    ['data', authorizeMemberDataBeet],
   ],
-  'AddToChannelInstructionArgs',
+  'AuthorizeMemberInstructionArgs',
 )
 /**
- * Accounts required by the _addToChannel_ instruction
+ * Accounts required by the _authorizeMember_ instruction
  *
- * @property [_writable_] channel
- * @property [_writable_, **signer**] inviter
- * @property [_writable_] inviterAca
- * @property [] invitee
- * @property [_writable_] inviteeAca
+ * @property [] channel
+ * @property [_writable_] membership
+ * @property [**signer**] authority
+ * @property [] authorityMembership
  * @category Instructions
- * @category AddToChannel
+ * @category AuthorizeMember
  * @category generated
  */
-export interface AddToChannelInstructionAccounts {
+export interface AuthorizeMemberInstructionAccounts {
   channel: web3.PublicKey
-  inviter: web3.PublicKey
-  inviterAca: web3.PublicKey
-  invitee: web3.PublicKey
-  inviteeAca: web3.PublicKey
+  membership: web3.PublicKey
+  authority: web3.PublicKey
+  authorityMembership: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const addToChannelInstructionDiscriminator = [
-  168, 102, 201, 103, 238, 221, 142, 229,
+export const authorizeMemberInstructionDiscriminator = [
+  194, 123, 189, 175, 86, 225, 93, 128,
 ]
 
 /**
- * Creates a _AddToChannel_ instruction.
+ * Creates a _AuthorizeMember_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category AddToChannel
+ * @category AuthorizeMember
  * @category generated
  */
-export function createAddToChannelInstruction(
-  accounts: AddToChannelInstructionAccounts,
-  args: AddToChannelInstructionArgs,
+export function createAuthorizeMemberInstruction(
+  accounts: AuthorizeMemberInstructionAccounts,
+  args: AuthorizeMemberInstructionArgs,
   programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
 ) {
-  const [data] = addToChannelStruct.serialize({
-    instructionDiscriminator: addToChannelInstructionDiscriminator,
+  const [data] = authorizeMemberStruct.serialize({
+    instructionDiscriminator: authorizeMemberInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.channel,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.inviter,
-      isWritable: true,
-      isSigner: true,
-    },
-    {
-      pubkey: accounts.inviterAca,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.invitee,
       isWritable: false,
       isSigner: false,
     },
     {
-      pubkey: accounts.inviteeAca,
+      pubkey: accounts.membership,
       isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.authority,
+      isWritable: false,
+      isSigner: true,
+    },
+    {
+      pubkey: accounts.authorityMembership,
+      isWritable: false,
       isSigner: false,
     },
     {

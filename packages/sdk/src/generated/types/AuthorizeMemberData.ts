@@ -8,7 +8,7 @@
 import * as beet from '@metaplex-foundation/beet'
 import type { CEKData } from './CEKData'
 import { cEKDataBeet } from './CEKData'
-export interface AddToChannelData {
+export interface AuthorizeMemberData {
   cek: CEKData
 }
 
@@ -16,8 +16,8 @@ export interface AddToChannelData {
  * @category userTypes
  * @category generated
  */
-export const addToChannelDataBeet
-  = new beet.FixableBeetArgsStruct<AddToChannelData>(
+export const authorizeMemberDataBeet
+  = new beet.FixableBeetArgsStruct<AuthorizeMemberData>(
     [['cek', cEKDataBeet]],
-    'AddToChannelData',
+    'AuthorizeMemberData',
   )

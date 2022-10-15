@@ -1,7 +1,7 @@
 import { Channel } from './Channel'
-import { AssociatedChannelAccount } from './AssociatedChannelAccount'
+import { ChannelMembership } from './ChannelMembership'
 
-export * from './AssociatedChannelAccount'
 export * from './Channel'
+export * from './ChannelMembership'
 
-export const accountProviders = { Channel, AssociatedChannelAccount }
+export const accountProviders = { Channel, ChannelMembership }

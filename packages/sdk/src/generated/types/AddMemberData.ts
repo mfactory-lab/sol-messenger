@@ -8,23 +8,23 @@
 import type * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-export interface Message {
-  id: number
-  sender: web3.PublicKey
-  createdAt: beet.bignum
-  content: string
+import type { CEKData } from './CEKData'
+import { cEKDataBeet } from './CEKData'
+export interface AddMemberData {
+  name: string
+  cek: CEKData
+  key: beet.COption<web3.PublicKey>
 }
 
 /**
  * @category userTypes
  * @category generated
  */
-export const messageBeet = new beet.FixableBeetArgsStruct<Message>(
+export const addMemberDataBeet = new beet.FixableBeetArgsStruct<AddMemberData>(
   [
-    ['id', beet.u32],
-    ['sender', beetSolana.publicKey],
-    ['createdAt', beet.i64],
-    ['content', beet.utf8String],
+    ['name', beet.utf8String],
+    ['cek', cEKDataBeet],
+    ['key', beet.coption(beetSolana.publicKey)],
   ],
-  'Message',
+  'AddMemberData',
 )

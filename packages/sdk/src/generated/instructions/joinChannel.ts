@@ -7,70 +7,74 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
+import type { JoinChannelData } from '../types/JoinChannelData'
+import { joinChannelDataBeet } from '../types/JoinChannelData'
 
 /**
  * @category Instructions
- * @category PostMessage
+ * @category JoinChannel
  * @category generated
  */
-export interface PostMessageInstructionArgs {
-  message: string
+export interface JoinChannelInstructionArgs {
+  data: JoinChannelData
 }
 /**
  * @category Instructions
- * @category PostMessage
+ * @category JoinChannel
  * @category generated
  */
-export const postMessageStruct = new beet.FixableBeetArgsStruct<
-  PostMessageInstructionArgs & {
+export const joinChannelStruct = new beet.FixableBeetArgsStruct<
+  JoinChannelInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['message', beet.utf8String],
+    ['data', joinChannelDataBeet],
   ],
-  'PostMessageInstructionArgs',
+  'JoinChannelInstructionArgs',
 )
 /**
- * Accounts required by the _postMessage_ instruction
+ * Accounts required by the _joinChannel_ instruction
  *
  * @property [_writable_] channel
- * @property [] membership
- * @property [**signer**] authority
+ * @property [_writable_] membership
+ * @property [_writable_, **signer**] authority
+ * @property [**signer**] key
  * @category Instructions
- * @category PostMessage
+ * @category JoinChannel
  * @category generated
  */
-export interface PostMessageInstructionAccounts {
+export interface JoinChannelInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authority: web3.PublicKey
+  key: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const postMessageInstructionDiscriminator = [
-  214, 50, 100, 209, 38, 34, 7, 76,
+export const joinChannelInstructionDiscriminator = [
+  124, 39, 115, 89, 217, 26, 38, 29,
 ]
 
 /**
- * Creates a _PostMessage_ instruction.
+ * Creates a _JoinChannel_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category PostMessage
+ * @category JoinChannel
  * @category generated
  */
-export function createPostMessageInstruction(
-  accounts: PostMessageInstructionAccounts,
-  args: PostMessageInstructionArgs,
+export function createJoinChannelInstruction(
+  accounts: JoinChannelInstructionAccounts,
+  args: JoinChannelInstructionArgs,
   programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
 ) {
-  const [data] = postMessageStruct.serialize({
-    instructionDiscriminator: postMessageInstructionDiscriminator,
+  const [data] = joinChannelStruct.serialize({
+    instructionDiscriminator: joinChannelInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
@@ -81,11 +85,16 @@ export function createPostMessageInstruction(
     },
     {
       pubkey: accounts.membership,
-      isWritable: false,
+      isWritable: true,
       isSigner: false,
     },
     {
       pubkey: accounts.authority,
+      isWritable: true,
+      isSigner: true,
+    },
+    {
+      pubkey: accounts.key,
       isWritable: false,
       isSigner: true,
     },

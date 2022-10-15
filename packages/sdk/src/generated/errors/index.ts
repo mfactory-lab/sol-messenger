@@ -12,13 +12,33 @@ const createErrorFromCodeLookup: Map<number, () => ErrorWithCode> = new Map()
 const createErrorFromNameLookup: Map<string, () => ErrorWithCode> = new Map()
 
 /**
+ * Unauthorized: 'Unauthorized'
+ *
+ * @category Errors
+ * @category generated
+ */
+export class UnauthorizedError extends Error {
+  readonly code: number = 0x1770
+  readonly name: string = 'Unauthorized'
+  constructor() {
+    super('Unauthorized')
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, UnauthorizedError)
+    }
+  }
+}
+
+createErrorFromCodeLookup.set(0x1770, () => new UnauthorizedError())
+createErrorFromNameLookup.set('Unauthorized', () => new UnauthorizedError())
+
+/**
  * NameTooLong: 'Name too long'
  *
  * @category Errors
  * @category generated
  */
 export class NameTooLongError extends Error {
-  readonly code: number = 0x1770
+  readonly code: number = 0x1771
   readonly name: string = 'NameTooLong'
   constructor() {
     super('Name too long')
@@ -28,7 +48,7 @@ export class NameTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1770, () => new NameTooLongError())
+createErrorFromCodeLookup.set(0x1771, () => new NameTooLongError())
 createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
 
 /**
@@ -38,7 +58,7 @@ createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
  * @category generated
  */
 export class MessageTooLongError extends Error {
-  readonly code: number = 0x1771
+  readonly code: number = 0x1772
   readonly name: string = 'MessageTooLong'
   constructor() {
     super('Message too long')
@@ -48,7 +68,7 @@ export class MessageTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1771, () => new MessageTooLongError())
+createErrorFromCodeLookup.set(0x1772, () => new MessageTooLongError())
 createErrorFromNameLookup.set('MessageTooLong', () => new MessageTooLongError())
 
 /**
@@ -58,7 +78,7 @@ createErrorFromNameLookup.set('MessageTooLong', () => new MessageTooLongError())
  * @category generated
  */
 export class AlreadyInUseError extends Error {
-  readonly code: number = 0x1772
+  readonly code: number = 0x1773
   readonly name: string = 'AlreadyInUse'
   constructor() {
     super('Already in use')
@@ -68,7 +88,7 @@ export class AlreadyInUseError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1772, () => new AlreadyInUseError())
+createErrorFromCodeLookup.set(0x1773, () => new AlreadyInUseError())
 createErrorFromNameLookup.set('AlreadyInUse', () => new AlreadyInUseError())
 
 /**
@@ -78,7 +98,7 @@ createErrorFromNameLookup.set('AlreadyInUse', () => new AlreadyInUseError())
  * @category generated
  */
 export class UninitializedAccountError extends Error {
-  readonly code: number = 0x1773
+  readonly code: number = 0x1774
   readonly name: string = 'UninitializedAccount'
   constructor() {
     super('Uninitialized account')
@@ -88,7 +108,7 @@ export class UninitializedAccountError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1773, () => new UninitializedAccountError())
+createErrorFromCodeLookup.set(0x1774, () => new UninitializedAccountError())
 createErrorFromNameLookup.set(
   'UninitializedAccount',
   () => new UninitializedAccountError(),

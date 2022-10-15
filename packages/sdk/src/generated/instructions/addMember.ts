@@ -7,70 +7,76 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
+import type { AddMemberData } from '../types/AddMemberData'
+import { addMemberDataBeet } from '../types/AddMemberData'
 
 /**
  * @category Instructions
- * @category PostMessage
+ * @category AddMember
  * @category generated
  */
-export interface PostMessageInstructionArgs {
-  message: string
+export interface AddMemberInstructionArgs {
+  data: AddMemberData
 }
 /**
  * @category Instructions
- * @category PostMessage
+ * @category AddMember
  * @category generated
  */
-export const postMessageStruct = new beet.FixableBeetArgsStruct<
-  PostMessageInstructionArgs & {
+export const addMemberStruct = new beet.FixableBeetArgsStruct<
+  AddMemberInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['message', beet.utf8String],
+    ['data', addMemberDataBeet],
   ],
-  'PostMessageInstructionArgs',
+  'AddMemberInstructionArgs',
 )
 /**
- * Accounts required by the _postMessage_ instruction
+ * Accounts required by the _addMember_ instruction
  *
  * @property [_writable_] channel
- * @property [] membership
- * @property [**signer**] authority
+ * @property [] invitee
+ * @property [_writable_] inviteeMembership
+ * @property [_writable_] authorityMembership
+ * @property [_writable_, **signer**] authority
  * @category Instructions
- * @category PostMessage
+ * @category AddMember
  * @category generated
  */
-export interface PostMessageInstructionAccounts {
+export interface AddMemberInstructionAccounts {
   channel: web3.PublicKey
-  membership: web3.PublicKey
+  invitee: web3.PublicKey
+  inviteeMembership: web3.PublicKey
+  authorityMembership: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const postMessageInstructionDiscriminator = [
-  214, 50, 100, 209, 38, 34, 7, 76,
+export const addMemberInstructionDiscriminator = [
+  13, 116, 123, 130, 126, 198, 57, 34,
 ]
 
 /**
- * Creates a _PostMessage_ instruction.
+ * Creates a _AddMember_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category PostMessage
+ * @category AddMember
  * @category generated
  */
-export function createPostMessageInstruction(
-  accounts: PostMessageInstructionAccounts,
-  args: PostMessageInstructionArgs,
+export function createAddMemberInstruction(
+  accounts: AddMemberInstructionAccounts,
+  args: AddMemberInstructionArgs,
   programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
 ) {
-  const [data] = postMessageStruct.serialize({
-    instructionDiscriminator: postMessageInstructionDiscriminator,
+  const [data] = addMemberStruct.serialize({
+    instructionDiscriminator: addMemberInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
@@ -80,13 +86,23 @@ export function createPostMessageInstruction(
       isSigner: false,
     },
     {
-      pubkey: accounts.membership,
+      pubkey: accounts.invitee,
       isWritable: false,
       isSigner: false,
     },
     {
+      pubkey: accounts.inviteeMembership,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.authorityMembership,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
       pubkey: accounts.authority,
-      isWritable: false,
+      isWritable: true,
       isSigner: true,
     },
     {

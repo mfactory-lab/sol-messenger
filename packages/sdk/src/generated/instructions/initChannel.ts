@@ -38,16 +38,18 @@ export const initChannelStruct = new beet.FixableBeetArgsStruct<
  * Accounts required by the _initChannel_ instruction
  *
  * @property [_writable_, **signer**] channel
- * @property [_writable_] associatedChannelAccount
+ * @property [_writable_] membership
  * @property [_writable_, **signer**] authority
+ * @property [**signer**] key
  * @category Instructions
  * @category InitChannel
  * @category generated
  */
 export interface InitChannelInstructionAccounts {
   channel: web3.PublicKey
-  associatedChannelAccount: web3.PublicKey
+  membership: web3.PublicKey
   authority: web3.PublicKey
+  key: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
@@ -82,13 +84,18 @@ export function createInitChannelInstruction(
       isSigner: true,
     },
     {
-      pubkey: accounts.associatedChannelAccount,
+      pubkey: accounts.membership,
       isWritable: true,
       isSigner: false,
     },
     {
       pubkey: accounts.authority,
       isWritable: true,
+      isSigner: true,
+    },
+    {
+      pubkey: accounts.key,
+      isWritable: false,
       isSigner: true,
     },
     {

@@ -10,68 +10,53 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category PostMessage
+ * @category DeleteMember
  * @category generated
  */
-export interface PostMessageInstructionArgs {
-  message: string
-}
-/**
- * @category Instructions
- * @category PostMessage
- * @category generated
- */
-export const postMessageStruct = new beet.FixableBeetArgsStruct<
-  PostMessageInstructionArgs & {
-    instructionDiscriminator: number[] /* size: 8 */
-  }
->(
-  [
-    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['message', beet.utf8String],
-  ],
-  'PostMessageInstructionArgs',
+export const deleteMemberStruct = new beet.BeetArgsStruct<{
+  instructionDiscriminator: number[] /* size: 8 */
+}>(
+  [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
+  'DeleteMemberInstructionArgs',
 )
 /**
- * Accounts required by the _postMessage_ instruction
+ * Accounts required by the _deleteMember_ instruction
  *
  * @property [_writable_] channel
- * @property [] membership
- * @property [**signer**] authority
+ * @property [_writable_] membership
+ * @property [_writable_, **signer**] authority
+ * @property [_writable_] authorityMembership
  * @category Instructions
- * @category PostMessage
+ * @category DeleteMember
  * @category generated
  */
-export interface PostMessageInstructionAccounts {
+export interface DeleteMemberInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authority: web3.PublicKey
+  authorityMembership: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const postMessageInstructionDiscriminator = [
-  214, 50, 100, 209, 38, 34, 7, 76,
+export const deleteMemberInstructionDiscriminator = [
+  95, 14, 98, 112, 252, 218, 205, 173,
 ]
 
 /**
- * Creates a _PostMessage_ instruction.
+ * Creates a _DeleteMember_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
- * @param args to provide as instruction data to the program
- *
  * @category Instructions
- * @category PostMessage
+ * @category DeleteMember
  * @category generated
  */
-export function createPostMessageInstruction(
-  accounts: PostMessageInstructionAccounts,
-  args: PostMessageInstructionArgs,
+export function createDeleteMemberInstruction(
+  accounts: DeleteMemberInstructionAccounts,
   programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
 ) {
-  const [data] = postMessageStruct.serialize({
-    instructionDiscriminator: postMessageInstructionDiscriminator,
-    ...args,
+  const [data] = deleteMemberStruct.serialize({
+    instructionDiscriminator: deleteMemberInstructionDiscriminator,
   })
   const keys: web3.AccountMeta[] = [
     {
@@ -81,13 +66,18 @@ export function createPostMessageInstruction(
     },
     {
       pubkey: accounts.membership,
-      isWritable: false,
+      isWritable: true,
       isSigner: false,
     },
     {
       pubkey: accounts.authority,
-      isWritable: false,
+      isWritable: true,
       isSigner: true,
+    },
+    {
+      pubkey: accounts.authorityMembership,
+      isWritable: true,
+      isSigner: false,
     },
     {
       pubkey: accounts.systemProgram ?? web3.SystemProgram.programId,

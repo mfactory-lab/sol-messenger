@@ -18,9 +18,10 @@ import { messageBeet } from '../types/Message'
  */
 export interface ChannelArgs {
   name: string
-  authority: web3.PublicKey
+  creator: web3.PublicKey
   createdAt: beet.bignum
   memberCount: number
+  messageCount: number
   maxMessages: number
   messages: Message[]
 }
@@ -36,9 +37,10 @@ export const channelDiscriminator = [49, 159, 99, 106, 220, 87, 219, 88]
 export class Channel implements ChannelArgs {
   private constructor(
     readonly name: string,
-    readonly authority: web3.PublicKey,
+    readonly creator: web3.PublicKey,
     readonly createdAt: beet.bignum,
     readonly memberCount: number,
+    readonly messageCount: number,
     readonly maxMessages: number,
     readonly messages: Message[],
   ) {}
@@ -49,9 +51,10 @@ export class Channel implements ChannelArgs {
   static fromArgs(args: ChannelArgs) {
     return new Channel(
       args.name,
-      args.authority,
+      args.creator,
       args.createdAt,
       args.memberCount,
+      args.messageCount,
       args.maxMessages,
       args.messages,
     )
@@ -163,7 +166,7 @@ export class Channel implements ChannelArgs {
   pretty() {
     return {
       name: this.name,
-      authority: this.authority.toBase58(),
+      creator: this.creator.toBase58(),
       createdAt: (() => {
         const x = <{ toNumber: () => number }> this.createdAt
         if (typeof x.toNumber === 'function') {
@@ -176,6 +179,7 @@ export class Channel implements ChannelArgs {
         return x
       })(),
       memberCount: this.memberCount,
+      messageCount: this.messageCount,
       maxMessages: this.maxMessages,
       messages: this.messages,
     }
@@ -195,9 +199,10 @@ export const channelBeet = new beet.FixableBeetStruct<
   [
     ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
     ['name', beet.utf8String],
-    ['authority', beetSolana.publicKey],
+    ['creator', beetSolana.publicKey],
     ['createdAt', beet.i64],
     ['memberCount', beet.u16],
+    ['messageCount', beet.u32],
     ['maxMessages', beet.u16],
     ['messages', beet.array(messageBeet)],
   ],

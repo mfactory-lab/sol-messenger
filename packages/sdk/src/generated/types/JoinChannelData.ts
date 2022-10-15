@@ -8,23 +8,20 @@
 import type * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-export interface Message {
-  id: number
-  sender: web3.PublicKey
-  createdAt: beet.bignum
-  content: string
+export interface JoinChannelData {
+  name: string
+  authority: beet.COption<web3.PublicKey>
 }
 
 /**
  * @category userTypes
  * @category generated
  */
-export const messageBeet = new beet.FixableBeetArgsStruct<Message>(
-  [
-    ['id', beet.u32],
-    ['sender', beetSolana.publicKey],
-    ['createdAt', beet.i64],
-    ['content', beet.utf8String],
-  ],
-  'Message',
-)
+export const joinChannelDataBeet
+  = new beet.FixableBeetArgsStruct<JoinChannelData>(
+    [
+      ['name', beet.utf8String],
+      ['authority', beet.coption(beetSolana.publicKey)],
+    ],
+    'JoinChannelData',
+  )
