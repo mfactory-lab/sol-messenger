@@ -22,7 +22,7 @@ help: ## Show this help
 
 .PHONY: build
 build: ## Build program
-	anchor build -p $(program) -t $(cwd)/packages/sdk/src/idl
+	anchor build -p $(program) # -t $(cwd)/packages/sdk/src/idl
 
 .PHONY: deploy
 deploy: build ## Deploy program
