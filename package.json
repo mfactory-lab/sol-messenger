@@ -4,8 +4,10 @@
   "packageManager": "pnpm@7.13.0",
 
   "scripts": {
-    "api:gen": "pnpm --filter=sdk run api:gen && eslint --fix --ext .ts ./packages/sdk/src/**",
+    "api:gen": "pnpm --filter=sdk run api:gen && pnpm lint:fix",
     "ui:dev": "pnpm --filter=ui run dev",
+    "ui:build": "pnpm --filter=ui run build:staging",
+    "ui:preview": "pnpm --filter=ui run preview",
     "lint:fix": "eslint --cache --fix --ext .js,.vue,.ts ./packages/**"
   },
   "dependencies": {
