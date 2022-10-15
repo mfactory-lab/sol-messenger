@@ -4,7 +4,7 @@
       <q-toolbar>
         <div class="app-header__logo">
           <router-link to="/">
-            SM
+            SO-M
           </router-link>
         </div>
 
@@ -12,10 +12,7 @@
 
         <div class="app-header__nav">
           <a href="https://jpool.one" target="_blank">JPOOL</a>
-          <a href="https://heartandsol.one/hatching" target="_blank">HATCHING</a>
-          <a href="https://heartandsol.one/freemint" target="_blank">AIRDROP</a>
-          <a href="https://heartandsol.one/auction" target="_blank">NFT AUCTION</a>
-          <a href="https://magiceden.io/marketplace/heartandsol" target="_blank">NFT Marketplace</a>
+          <a href="https://dev.svt.one" target="_blank">Validator toolkit</a>
         </div>
 
         <q-space />
