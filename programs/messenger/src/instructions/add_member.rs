@@ -70,7 +70,7 @@ pub struct AddMember<'info> {
     )]
     pub invitee_membership: Account<'info, ChannelMembership>,
 
-    #[account(mut, has_one = channel, has_one = authority)]
+    #[account(mut, has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ ErrorCode::Unauthorized)]
     pub authority_membership: Account<'info, ChannelMembership>,
 
     #[account(mut)]

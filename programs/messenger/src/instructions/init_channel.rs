@@ -5,10 +5,10 @@ use crate::{events::NewChannelEvent, state::*, ErrorCode};
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     data.validate()?;
 
-    if !ctx.accounts.channel.to_account_info().data_is_empty() {
-        msg!("Error: Attempt to create a channel for an address that is already in use");
-        return Err(ErrorCode::AlreadyInUse.into());
-    }
+    // if !ctx.accounts.channel.to_account_info().data_is_empty() {
+    //     msg!("Error: Attempt to create a channel for an address that is already in use");
+    //     return Err(ErrorCode::AlreadyInUse.into());
+    // }
 
     let clock = Clock::get()?;
 
@@ -24,14 +24,14 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     channel.created_at = clock.unix_timestamp;
 
     // create associated channel account
-    let aca = &mut ctx.accounts.membership;
-    aca.channel = channel.key();
-    aca.authority = authority.key();
-    aca.key = ctx.accounts.key.key();
-    aca.cek = data.cek;
-    aca.status = ChannelMembershipStatus::Authorized { by: None };
-    aca.created_at = clock.unix_timestamp;
-    aca.bump = ctx.bumps["aca"];
+    let membership = &mut ctx.accounts.membership;
+    membership.channel = channel.key();
+    membership.authority = authority.key();
+    membership.key = ctx.accounts.key.key();
+    membership.cek = data.cek;
+    membership.status = ChannelMembershipStatus::Authorized { by: None };
+    membership.created_at = clock.unix_timestamp;
+    membership.bump = ctx.bumps["membership"];
 
     emit!(NewChannelEvent {
         channel: channel.key(),

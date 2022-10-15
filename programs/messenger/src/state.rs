@@ -111,6 +111,10 @@ impl ChannelMembership {
         + (4 + MAX_MEMBER_NAME_LENGTH) // name
         + (1 + 32) + 8 + 1 // invited_by + created_at + bump
     }
+
+    pub fn is_authorized(&self) -> bool {
+        matches!(self.status, ChannelMembershipStatus::Authorized { .. })
+    }
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]

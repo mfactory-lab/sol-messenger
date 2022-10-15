@@ -51,7 +51,7 @@ pub struct AuthorizeMember<'info> {
 
     pub authority: Signer<'info>,
 
-    #[account(has_one = channel, has_one = authority)]
+    #[account(has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ ErrorCode::Unauthorized)]
     pub authority_membership: Account<'info, ChannelMembership>,
 
     pub system_program: Program<'info, System>,

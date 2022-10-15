@@ -35,7 +35,7 @@ pub struct DeleteMember<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
-    #[account(mut, has_one = channel, has_one = authority)]
+    #[account(mut, has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ ErrorCode::Unauthorized)]
     pub authority_membership: Account<'info, ChannelMembership>,
 
     pub system_program: Program<'info, System>,
