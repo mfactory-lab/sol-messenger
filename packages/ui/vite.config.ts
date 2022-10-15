@@ -20,12 +20,14 @@ export default defineConfig(({ mode }) => {
     Vue({
       include: [/\.vue$/, /\.md$/],
       template: { transformAssetUrls },
+      reactivityTransform: true,
     }),
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
       imports: [
         'vue',
+        'vue/macros',
         'vue-router',
         '@vueuse/head',
         '@vueuse/core',

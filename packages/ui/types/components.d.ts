@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']
+    Messenger: typeof import('./../src/components/Messenger.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
