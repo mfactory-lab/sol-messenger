@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.0.3",
   "name": "messenger",
   "instructions": [
     {
@@ -11,13 +11,18 @@
           "isSigner": true
         },
         {
-          "name": "associatedChannelAccount",
+          "name": "membership",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "authority",
           "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "key",
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -36,7 +41,7 @@
       ]
     },
     {
-      "name": "addToChannel",
+      "name": "deleteChannel",
       "accounts": [
         {
           "name": "channel",
@@ -44,12 +49,66 @@
           "isSigner": false
         },
         {
-          "name": "inviter",
+          "name": "authority",
           "isMut": true,
           "isSigner": true
         },
         {
-          "name": "inviterAca",
+          "name": "authorityMembership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "joinChannel",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "key",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "JoinChannelData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addMember",
+      "accounts": [
+        {
+          "name": "channel",
           "isMut": true,
           "isSigner": false
         },
@@ -59,8 +118,56 @@
           "isSigner": false
         },
         {
-          "name": "inviteeAca",
+          "name": "inviteeMembership",
           "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authorityMembership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "AddMemberData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "authorizeMember",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "authorityMembership",
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -73,10 +180,41 @@
         {
           "name": "data",
           "type": {
-            "defined": "AddToChannelData"
+            "defined": "AuthorizeMemberData"
           }
         }
       ]
+    },
+    {
+      "name": "deleteMember",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "authorityMembership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "postMessage",
@@ -87,13 +225,13 @@
           "isSigner": false
         },
         {
-          "name": "associatedChannelAccount",
-          "isMut": true,
+          "name": "membership",
+          "isMut": false,
           "isSigner": false
         },
         {
-          "name": "sender",
-          "isMut": true,
+          "name": "authority",
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -119,14 +257,14 @@
           {
             "name": "name",
             "docs": [
-              "The channel name"
+              "Name of the channel"
             ],
             "type": "string"
           },
           {
-            "name": "authority",
+            "name": "creator",
             "docs": [
-              "The channel authority"
+              "Channel creator"
             ],
             "type": "publicKey"
           },
@@ -140,21 +278,28 @@
           {
             "name": "memberCount",
             "docs": [
-              "Number of channel members"
+              "Number of members"
             ],
             "type": "u16"
           },
           {
+            "name": "messageCount",
+            "docs": [
+              "Message counter"
+            ],
+            "type": "u32"
+          },
+          {
             "name": "maxMessages",
             "docs": [
-              "Max messages in this channel"
+              "The maximum number of messages that are stored in [messages]"
             ],
             "type": "u16"
           },
           {
             "name": "messages",
             "docs": [
-              "All of the messages in the channel"
+              "List of messages"
             ],
             "type": {
               "vec": {
@@ -166,31 +311,63 @@
       }
     },
     {
-      "name": "AssociatedChannelAccount",
+      "name": "ChannelMembership",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "channel",
             "docs": [
-              "The channel address"
+              "Associated [Channel] address"
             ],
             "type": "publicKey"
           },
           {
-            "name": "owner",
+            "name": "authority",
             "docs": [
-              "The owner that can decrypt the CEK in this account"
+              "Authority of membership"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "key",
+            "docs": [
+              "The public key used to encrypt the `CEK`"
             ],
             "type": "publicKey"
           },
           {
             "name": "cek",
             "docs": [
-              "The CEK for the channel"
+              "The content encryption key (CEK) of the channel"
             ],
             "type": {
               "defined": "CEKData"
+            }
+          },
+          {
+            "name": "status",
+            "docs": [
+              "Status of membership"
+            ],
+            "type": {
+              "defined": "ChannelMembershipStatus"
+            }
+          },
+          {
+            "name": "name",
+            "docs": [
+              "Name of the channel member"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "invitedBy",
+            "docs": [
+              "Inviter address"
+            ],
+            "type": {
+              "option": "publicKey"
             }
           },
           {
@@ -199,6 +376,13 @@
               "Creation date"
             ],
             "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "Bump seed for deriving PDA seeds"
+            ],
+            "type": "u8"
           }
         ]
       }
@@ -206,7 +390,31 @@
   ],
   "types": [
     {
-      "name": "AddToChannelData",
+      "name": "AddMemberData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "cek",
+            "type": {
+              "defined": "CEKData"
+            }
+          },
+          {
+            "name": "key",
+            "type": {
+              "option": "publicKey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "AuthorizeMemberData",
       "type": {
         "kind": "struct",
         "fields": [
@@ -242,6 +450,24 @@
       }
     },
     {
+      "name": "JoinChannelData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "authority",
+            "type": {
+              "option": "publicKey"
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "CEKData",
       "type": {
         "kind": "struct",
@@ -269,6 +495,13 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "id",
+            "docs": [
+              "Uniq message id"
+            ],
+            "type": "u32"
+          },
+          {
             "name": "sender",
             "docs": [
               "The message sender id"
@@ -291,26 +524,210 @@
           }
         ]
       }
+    },
+    {
+      "name": "ChannelMembershipStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Authorized",
+            "fields": [
+              {
+                "name": "by",
+                "type": {
+                  "option": "publicKey"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Pending",
+            "fields": [
+              {
+                "name": "authority",
+                "type": {
+                  "option": "publicKey"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "NewChannelEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "creator",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DeleteChannelEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "creator",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "NewMessageEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "message",
+          "type": {
+            "defined": "Message"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "JoinChannelEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "membership",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AddMemberEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "membership",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AuthorizeMemberEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "membership",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "by",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DeleteMemberEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "membership",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
     {
       "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
+    },
+    {
+      "code": 6001,
       "name": "NameTooLong",
       "msg": "Name too long"
     },
     {
-      "code": 6001,
+      "code": 6002,
       "name": "MessageTooLong",
       "msg": "Message too long"
     },
     {
-      "code": 6002,
+      "code": 6003,
       "name": "AlreadyInUse",
       "msg": "Already in use"
     },
     {
-      "code": 6003,
+      "code": 6004,
       "name": "UninitializedAccount",
       "msg": "Uninitialized account"
     }
