@@ -1,5 +1,6 @@
 import * as assert from 'assert'
-import type { ConfirmOptions, Keypair } from '@solana/web3.js'
+import { Keypair } from '@solana/web3.js'
+import type { ConfirmOptions } from '@solana/web3.js'
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor'
 import { MessengerClient } from '../packages/sdk'
 
@@ -48,6 +49,25 @@ describe('messenger', () => {
     assert.equal(acaInfo.authority.toBase58(), sender.publicKey.toBase58())
     assert.equal(acaInfo.key.toBase58(), sender.publicKey.toBase58())
     assert.equal(acaInfo.cek.encryptedKey, cekEncrypted.encryptedKey)
+  })
+
+  it('can init channel with keypair', async () => {
+    const data = { name: 'test', maxMessages: 10 }
+    const keypair = Keypair.generate()
+    const { channel: newChannel } = await getClient(sender, keypair).initChannel(data)
+    const channelInfo = await client.loadChannel(newChannel.publicKey)
+    assert.equal(channelInfo.name, data.name)
+    assert.equal(channelInfo.maxMessages, data.maxMessages)
+  })
+
+  it('cannot init channel with existing account', async () => {
+    const data = { name: 'test', maxMessages: 10, channel }
+    try {
+      await client.initChannel(data)
+      assert.ok(false)
+    } catch (e) {
+      assert.ok(e.message.includes('custom program error: 0x0'))
+    }
   })
 
   it('can post message', async () => {
