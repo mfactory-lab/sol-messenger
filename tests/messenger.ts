@@ -37,18 +37,19 @@ describe('messenger', () => {
   console.log(`Sender: ${sender.publicKey}`)
 
   it('can init channel', async () => {
-    const data = { name: 'test', maxMessages: 10 }
+    const data = { name: 'test', memberName: 'creator', maxMessages: 10 }
     const { cekEncrypted, channel: _channel } = await client.initChannel(data)
     channel = _channel
     const channelInfo = await client.loadChannel(channel.publicKey)
-    const acaInfo = await client.loadMembership((await client.getMembershipPDA(channel.publicKey))[0])
+    const membership = await client.loadMembership((await client.getMembershipPDA(channel.publicKey))[0])
     assert.equal(channelInfo.name, data.name)
     assert.equal(channelInfo.maxMessages, data.maxMessages)
     assert.equal(channelInfo.creator.toBase58(), sender.publicKey.toBase58())
-    assert.equal(acaInfo.channel.toBase58(), channel.publicKey.toBase58())
-    assert.equal(acaInfo.authority.toBase58(), sender.publicKey.toBase58())
-    assert.equal(acaInfo.key.toBase58(), sender.publicKey.toBase58())
-    assert.equal(acaInfo.cek.encryptedKey, cekEncrypted.encryptedKey)
+    assert.equal(membership.channel.toBase58(), channel.publicKey.toBase58())
+    assert.equal(membership.authority.toBase58(), sender.publicKey.toBase58())
+    assert.equal(membership.key.toBase58(), sender.publicKey.toBase58())
+    assert.equal(membership.name, data.memberName)
+    assert.equal(membership.cek.encryptedKey, cekEncrypted.encryptedKey)
   })
 
   it('can init channel with keypair', async () => {
