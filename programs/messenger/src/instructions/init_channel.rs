@@ -5,11 +5,6 @@ use crate::{events::NewChannelEvent, state::*, ErrorCode};
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     data.validate()?;
 
-    // if !ctx.accounts.channel.to_account_info().data_is_empty() {
-    //     msg!("Error: Attempt to create a channel for an address that is already in use");
-    //     return Err(ErrorCode::AlreadyInUse.into());
-    // }
-
     let clock = Clock::get()?;
 
     let authority = &ctx.accounts.authority;
@@ -23,11 +18,12 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     channel.messages = Vec::with_capacity(data.max_messages as usize);
     channel.created_at = clock.unix_timestamp;
 
-    // create associated channel account
+    let key = &ctx.accounts.key;
+
     let membership = &mut ctx.accounts.membership;
     membership.channel = channel.key();
     membership.authority = authority.key();
-    membership.key = ctx.accounts.key.key();
+    membership.key = key.key();
     membership.cek = data.cek;
     membership.status = ChannelMembershipStatus::Authorized { by: None };
     membership.created_at = clock.unix_timestamp;
@@ -73,7 +69,7 @@ pub struct InitChannel<'info> {
 
     #[account(
         init,
-        seeds = [channel.key().as_ref(), authority.key().as_ref()],
+        seeds = [channel.key().as_ref(), key.key().as_ref()],
         bump,
         payer = authority,
         space = ChannelMembership::space()
