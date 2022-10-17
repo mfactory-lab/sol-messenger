@@ -1,5 +1,5 @@
 {
-  "version": "0.0.4",
+  "version": "0.0.5",
   "name": "messenger",
   "instructions": [
     {
@@ -439,6 +439,10 @@
           {
             "name": "maxMessages",
             "type": "u16"
+          },
+          {
+            "name": "memberName",
+            "type": "string"
           },
           {
             "name": "cek",
