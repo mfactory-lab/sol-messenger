@@ -4,7 +4,7 @@
       <q-toolbar>
         <div class="app-header__logo">
           <router-link to="/">
-            SO-M
+            SOM
           </router-link>
         </div>
 
