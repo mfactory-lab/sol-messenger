@@ -1,0 +1,101 @@
+{
+  "src/assets/img/wallets/ledger.svg": {
+    "file": "assets/ledger.40cf6861.svg",
+    "src": "src/assets/img/wallets/ledger.svg"
+  },
+  "src/assets/img/wallets/mathwallet.svg": {
+    "file": "assets/mathwallet.1d763e81.svg",
+    "src": "src/assets/img/wallets/mathwallet.svg"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
+    "file": "assets/Eva-Icons.f19a427f.woff2",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOkCnqEu92Fr1MmgVxIIzQ.woff": {
+    "file": "assets/KFOkCnqEu92Fr1MmgVxIIzQ.34e9582c.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOkCnqEu92Fr1MmgVxIIzQ.woff"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmSU5fBBc-.woff": {
+    "file": "assets/KFOlCnqEu92Fr1MmSU5fBBc-.bf14c7d7.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmSU5fBBc-.woff"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff": {
+    "file": "assets/KFOmCnqEu92Fr1Mu4mxM.f2abf7fb.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff": {
+    "file": "assets/KFOlCnqEu92Fr1MmEU9fBBc-.9ce7f3ac.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff": {
+    "file": "assets/KFOlCnqEu92Fr1MmWUlfBBc-.e0fd57c0.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff": {
+    "file": "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff": {
+    "file": "assets/Eva-Icons.ba7db2a0.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.4/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
+  },
+  "index.html": {
+    "file": "assets/index.250fc19d.js",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_vendor.c5367e08.js"
+    ],
+    "dynamicImports": [
+      "src/layouts/empty.vue",
+      "src/pages/[...all].vue"
+    ],
+    "css": [
+      "assets/index.159d3fa5.css"
+    ],
+    "assets": [
+      "assets/ledger.40cf6861.svg",
+      "assets/mathwallet.1d763e81.svg",
+      "assets/Eva-Icons.f19a427f.woff2",
+      "assets/Eva-Icons.ba7db2a0.woff",
+      "assets/KFOkCnqEu92Fr1MmgVxIIzQ.34e9582c.woff",
+      "assets/KFOlCnqEu92Fr1MmSU5fBBc-.bf14c7d7.woff",
+      "assets/KFOmCnqEu92Fr1Mu4mxM.f2abf7fb.woff",
+      "assets/KFOlCnqEu92Fr1MmEU9fBBc-.9ce7f3ac.woff",
+      "assets/KFOlCnqEu92Fr1MmWUlfBBc-.e0fd57c0.woff",
+      "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff"
+    ]
+  },
+  "_vendor.c5367e08.js": {
+    "file": "assets/vendor.c5367e08.js"
+  },
+  "src/layouts/empty.vue": {
+    "file": "assets/empty.cc5f98ff.js",
+    "src": "src/layouts/empty.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor.c5367e08.js",
+      "index.html"
+    ]
+  },
+  "src/pages/[...all].vue": {
+    "file": "assets/_...all_.9c6e29da.js",
+    "src": "src/pages/[...all].vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor.c5367e08.js",
+      "index.html"
+    ],
+    "css": [
+      "assets/_...all_.319a51ec.css"
+    ]
+  },
+  "src/pages/[...all].css": {
+    "file": "assets/_...all_.319a51ec.css",
+    "src": "src/pages/[...all].css"
+  },
+  "index.css": {
+    "file": "assets/index.159d3fa5.css",
+    "src": "index.css"
+  }
+}
