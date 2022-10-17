@@ -29,7 +29,7 @@ jobs:
 
       - name: Build
         run: |
-          pnpm run ui:build
+          pnpm run ui:build:staging
           cd packages/ui && cp dist/index.html dist/404.html && touch dist/.nojekyll
 
       - name: Deploy 🚀
