@@ -23,7 +23,7 @@ export class MessengerClient {
 
   constructor(
     private readonly provider: AnchorProvider,
-    private sender?: Keypair,
+    private keypair?: Keypair,
   ) {}
 
   get connection() {
@@ -33,8 +33,8 @@ export class MessengerClient {
   /**
    * Set new sender keypair
    */
-  setSender(sender: Keypair) {
-    this.sender = sender
+  setKeypair(keypair: Keypair) {
+    this.keypair = keypair
   }
 
   /**
@@ -75,7 +75,7 @@ export class MessengerClient {
    */
   async loadUserMemberships(key?: PublicKey) {
     return ChannelMembership.gpaBuilder()
-      .addFilter('key', key ?? this.sender.publicKey)
+      .addFilter('key', key ?? this.keypair.publicKey)
       .run(this.provider.connection)
   }
 
@@ -90,22 +90,22 @@ export class MessengerClient {
    * Get channel membership PDA
    */
   async getMembershipPDA(channel: PublicKey, addr?: PublicKey) {
-    addr = addr ?? this.sender.publicKey
+    addr = addr ?? this.keypair.publicKey
     return await PublicKey.findProgramAddress([channel.toBuffer(), addr.toBuffer()], this.programId)
   }
 
   /**
-   * Encrypt {@link cek} with {@link key or @link sender.publicKey}
+   * Encrypt {@link cek} with {@link key or @link keypair.publicKey}
    */
   async encryptCEK(cek: Uint8Array, key?: PublicKey) {
-    return encryptCEK(cek, key ?? this.sender.publicKey)
+    return encryptCEK(cek, key ?? this.keypair.publicKey)
   }
 
   /**
-   * Decrypt {@link cek} with {@link secretKey} or {@link sender.secretKey}
+   * Decrypt {@link cek} with {@link secretKey} or {@link keypair.secretKey}
    */
   async decryptCEK(cek: CEKData, secretKey?: Uint8Array) {
-    return decryptCEK(cek, secretKey ?? this.sender.secretKey)
+    return decryptCEK(cek, secretKey ?? this.keypair.secretKey)
   }
 
   /**
@@ -126,7 +126,7 @@ export class MessengerClient {
    * Initialize new channel
    */
   async initChannel(props: InitChannelProps) {
-    const channel = Keypair.generate()
+    const channel = props.channel ?? Keypair.generate()
     const cek = await generateCEK()
     const cekEncrypted = await this.encryptCEK(cek)
 
@@ -139,7 +139,7 @@ export class MessengerClient {
         channel: channel.publicKey,
         membership,
         authority: this.provider.publicKey,
-        key: this.sender.publicKey,
+        key: this.keypair.publicKey,
       }, {
         data: {
           name: props.name,
@@ -152,7 +152,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [channel])
+      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair])
     } catch (e) {
       throw errorFromCode(e.code) ?? e
     }
@@ -199,7 +199,7 @@ export class MessengerClient {
       createJoinChannelInstruction({
         channel: props.channel,
         authority: this.provider.publicKey,
-        key: this.sender.publicKey,
+        key: this.keypair.publicKey,
         membership,
       }, {
         data: {
@@ -212,7 +212,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [this.sender])
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair])
     } catch (e) {
       throw errorFromCode(e.code) ?? e
     }
@@ -376,6 +376,7 @@ export class MessengerClient {
 interface InitChannelProps {
   name: string
   maxMessages: number
+  channel?: Keypair
 }
 
 interface JoinChannelProps {
