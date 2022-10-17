@@ -25,6 +25,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     membership.authority = authority.key();
     membership.key = key.key();
     membership.cek = data.cek;
+    membership.name = data.member_name;
     membership.status = ChannelMembershipStatus::Authorized { by: None };
     membership.created_at = clock.unix_timestamp;
     membership.bump = ctx.bumps["membership"];
@@ -43,6 +44,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
 pub struct InitChannelData {
     pub name: String,
     pub max_messages: u16,
+    pub member_name: String,
     pub cek: CEKData,
 }
 
