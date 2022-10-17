@@ -2,7 +2,6 @@
   "name": "messenger",
   "license": "MIT",
   "packageManager": "pnpm@7.13.0",
-
   "scripts": {
     "ui:dev": "pnpm --filter=ui run dev",
     "ui:build": "pnpm --filter=ui run build",
