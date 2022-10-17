@@ -1,0 +1,39 @@
+name: Deploy UI (dev)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - packages/ui/public/**
+      - packages/ui/src/**
+
+#env:
+#  URL: som.svt.one
+#  && echo ${{ env.URL }} > dist/CNAME
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: |
+          pnpm run ui:build
+          cd packages/ui && cp dist/index.html dist/404.html && touch dist/.nojekyll
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          folder: packages/ui/dist
