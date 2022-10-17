@@ -33,7 +33,7 @@ jobs:
           cd packages/ui && cp dist/index.html dist/404.html && touch dist/.nojekyll
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: packages/ui/dist
