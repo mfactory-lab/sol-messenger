@@ -6,14 +6,14 @@ import {
   Channel,
   ChannelMembership,
   PROGRAM_ID,
+  channelDiscriminator,
+  channelMembershipDiscriminator,
   createAddMemberInstruction,
   createAuthorizeMemberInstruction,
   createDeleteChannelInstruction,
   createDeleteMemberInstruction,
   createInitChannelInstruction,
-  createJoinChannelInstruction,
-  createPostMessageInstruction,
-  errorFromCode, errorFromName,
+  createJoinChannelInstruction, createPostMessageInstruction, errorFromCode, errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -41,7 +41,16 @@ export class MessengerClient {
    * Load all channels
    */
   async loadAllChannels() {
-    return Channel.gpaBuilder().run(this.provider.connection)
+    const accounts = await Channel.gpaBuilder()
+      .addFilter('accountDiscriminator', channelDiscriminator)
+      .run(this.provider.connection)
+
+    return accounts.map((acc) => {
+      return {
+        pubkey: acc.pubkey,
+        data: Channel.fromAccountInfo(acc.account)[0],
+      }
+    })
   }
 
   /**
@@ -55,7 +64,7 @@ export class MessengerClient {
    * Load list of {@link Channel} participated by user
    */
   async loadMyChannels() {
-    const accounts = await this.loadUserMemberships()
+    const accounts = await this.loadMemberships()
     console.log(accounts)
     // return this.provider.connection.getMultipleAccountsInfo()
     return []
@@ -65,18 +74,35 @@ export class MessengerClient {
    * Load list of {@link ChannelMembership} for the {@link channel}
    */
   async loadChannelMembers(channel: PublicKey) {
-    return ChannelMembership.gpaBuilder()
+    const accounts = await ChannelMembership.gpaBuilder()
+      .addFilter('accountDiscriminator', channelMembershipDiscriminator)
       .addFilter('channel', channel)
       .run(this.provider.connection)
+
+    return accounts.map((acc) => {
+      return {
+        pubkey: acc.pubkey,
+        data: ChannelMembership.fromAccountInfo(acc.account)[0],
+      }
+    })
   }
 
   /**
    * Load list of {@link ChannelMembership} for the {@link key}
    */
-  async loadUserMemberships(key?: PublicKey) {
-    return ChannelMembership.gpaBuilder()
-      .addFilter('key', key ?? this.keypair.publicKey)
+  async loadMemberships(key?: PublicKey) {
+    const accounts = await ChannelMembership.gpaBuilder()
+      .addFilter('accountDiscriminator', channelMembershipDiscriminator)
+      .addFilter('authority', this.provider.publicKey)
+      .addFilter('key', key)
       .run(this.provider.connection)
+
+    return accounts.map((acc) => {
+      return {
+        pubkey: acc.pubkey,
+        data: ChannelMembership.fromAccountInfo(acc.account),
+      }
+    })
   }
 
   /**
@@ -143,6 +169,7 @@ export class MessengerClient {
       }, {
         data: {
           name: props.name,
+          memberName: props.memberName ?? '',
           maxMessages: props.maxMessages,
           cek: cekEncrypted,
         },
@@ -163,8 +190,8 @@ export class MessengerClient {
   /**
    * Delete channel
    */
-  async deleteChannel(channel: PublicKey) {
-    const [authorityMembership] = await this.getMembershipPDA(channel)
+  async deleteChannel(channel: PublicKey, authorityMembership?: PublicKey) {
+    const [membership] = await this.getMembershipPDA(channel)
 
     const tx = new Transaction()
 
@@ -172,7 +199,7 @@ export class MessengerClient {
       createDeleteChannelInstruction({
         channel,
         authority: this.provider.publicKey,
-        authorityMembership,
+        authorityMembership: authorityMembership ?? membership,
       }),
     )
 
@@ -375,6 +402,7 @@ export class MessengerClient {
 
 interface InitChannelProps {
   name: string
+  memberName?: string
   maxMessages: number
   channel?: Keypair
 }

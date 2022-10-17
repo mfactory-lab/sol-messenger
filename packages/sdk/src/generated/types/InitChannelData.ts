@@ -11,6 +11,7 @@ import { cEKDataBeet } from './CEKData'
 export interface InitChannelData {
   name: string
   maxMessages: number
+  memberName: string
   cek: CEKData
 }
 
@@ -23,6 +24,7 @@ export const initChannelDataBeet
     [
       ['name', beet.utf8String],
       ['maxMessages', beet.u16],
+      ['memberName', beet.utf8String],
       ['cek', cEKDataBeet],
     ],
     'InitChannelData',
