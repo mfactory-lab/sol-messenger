@@ -2,11 +2,10 @@ import type { Channel, ChannelMembership, Message } from '@app/sdk'
 import { MessengerClient } from '@app/sdk'
 import type { Address } from '@project-serum/anchor'
 import { AnchorProvider } from '@project-serum/anchor'
-import { Keypair, PublicKey } from '@solana/web3.js'
-import { useLocalStorage } from '@vueuse/core'
+import type { Keypair } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
-import bs58 from 'bs58'
 import { shortenAddress } from '@/utils'
 
 interface MessengerStoreState {
@@ -24,10 +23,11 @@ interface MessengerStoreState {
 
 export const useMessengerStore = defineStore('messenger', () => {
   const connectionStore = useConnectionStore()
+  const userStore = useUserStore()
   const wallet = useAnchorWallet()
 
-  const secretKey = useLocalStorage('key', () => bs58.encode(Keypair.generate().secretKey))
-  const keypair = Keypair.fromSecretKey(bs58.decode(secretKey.value))
+  // const secretKey = useLocalStorage('key', () => bs58.encode(Keypair.generate().secretKey))
+  // const keypair = Keypair.fromSecretKey(bs58.decode(secretKey.value))
 
   const state = reactive<MessengerStoreState>({
     allChannels: [],
@@ -48,7 +48,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         connectionStore.connection,
         wallet.value ?? { publicKey: PublicKey.default } as never,
         AnchorProvider.defaultOptions(),
-      ), keypair)
+      ), userStore.keypair as Keypair)
   })
 
   init().then()
@@ -62,7 +62,8 @@ export const useMessengerStore = defineStore('messenger', () => {
       const members = await client.loadChannelMembers(channel.pubkey)
       console.log('|-- members:')
       for (const member of members) {
-        console.log(member.data.pretty())
+        console.log(`key: ${member.pubkey}`)
+        console.log(JSON.stringify(member.data.pretty(), null, 2))
       }
     }
 
@@ -99,11 +100,13 @@ export const useMessengerStore = defineStore('messenger', () => {
     // const key = new PublicKey('2MF6T12ez4Wdzo9AggucE2659bGsrh6n39M8JR9afa6S')
     // const [membership] = await client.getMembershipPDA(channel, key)
     await client.deleteChannel(channel)
+    await init()
   }
 
   async function joinChannel(addr: Address, name: string) {
     const channel = new PublicKey(addr)
     await client.joinChannel({ channel, name })
+    await loadChannel(addr)
   }
 
   async function loadChannel(addr: Address) {
@@ -116,11 +119,12 @@ export const useMessengerStore = defineStore('messenger', () => {
           state.channelMembership = await client.loadMembership(membershipAddr)
         } catch (e) {
           console.log(e)
+          state.channelMembership = undefined
         }
       }
       await Promise.all([
-        loadChannelMembers(),
         reloadChannel(),
+        loadChannelMembers(),
       ])
     } catch (e) {
       console.log('Error', e)
@@ -135,7 +139,16 @@ export const useMessengerStore = defineStore('messenger', () => {
       return
     }
     state.channel = await client.loadChannel(state.channelAddr)
-    const cek = state.channelMembership ? await client.decryptCEK(state.channelMembership.cek) : null
+
+    let cek: Uint8Array
+    if (state.channelMembership) {
+      try {
+        cek = await client.decryptCEK(state.channelMembership.cek)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
     state.channelMessages = await Promise.all(
       state.channel.messages.map(async (m) => {
         let content = '***** *** *** *** *******'
@@ -197,6 +210,17 @@ export const useMessengerStore = defineStore('messenger', () => {
     })
   }
 
+  async function deleteMember(addr: Address) {
+    if (!state.channelAddr) {
+      console.log('Invalid channel')
+      return
+    }
+    await client.deleteMember({
+      channel: state.channelAddr,
+      key: new PublicKey(addr),
+    })
+  }
+
   async function authorizeMember(key: Address) {
     if (!state.channelAddr) {
       console.log('Invalid channel')
@@ -206,18 +230,19 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key: new PublicKey(key),
     })
+    await reloadChannel()
   }
 
   return {
     state,
     client,
-    keypair,
     loadChannel,
     joinChannel,
     createChannel,
     deleteChannel,
     postMessage,
     addMember,
+    deleteMember,
     authorizeMember,
   }
 })

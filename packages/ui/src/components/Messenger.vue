@@ -1,18 +1,42 @@
 <script lang="ts" setup>
+import { isChannelMembershipStatusPending } from '@app/sdk'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
+import { shortenAddress } from '@/utils'
 const { notify } = useQuasar()
 const wallet = useWallet()
 
-const { state, postMessage, addMember, authorizeMember, createChannel, loadChannel, deleteChannel } = useMessengerStore()
+const {
+  state,
+  postMessage,
+  addMember, deleteMember, authorizeMember,
+  createChannel, loadChannel, deleteChannel, joinChannel,
+} = useMessengerStore()
+const userStore = useUserStore()
 
 const membersDialog = ref(false)
+
+const joinChannelState = reactive({
+  dialog: false,
+  loading: false,
+  name: '',
+  authority: '',
+})
 
 const addMemberState = reactive({
   dialog: false,
   loading: false,
   name: '',
+  authority: '',
   key: '',
+})
+
+const authorizeMemberState = reactive({
+  loading: false,
+})
+
+const deleteMemberState = reactive({
+  loading: false,
 })
 
 const newChannelState = reactive({
@@ -21,14 +45,35 @@ const newChannelState = reactive({
   maxMessages: 15,
 })
 
-const form = reactive({
+const postMessageState = reactive({
   message: '',
+})
+
+const isWalletConnected = computed(() => !!wallet.publicKey.value)
+const isAuthorizedMember = computed(() => state.channelMembership?.status.__kind === 'Authorized')
+const isPendingMember = computed(() => state.channelMembership?.status.__kind === 'Pending')
+const isChannelCreator = computed(() => isAuthorizedMember.value
+  && state.channel?.creator.toString() === wallet.publicKey.value?.toString())
+const channels = computed(() => state.allChannels)
+const messages = computed(() => state.channelMessages)
+const allowSend = computed(() => wallet.publicKey.value && state.channel && !state.sending)
+const canAddMember = computed(() => isAuthorizedMember.value)
+const canDeleteMember = (member: any) => computed(() => isChannelCreator.value
+  && String(member.key) !== String(userStore.keypair?.publicKey))
+const canJoinChannel = computed(() => isWalletConnected.value && !isAuthorizedMember.value)
+
+const ok = (message: string) => notify({ type: 'positive', message, timeout: 2000 })
+const info = (message: string) => notify({ type: 'info', message, timeout: 2000 })
+const error = (message: string) => notify({ type: 'negative', message, timeout: 2000 })
+
+const pendingMemberCount = computed(() => {
+  return state.channelMembers.filter(acc => isChannelMembershipStatusPending(acc.data.status)).length
 })
 
 async function sendMessage() {
   if (checkWalletConnected()) {
-    await postMessage(form.message)
-    form.message = ''
+    await postMessage(postMessageState.message)
+    postMessageState.message = ''
   }
 }
 
@@ -40,69 +85,139 @@ function addNewChannel() {
 
 async function handleNewChannel() {
   if (checkWalletConnected()) {
-    await createChannel(newChannelState.name, newChannelState.maxMessages)
-    newChannelState.dialog = false
-    newChannelState.name = ''
-    notify({ type: 'positive', message: 'Channel was created!', timeout: 2000 })
+    try {
+      await createChannel(newChannelState.name, newChannelState.maxMessages)
+      handleNewChannelReset()
+      ok('Channel was created!')
+    } catch (e) {
+      error('Something went wrong')
+      console.log(e)
+    }
   }
 }
 
-async function handleAddMemberReset() {
-  addMemberState.loading = false
-  addMemberState.name = ''
-  addMemberState.key = ''
-}
-
-async function handleAuthorizeMember(key: any) {
-  try {
-    await authorizeMember(key)
-    notify({ type: 'info', message: 'Member was authorized', timeout: 2000 })
-  } catch (e) {
-    notify({ type: 'negative', message: 'Something went wrong', timeout: 2000 })
-  }
+function handleNewChannelReset() {
+  newChannelState.dialog = false
+  newChannelState.name = ''
+  newChannelState.maxMessages = 15
 }
 
 async function handleAddMember() {
   addMemberState.loading = true
   if (!state.channelAddr) {
-    notify({ type: 'info', message: 'Please select a channel', timeout: 2000 })
+    info('Please select a channel')
     return
   }
-  await addMember(state.channelAddr, addMemberState.key, addMemberState.name)
-  addMemberState.loading = false
-}
-
-function checkWalletConnected() {
-  if (!wallet.publicKey.value) {
-    notify({ type: 'negative', message: 'Please connect wallet', timeout: 2000 })
-    return false
+  try {
+    await addMember(addMemberState.authority, addMemberState.key, addMemberState.name)
+    handleAddMemberReset()
+    ok('Member was added')
+  } catch (e) {
+    error('Something went wrong')
+    console.log(e)
+  } finally {
+    addMemberState.loading = false
   }
-  return true
 }
 
-async function joinChannel(addr: any) {
-
+function handleAddMemberReset() {
+  addMemberState.loading = false
+  addMemberState.name = ''
+  addMemberState.authority = ''
+  addMemberState.key = ''
 }
 
-async function removeChannel(addr: any) {
-  await deleteChannel(addr)
-  notify({ type: 'positive', message: 'Channel was deleted!', timeout: 2000 })
+async function handleDeleteMember(key: any) {
+  try {
+    deleteMemberState.loading = true
+    await deleteMember(key)
+    ok('Member was deleted')
+  } catch (e) {
+    error('Something went wrong')
+    console.log(e)
+  } finally {
+    deleteMemberState.loading = false
+  }
+}
+async function handleAuthorizeMember(key: any) {
+  try {
+    authorizeMemberState.loading = true
+    await authorizeMember(key)
+    ok('Member was authorized')
+  } catch (e) {
+    error('Something went wrong')
+    console.log(e)
+  } finally {
+    authorizeMemberState.loading = false
+  }
+}
+
+async function handleJoinChannel() {
+  if (!state.channelAddr) {
+    info('Please select a channel')
+    return
+  }
+  joinChannelState.loading = true
+  try {
+    await joinChannel(state.channelAddr, joinChannelState.name)
+    handleJoinChannelReset()
+    ok('Request was sent')
+  } catch (e) {
+    console.log('Error', e)
+    error('Something went wrong')
+  } finally {
+    joinChannelState.loading = false
+  }
+}
+
+function handleJoinChannelReset() {
+  joinChannelState.loading = false
+  joinChannelState.dialog = false
+  joinChannelState.name = ''
+}
+
+async function handleDeleteChannel() {
+  if (!state.channelAddr) {
+    info('Please select a channel')
+    return
+  }
+  await deleteChannel(state.channelAddr)
+  try {
+    await deleteChannel(state.channelAddr)
+    ok('Channel was deleted!')
+  } catch (e) {
+    console.log('Error', e)
+    error('Something went wrong')
+  } finally {
+    joinChannelState.loading = false
+  }
 }
 
 async function selectChannel(addr: any) {
   await loadChannel(addr)
 }
 
+function checkWalletConnected() {
+  if (!wallet.publicKey.value) {
+    info('Please connect wallet')
+    return false
+  }
+  return true
+}
+
 function getStatusColor(status: any) {
   if (status?.__kind === 'Authorized') {
     return 'positive'
   }
+  return 'grey'
 }
 
-const isWalletConnected = computed(() => !!wallet.publicKey.value)
-const channels = computed(() => state.allChannels)
-const messages = computed(() => state.channelMessages)
-const allowSend = computed(() => wallet.publicKey.value && state.channel && !state.sending)
+function formatMemberName(member: any) {
+  if (member?.name && member.name !== '') {
+    return member.name
+  }
+  return shortenAddress(member.authority)
+}
 </script>
 
 <template>
@@ -130,26 +245,21 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
                   </q-item-label>
                 </q-item-section>
 
-                <q-item-section side>
-                  <q-btn-dropdown v-if="isWalletConnected" unelevated rounded>
-                    <q-list>
-                      <q-item v-close-popup clickable @click="joinChannel(ch.pubkey)">
-                        <q-item-section>
-                          <q-item-label>Join channel</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                      <q-item
-                        v-if="String(ch.data.creator) === String(wallet.publicKey.value)"
-                        v-close-popup clickable
-                        @click="removeChannel(ch.pubkey)"
-                      >
-                        <q-item-section class="text-negative">
-                          <q-item-label>Delete channel</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-                </q-item-section>
+                <!--                <q-item-section side> -->
+                <!--                  <q-btn-dropdown v-if="isWalletConnected" unelevated rounded> -->
+                <!--                    <q-list> -->
+                <!--                      <q-item -->
+                <!--                        v-if="String(ch.data.creator) === String(wallet.publicKey.value)" -->
+                <!--                        v-close-popup clickable -->
+                <!--                        @click="removeChannel(ch.pubkey)" -->
+                <!--                      > -->
+                <!--                        <q-item-section class="text-negative"> -->
+                <!--                          <q-item-label>Delete channel</q-item-label> -->
+                <!--                        </q-item-section> -->
+                <!--                      </q-item> -->
+                <!--                    </q-list> -->
+                <!--                  </q-btn-dropdown> -->
+                <!--                </q-item-section> -->
               </q-item>
             </q-list>
           </template>
@@ -162,21 +272,36 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
       <div class="col">
         <div v-if="state.channel">
           <div class="row">
-            <div v-if="isWalletConnected" class="col">
+            <div class="col">
               <q-btn-group rounded unelevated>
                 <q-btn
+                  v-if="canAddMember"
                   color="secondary" text-color="dark"
                   :loading="addMemberState.loading"
                   @click="addMemberState.dialog = true"
                 >
-                  add member
+                  add&nbsp;member
                 </q-btn>
 
                 <q-btn
-                  color="primary"
-                  @click="membersDialog = true"
+                  v-if="canJoinChannel"
+                  color="secondary" text-color="dark"
+                  :loading="joinChannelState.loading"
+                  :disable="isPendingMember"
+                  @click="joinChannelState.dialog = true"
                 >
-                  show members
+                  {{ isPendingMember ? 'pending&nbsp;request' : 'join&nbsp;channel' }}
+                </q-btn>
+
+                <q-btn v-if="isWalletConnected" color="blue-grey" @click="membersDialog = true">
+                  members
+                  <q-badge v-if="pendingMemberCount > 0" color="info" rounded floating>
+                    {{ pendingMemberCount }}
+                  </q-badge>
+                </q-btn>
+
+                <q-btn v-if="isChannelCreator" color="negative" @click="handleDeleteChannel">
+                  delete
                 </q-btn>
               </q-btn-group>
             </div>
@@ -211,7 +336,7 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
             <q-toolbar class="bg-primary text-white row">
               <q-input
                 ref="inputFocus"
-                v-model="form.message"
+                v-model="postMessageState.message"
                 class="col-grow q-mr-sm"
                 bg-color="white"
                 placeholder="Type a message"
@@ -232,7 +357,7 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
     </div>
   </div>
 
-  <!-- Dialogs -->
+  <!-- New channel dialog -->
   <q-dialog v-model="newChannelState.dialog" class="new-channel-dialog">
     <q-card>
       <q-card-section>
@@ -257,6 +382,8 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
       </q-card-section>
     </q-card>
   </q-dialog>
+
+  <!-- Add member dialog -->
   <q-dialog v-model="addMemberState.dialog" class="add-member-dialog" @hide="handleAddMemberReset">
     <q-card>
       <q-card-section>
@@ -269,7 +396,13 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
           />
           <q-input
             v-model="addMemberState.key"
-            label="Member Key *"
+            label="Member Wallet *"
+            lazy-rules
+            :rules="[val => val && val.length > 32 || 'Invalid public key']"
+          />
+          <q-input
+            v-model="addMemberState.key"
+            label="Member Device Key *"
             lazy-rules
             :rules="[val => val && val.length > 32 || 'Invalid public key']"
           />
@@ -283,15 +416,44 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
     </q-card>
   </q-dialog>
 
+  <!-- Join channel dialog -->
+  <q-dialog v-model="joinChannelState.dialog" class="join-channel-dialog" @hide="handleJoinChannelReset">
+    <q-card>
+      <q-card-section>
+        <q-form class="join-channel-form" @submit.prevent="handleJoinChannel">
+          <q-input
+            v-model="joinChannelState.name"
+            placeholder="Member name *"
+            lazy-rules
+            :rules="[val => val && val.length > 2 || 'Please type something']"
+          />
+          <q-input
+            v-model="joinChannelState.authority"
+            placeholder="Authorize By"
+            lazy-rules
+            :rules="[val => !val || (val && val.length > 32 || 'Invalid public key')]"
+          />
+          <br>
+          <q-btn type="submit" color="info" :ripple="false" rounded>
+            Join Channel
+          </q-btn>
+        </q-form>
+        <q-inner-loading :showing="joinChannelState.loading" />
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+
+  <!-- Member list dialog -->
   <q-dialog v-model="membersDialog">
     <q-card>
       <q-card-section>
         <q-list separator>
           <q-item v-for="m in state.channelMembers" :key="m.pubkey.toString()">
             <q-item-section>
-              <q-item-label>{{ m.data.name && m.data.name !== '' ? m.data.name : m.data.authority }}</q-item-label>
+              <q-item-label>{{ formatMemberName(m.data) }}</q-item-label>
               <q-item-label caption lines="2">
-                {{ m.data.key }}
+                <div>Authority: {{ m.data.authority }}</div>
+                <div>Key: {{ m.data.key }}</div>
               </q-item-label>
             </q-item-section>
             <q-item-section side top>
@@ -299,11 +461,24 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
                 {{ m.data.status.__kind }}
               </q-badge>
               <q-btn
-                v-if="m.data.status.__kind === 'Pending' && (!m.data.status.authority || String(m.data.status.authority) === String(wallet.publicKey.value))"
+                v-if="m.data.status.__kind === 'Pending'
+                  && isAuthorizedMember
+                  && (!m.data.status.authority || String(m.data.status.authority) === String(wallet.publicKey.value))"
                 color="primary" rounded size="sm" unelevated class="q-mt-sm"
+                :loading="authorizeMemberState.loading"
+                :disabled="authorizeMemberState.loading"
                 @click="handleAuthorizeMember(m.data.key)"
               >
                 Authorize
+              </q-btn>
+              <q-btn
+                v-if="canDeleteMember(m.data)"
+                color="negative" rounded size="sm" unelevated class="q-mt-sm"
+                :loading="deleteMemberState.loading"
+                :disabled="deleteMemberState.loading"
+                @click="handleDeleteMember(m.data.key)"
+              >
+                Delete
               </q-btn>
             </q-item-section>
           </q-item>
@@ -382,6 +557,11 @@ const allowSend = computed(() => wallet.publicKey.value && state.channel && !sta
   }
 }
 .add-member-dialog {
+  .q-card {
+    width: 320px;
+  }
+}
+.join-channel-dialog {
   .q-card {
     width: 320px;
   }
