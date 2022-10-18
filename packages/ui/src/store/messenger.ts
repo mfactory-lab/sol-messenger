@@ -8,13 +8,16 @@ import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
 
+const ENCRYPTED_MOCK = '***** *** *** *** *******'
+
 interface MessengerStoreState {
   allChannels: { pubkey: PublicKey; data: Channel }[]
   channel?: Channel
   channelAddr?: PublicKey
+  channelMembershipAddr?: PublicKey
   channelMembership?: ChannelMembership
   channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
-  channelMessages: Array<Message & { sender: any }>
+  channelMessages: Array<Message & { senderFormatted: string }>
   channelLoading: boolean
   loading: boolean
   creating: boolean
@@ -33,6 +36,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     allChannels: [],
     channel: undefined,
     channelAddr: undefined,
+    channelMembershipAddr: undefined,
     channelMembership: undefined,
     channelMembers: [],
     channelMessages: [], // decrypted messages list
@@ -53,25 +57,67 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   init().then()
 
+  watch(wallet, (w) => {
+    if (w?.publicKey && state.channelAddr) {
+      loadChannel(state.channelAddr).then()
+    }
+  }, { immediate: true })
+
+  const listeners: number[] = []
+
+  async function initEvents() {
+    console.log('Register events...')
+    for (const listener of listeners) {
+      await client.removeEventListener(listener)
+    }
+    listeners.push(client.addEventListener('NewMessageEvent', async (e) => {
+      console.log('[Event] NewMessageEvent', e)
+      if (`${e.channel}` !== `${state.channelAddr}`) {
+        return
+      }
+      let content = ENCRYPTED_MOCK
+      const cek = await getCEK()
+      if (cek) {
+        content = await client.decryptMessage(e.message.content, cek)
+      }
+      state.channelMessages.push({
+        ...e.message,
+        content,
+      })
+    }))
+    listeners.push(client.addEventListener('AuthorizeMemberEvent', async (e) => {
+      console.log('[Event] AuthorizeMemberEvent', e)
+      if (state.channelAddr && `${e.channel}` !== `${state.channelAddr}`) {
+        return
+      }
+      if (`${e.membership}` === `${state.channelMembershipAddr}`) {
+        loadChannel(state.channelAddr!).then()
+      } else {
+        loadChannelMembers().then()
+      }
+    }))
+    listeners.push(client.addEventListener('JoinChannelEvent', async (e) => {
+      console.log('[Event] JoinChannelEvent', e)
+      if (`${e.channel}` === `${state.channelAddr}`) {
+        loadChannelMembers().then()
+      }
+    }))
+  }
+
   async function init() {
     state.loading = true
     const channels = await client.loadAllChannels()
-    for (const channel of channels) {
-      console.log(`Channel: ${channel.pubkey}`)
-      console.log(channel.data.pretty())
-      const members = await client.loadChannelMembers(channel.pubkey)
-      console.log('|-- members:')
-      for (const member of members) {
-        console.log(`key: ${member.pubkey}`)
-        console.log(JSON.stringify(member.data.pretty(), null, 2))
-      }
-    }
-
-    watch(wallet, (w) => {
-      if (w?.publicKey && state.channelAddr) {
-        loadChannel(state.channelAddr)
-      }
-    })
+    // for (const channel of channels) {
+    //   console.log(`Channel: ${channel.pubkey}`)
+    //   console.log(channel.data.pretty())
+    //   const members = await client.loadChannelMembers(channel.pubkey)
+    //   console.log('|-- members:')
+    //   for (const member of members) {
+    //     console.log(`key: ${member.pubkey}`)
+    //     console.log(JSON.stringify(member.data.pretty(), null, 2))
+    //   }
+    // }
+    await initEvents()
     state.allChannels = channels as any
     state.loading = false
   }
@@ -116,9 +162,11 @@ export const useMessengerStore = defineStore('messenger', () => {
       if (wallet.value?.publicKey) {
         try {
           const [membershipAddr] = await client.getMembershipPDA(state.channelAddr)
+          state.channelMembershipAddr = membershipAddr
           state.channelMembership = await client.loadMembership(membershipAddr)
         } catch (e) {
           console.log(e)
+          state.channelMembershipAddr = undefined
           state.channelMembership = undefined
         }
       }
@@ -133,6 +181,17 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
   }
 
+  async function getCEK(): Promise<Uint8Array | undefined> {
+    if (!state.channelMembership) {
+      return
+    }
+    try {
+      return await client.decryptCEK(state.channelMembership.cek)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   async function reloadChannel() {
     if (!state.channelAddr) {
       console.log('Invalid channel')
@@ -140,25 +199,17 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
     state.channel = await client.loadChannel(state.channelAddr)
 
-    let cek: Uint8Array
-    if (state.channelMembership) {
-      try {
-        cek = await client.decryptCEK(state.channelMembership.cek)
-      } catch (e) {
-        console.log(e)
-      }
-    }
+    const cek = await getCEK()
 
     state.channelMessages = await Promise.all(
       state.channel.messages.map(async (m) => {
-        let content = '***** *** *** *** *******'
-        let sender = shortenAddress(m.sender)
+        let content = ENCRYPTED_MOCK
+        let senderFormatted = shortenAddress(m.sender)
         const membership = state.channelMembers.find(({ data }) =>
-          String(data.authority) === String(m.sender)
-          || String(data.key) === String(m.sender),
+          data.name !== '' && (`${data.authority}` === `${m.sender}` || `${data.key}` === `${m.sender}`),
         )
         if (membership && membership.data.name !== '') {
-          sender = membership.data.name
+          senderFormatted = membership.data.name
         }
         if (cek) {
           try {
@@ -167,7 +218,7 @@ export const useMessengerStore = defineStore('messenger', () => {
             console.log(`Failed to decrypt message #${m.id}`)
           }
         }
-        return { ...m, sender, content }
+        return { ...m, senderFormatted, content }
       }),
     )
   }

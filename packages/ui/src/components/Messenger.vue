@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ChannelMembership } from '@app/sdk'
 import { isChannelMembershipStatusPending } from '@app/sdk'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
@@ -15,6 +16,8 @@ const {
 const userStore = useUserStore()
 
 const membersDialog = ref(false)
+const showDebug = ref(false)
+const toggleDebug = useToggle(showDebug)
 
 const joinChannelState = reactive({
   dialog: false,
@@ -53,13 +56,34 @@ const isWalletConnected = computed(() => !!wallet.publicKey.value)
 const isAuthorizedMember = computed(() => state.channelMembership?.status.__kind === 'Authorized')
 const isPendingMember = computed(() => state.channelMembership?.status.__kind === 'Pending')
 const isChannelCreator = computed(() => isAuthorizedMember.value
-  && state.channel?.creator.toString() === wallet.publicKey.value?.toString())
+  && state.channel?.creator.toString() === String(wallet.publicKey.value ?? '-'))
 const channels = computed(() => state.allChannels)
-const messages = computed(() => state.channelMessages)
-const allowSend = computed(() => wallet.publicKey.value && state.channel && !state.sending)
+
+const messages = computed(() => {
+  const data = []
+  let i = 0; let prev
+  for (const msg of state.channelMessages) {
+    if (prev && `${msg.sender}` === `${prev}`) {
+      data[i - 1].text.push(msg.content)
+    } else {
+      prev = msg.sender
+      data.push({
+        id: msg.id,
+        sender: msg.sender,
+        senderFormatted: msg.senderFormatted,
+        text: [msg.content],
+        date: msg.createdAt,
+      })
+      i++
+    }
+  }
+  return data
+})
+
+const allowSend = computed(() => isAuthorizedMember.value && !state.sending)
 const canAddMember = computed(() => isAuthorizedMember.value)
 const canDeleteMember = (member: any) => computed(() => isChannelCreator.value
-  && String(member.key) !== String(userStore.keypair?.publicKey))
+  && String(member.key) !== String(userStore.keypair?.publicKey)).value
 const canJoinChannel = computed(() => isWalletConnected.value && !isAuthorizedMember.value)
 
 const ok = (message: string) => notify({ type: 'positive', message, timeout: 2000 })
@@ -212,11 +236,20 @@ function getStatusColor(status: any) {
   return 'grey'
 }
 
-function formatMemberName(member: any) {
+function formatMemberName(member: ChannelMembership) {
+  console.log(member)
   if (member?.name && member.name !== '') {
     return member.name
   }
   return shortenAddress(member.authority)
+}
+
+function isSomeoneMessage(sender: any) {
+  const pubkey = wallet.publicKey.value
+  if (!pubkey) {
+    return true
+  }
+  return String(pubkey) !== String(sender)
 }
 </script>
 
@@ -290,7 +323,7 @@ function formatMemberName(member: any) {
                   :disable="isPendingMember"
                   @click="joinChannelState.dialog = true"
                 >
-                  {{ isPendingMember ? 'pending&nbsp;request' : 'join&nbsp;channel' }}
+                  {{ isPendingMember ? 'pending&nbsp;access' : 'join&nbsp;channel' }}
                 </q-btn>
 
                 <q-btn v-if="isWalletConnected" color="blue-grey" @click="membersDialog = true">
@@ -318,9 +351,9 @@ function formatMemberName(member: any) {
               <q-chat-message
                 v-for="msg in messages"
                 :key="msg.id"
-                :name="msg.sender"
-                :text="[msg.content]"
-                :sent="msg.sender === wallet.publicKey.value"
+                :name="msg.senderFormatted"
+                :text="msg.text"
+                :sent="isSomeoneMessage(msg.sender)"
               />
             </div>
             <div v-else class="messenger-empty">
@@ -353,6 +386,32 @@ function formatMemberName(member: any) {
           </q-form>
           <q-inner-loading :showing="state.channelLoading" />
         </q-card>
+
+        <div v-if="state.channel" class="q-my-md q-px-lg">
+          <q-btn flat class="text-blue-2" @click="toggleDebug()">
+            debug info
+          </q-btn>
+          <template v-if="showDebug">
+            <div
+              v-for="row in [
+                ['Authorized', isAuthorizedMember],
+                ['Pending Access', isPendingMember],
+                ['Channel Creator', isChannelCreator],
+                ['Channel', state.channel],
+                ['Membership', state.channelMembership],
+                ['Members', state.channelMembers],
+              ]"
+              :key="row[0]" class="row q-mt-md"
+            >
+              <div class="col col-4">
+                {{ row[0] }}
+              </div>
+              <div class="col">
+                <pre class="no-margin">{{ row[1] }}</pre>
+              </div>
+            </div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -391,6 +450,7 @@ function formatMemberName(member: any) {
           <q-input
             v-model="addMemberState.name"
             label="Member name *"
+            hint="Min length 3 chars"
             lazy-rules
             :rules="[val => val && val.length > 2 || 'Please type something']"
           />
@@ -402,9 +462,10 @@ function formatMemberName(member: any) {
           />
           <q-input
             v-model="addMemberState.key"
-            label="Member Device Key *"
+            label="Member Device Key"
+            hint="Default: The same as member wallet"
             lazy-rules
-            :rules="[val => val && val.length > 32 || 'Invalid public key']"
+            :rules="[val => !val || (val.length > 32 || 'Invalid public key')]"
           />
           <br>
           <q-btn type="submit" color="info" :ripple="false" rounded>
@@ -448,23 +509,25 @@ function formatMemberName(member: any) {
     <q-card>
       <q-card-section>
         <q-list separator>
-          <q-item v-for="m in state.channelMembers" :key="m.pubkey.toString()">
+          <q-item v-for="m in state.channelMembers" :key="m.pubkey.toString()" active-class="bg-teal-1" :active="`${m.pubkey}` === `${state.channelMembershipAddr}`">
             <q-item-section>
-              <q-item-label>{{ formatMemberName(m.data) }}</q-item-label>
+              <q-item-label>
+                {{ formatMemberName(m.data) }}
+                <q-badge :color="getStatusColor(m.data.status)">
+                  {{ m.data.status.__kind }}
+                </q-badge>
+              </q-item-label>
               <q-item-label caption lines="2">
                 <div>Authority: {{ m.data.authority }}</div>
                 <div>Key: {{ m.data.key }}</div>
               </q-item-label>
             </q-item-section>
-            <q-item-section side top>
-              <q-badge :color="getStatusColor(m.data.status)">
-                {{ m.data.status.__kind }}
-              </q-badge>
+            <q-item-section side class="q-gutter-sm">
               <q-btn
                 v-if="m.data.status.__kind === 'Pending'
                   && isAuthorizedMember
                   && (!m.data.status.authority || String(m.data.status.authority) === String(wallet.publicKey.value))"
-                color="primary" rounded size="sm" unelevated class="q-mt-sm"
+                color="teal" rounded size="xs" unelevated class="full-width"
                 :loading="authorizeMemberState.loading"
                 :disabled="authorizeMemberState.loading"
                 @click="handleAuthorizeMember(m.data.key)"
@@ -473,7 +536,7 @@ function formatMemberName(member: any) {
               </q-btn>
               <q-btn
                 v-if="canDeleteMember(m.data)"
-                color="negative" rounded size="sm" unelevated class="q-mt-sm"
+                color="negative" rounded size="xs" unelevated class="full-width"
                 :loading="deleteMemberState.loading"
                 :disabled="deleteMemberState.loading"
                 @click="handleDeleteMember(m.data.key)"
