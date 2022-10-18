@@ -84,7 +84,7 @@ const allowSend = computed(() => isAuthorizedMember.value && !state.sending)
 const canAddMember = computed(() => isAuthorizedMember.value)
 const canDeleteMember = (member: any) => computed(() => isChannelCreator.value
   && String(member.key) !== String(userStore.keypair?.publicKey)).value
-const canJoinChannel = computed(() => isWalletConnected.value && !isAuthorizedMember.value)
+const canJoinChannel = computed(() => isWalletConnected.value && !state.loading && !isAuthorizedMember.value)
 
 const ok = (message: string) => notify({ type: 'positive', message, timeout: 2000 })
 const info = (message: string) => notify({ type: 'info', message, timeout: 2000 })
