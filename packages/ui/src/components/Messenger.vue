@@ -237,7 +237,6 @@ function getStatusColor(status: any) {
 }
 
 function formatMemberName(member: ChannelMembership) {
-  console.log(member)
   if (member?.name && member.name !== '') {
     return member.name
   }
