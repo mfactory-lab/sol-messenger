@@ -157,6 +157,10 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function loadChannel(addr: Address) {
     state.channelLoading = true
+    state.channelMessages = []
+    state.channelMembers = []
+    state.channelMembershipAddr = undefined
+    state.channelMembership = undefined
     state.channelAddr = new PublicKey(addr)
     try {
       if (wallet.value?.publicKey) {
@@ -170,10 +174,8 @@ export const useMessengerStore = defineStore('messenger', () => {
           state.channelMembership = undefined
         }
       }
-      await Promise.all([
-        reloadChannel(),
-        loadChannelMembers(),
-      ])
+      await loadChannelMembers()
+      await loadChannelMessages()
     } catch (e) {
       console.log('Error', e)
     } finally {
@@ -192,7 +194,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
   }
 
-  async function reloadChannel() {
+  async function loadChannelMessages() {
     if (!state.channelAddr) {
       console.log('Invalid channel')
       return
@@ -205,11 +207,14 @@ export const useMessengerStore = defineStore('messenger', () => {
       state.channel.messages.map(async (m) => {
         let content = ENCRYPTED_MOCK
         let senderFormatted = shortenAddress(m.sender)
-        const membership = state.channelMembers.find(({ data }) =>
-          data.name !== '' && (`${data.authority}` === `${m.sender}` || `${data.key}` === `${m.sender}`),
-        )
-        if (membership && membership.data.name !== '') {
-          senderFormatted = membership.data.name
+        // show sender name only for authorized users
+        if (wallet.value?.publicKey) {
+          const membership = state.channelMembers.find(({ data }) =>
+            data.name !== '' && (`${data.authority}` === `${m.sender}` || `${data.key}` === `${m.sender}`),
+          )
+          if (membership && membership.data.name !== '') {
+            senderFormatted = membership.data.name
+          }
         }
         if (cek) {
           try {
@@ -242,7 +247,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         channel: state.channelAddr,
         message,
       })
-      await reloadChannel()
+      await loadChannelMessages()
     } finally {
       state.sending = false
     }
@@ -281,7 +286,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key: new PublicKey(key),
     })
-    await reloadChannel()
+    await loadChannelMessages()
   }
 
   return {
