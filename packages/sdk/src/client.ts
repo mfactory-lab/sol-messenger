@@ -1,7 +1,10 @@
+import { BorshCoder, EventManager } from '@project-serum/anchor'
 import type { AnchorProvider } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import type { Commitment } from '@solana/web3.js'
+import idl from '../idl/messenger.json'
 import type { CEKData } from './generated'
+
 import {
   Channel,
   ChannelMembership,
@@ -21,13 +24,40 @@ import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } f
 export class MessengerClient {
   programId = PROGRAM_ID
 
+  _coder: BorshCoder
+  _events: EventManager
+
   constructor(
     private readonly provider: AnchorProvider,
     private keypair?: Keypair,
-  ) {}
+  ) {
+    this._coder = new BorshCoder(idl as any)
+    this._events = new EventManager(this.programId, provider, this._coder)
+  }
 
   get connection() {
     return this.provider.connection
+  }
+
+  /**
+   * Invokes the given callback every time the given event is emitted.
+   *
+   * @param eventName The PascalCase name of the event, provided by the IDL.
+   * @param callback  The function to invoke whenever the event is emitted from
+   *                  program logs.
+   */
+  public addEventListener(
+    eventName: string,
+    callback: (event: any, slot: number, signature: string) => void,
+  ): number {
+    return this._events.addEventListener(eventName, callback)
+  }
+
+  /**
+   * Unsubscribes from the given eventName.
+   */
+  public async removeEventListener(listener: number): Promise<void> {
+    return await this._events.removeEventListener(listener)
   }
 
   /**
