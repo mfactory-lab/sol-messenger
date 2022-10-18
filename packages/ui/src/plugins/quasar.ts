@@ -1,5 +1,5 @@
 import type { QuasarPluginOptions } from 'quasar'
-import { Dark, LocalStorage, Notify, Quasar } from 'quasar'
+import { Dark, Dialog, LocalStorage, Notify, Quasar } from 'quasar'
 import iconSet from 'quasar/icon-set/svg-eva-icons'
 import type { App } from 'vue'
 
@@ -12,6 +12,7 @@ export const install = ({ app }: { app: App<Element> }) => {
   app.use(Quasar, {
     plugins: {
       Dark,
+      Dialog,
       Notify,
       LocalStorage,
     },

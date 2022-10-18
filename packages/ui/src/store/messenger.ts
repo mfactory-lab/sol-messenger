@@ -57,8 +57,8 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   init().then()
 
-  watch(wallet, (w) => {
-    if (w?.publicKey && state.channelAddr) {
+  watch(wallet, () => {
+    if (state.channelAddr) {
       loadChannel(state.channelAddr).then()
     }
   }, { immediate: true })
