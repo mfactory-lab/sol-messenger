@@ -84,7 +84,7 @@ export class MessengerClient {
   }
 
   /**
-   * Load channel by id
+   * Load channel by {@link addr}
    */
   async loadChannel(addr: PublicKey, commitment?: Commitment) {
     return Channel.fromAccountAddress(this.provider.connection, addr, commitment)
@@ -325,7 +325,7 @@ export class MessengerClient {
   }
 
   /**
-   * Add new participant to the channel
+   * Delete channel member
    */
   async deleteMember(props: DeleteMemberProps) {
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
@@ -354,7 +354,7 @@ export class MessengerClient {
   }
 
   /**
-   * Add new participant to the channel
+   * Authorize member request
    */
   async authorizeMember(props: AuthorizeMemberProps) {
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
