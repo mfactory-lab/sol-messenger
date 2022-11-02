@@ -29,7 +29,7 @@ const select = (e: Endpoint) => {
     :model-value="false"
     auto-close
     color="secondary"
-    text-color="grey-8"
+    text-color="#000"
     rounded
     unelevated
     :ripple="false"

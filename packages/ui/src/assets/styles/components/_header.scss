@@ -1,8 +1,9 @@
-$app-header-color: #333 !default;
-$app-header-bg-color: #eee !default;
+$app-header-color: #100808 !default;
+$app-header-bg-color: #fff !default;
 $app-header-height: 80px !default;
 $app-header-logo: '~/assets/img/logo.svg' !default;
 $app-header-btn-shadow: $shadow-3 !default;
+$app-header-marked-color: #00A57D;
 
 .app-header {
   background-color: $app-header-bg-color;
@@ -14,6 +15,27 @@ $app-header-btn-shadow: $shadow-3 !default;
     justify-content: center;
     align-items: center;
     min-height: $app-header-height;
+  }
+
+  &__title {
+    h1 {
+      font-size: 16px;
+      text-transform: uppercase;
+      font-weight: 500;
+      line-height: 19.5px;
+      font-family: 'Montserrat', sans-serif;
+
+      .marked {
+        color: $app-header-marked-color;
+      }
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 
   &__nav {
@@ -36,20 +58,27 @@ $app-header-btn-shadow: $shadow-3 !default;
   }
 
   &__logo {
-    align-self: center;
     position: relative;
-    top: -10px;
-    min-width: 100px;
+    width: 80px;
+    height: 60px;
+    margin-right: 10px;
 
-    a {
-      position: absolute;
-      left: 0;
-      top: 0;
-      font-size: 30px;
-      font-weight: 900;
-      text-decoration: none;
-      line-height: 100%;
-      color: #000;
+    .logo-wrapper {
+      height: 100%;
+      position: static;
+
+      a {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        place-content: center;
+        background: url('@/assets/img/logo-bg.svg') no-repeat 50% 0;
+        background-size: contain;
+      }
+      img {
+        margin-top: -5px;
+        width: 50%;
+      }
     }
 
     svg {
@@ -59,8 +88,14 @@ $app-header-btn-shadow: $shadow-3 !default;
   }
 
   &__buttons {
-    box-shadow: $app-header-btn-shadow;
-    border-radius: 28px;
+    .header-btn {
+      box-shadow: $app-header-btn-shadow;
+      border-radius: 28px;
+      font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 16px;
+      font-size: 14px;
+      padding: 0 30px;
+    }
   }
 
   &__cluster-btn {
@@ -71,6 +106,8 @@ $app-header-btn-shadow: $shadow-3 !default;
     font-size: 14px;
     height: 32px;
     z-index: 1;
+    margin-right: 12px;
+    color: #000;
   }
 
   &__wallet-btn {
@@ -86,9 +123,41 @@ $app-header-btn-shadow: $shadow-3 !default;
 
 @media(min-width: $breakpoint-sm) {
   .app-header {
+    .container {
+      justify-content: center;
+      align-items: center;
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &__title {
+      margin-top: 6px;
+    }
+
+    &__logo {
+      width: 136px;
+      margin-right: 20px;
+      .logo-wrapper {
+        display: flex;
+        place-items: center;
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        height: 120px;
+
+        img {
+          max-width: 56px;
+          width: 100%;
+          height: auto;
+        }
+      }
+    }
     &__wallet-btn {
-      margin-left: -25px;
-      padding-left: 38px;
     }
   }
 }
@@ -99,7 +168,6 @@ $app-header-btn-shadow: $shadow-3 !default;
   }
   .app-header {
     &__logo {
-      min-width: 120px;
       top: 0;
 
       a {
@@ -128,11 +196,16 @@ $app-header-btn-shadow: $shadow-3 !default;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
   }
   .app-header {
     &__logo {
-      width: 100%;
-      text-align: center;
+      width: 40px;
+      height: 40px;
+      img {
+        width: 40px;
+        height: 40px;
+      }
     }
 
     &__nav {
