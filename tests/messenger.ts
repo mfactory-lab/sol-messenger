@@ -3,8 +3,10 @@ import { Keypair } from '@solana/web3.js'
 import type { ConfirmOptions } from '@solana/web3.js'
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor'
 import { MessengerClient } from '../packages/sdk'
+import adminKeypair from '../target/deploy/messenger-manager.json'
 
 describe('messenger', () => {
+  const admin = Keypair.fromSecretKey(Uint8Array.from(adminKeypair))
   const sender = web3.Keypair.generate()
 
   function getClient(wallet: web3.Keypair, sender?: web3.Keypair) {
@@ -26,7 +28,7 @@ describe('messenger', () => {
 
   before(async () => {
     console.log('Airdropping some lamports...')
-    for (const { publicKey } of [sender, member1, member2, member3]) {
+    for (const { publicKey } of [admin, sender, member1, member2, member3]) {
       await client.connection.confirmTransaction(
         await client.connection.requestAirdrop(publicKey, web3.LAMPORTS_PER_SOL),
       )
@@ -53,7 +55,7 @@ describe('messenger', () => {
   })
 
   it('can init channel with keypair', async () => {
-    const data = { name: 'test', maxMessages: 10 }
+    const data = { name: 'test2', maxMessages: 10 }
     const keypair = Keypair.generate()
     const { channel: newChannel } = await getClient(sender, keypair).initChannel(data)
     const channelInfo = await client.loadChannel(newChannel.publicKey)
@@ -150,7 +152,7 @@ describe('messenger', () => {
     }
   })
 
-  it('cannot authorize new member if not authorized', async () => {
+  it('cannot authorize new member if not authorized membership', async () => {
     const data = { channel: channel.publicKey, key: member3.publicKey }
     try {
       await getClient(member2).authorizeMember(data)
@@ -187,6 +189,17 @@ describe('messenger', () => {
     }
   })
 
+  it('can member #2 leave the channel', async () => {
+    const data = { channel: channel.publicKey }
+    await getClient(member2).leaveChannel(data)
+    try {
+      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member2.publicKey)
+      await client.loadMembership(membershipAddr)
+    } catch (e) {
+      assert.ok(e.message.startsWith('Unable to find ChannelMembership account'))
+    }
+  })
+
   // it('can member #2 add new device', async () => {
   //   const data = { channel: channel.publicKey, key: member2.publicKey }
   //   await getClient(member2).addMember(data)
@@ -205,12 +218,23 @@ describe('messenger', () => {
     }
   })
 
-  it('can delete a channel', async () => {
+  it('can creator delete a channel', async () => {
     try {
       await client.deleteChannel(channel.publicKey)
       await client.loadChannel(channel.publicKey)
     } catch (e) {
       assert.ok(e.message.startsWith('Unable to find Channel account'))
     }
+  })
+
+  it('can admin delete a member', async () => {
+    const channels = await client.loadAllChannels()
+    const members = await client.loadChannelMembers(channels[0].pubkey)
+    await getClient(admin).deleteMember({ channel: members[0].data.channel, membership: members[0].pubkey })
+  })
+
+  it('can admin delete a channel', async () => {
+    const channels = await client.loadAllChannels()
+    await getClient(admin).deleteChannel(channels[0].pubkey)
   })
 })
