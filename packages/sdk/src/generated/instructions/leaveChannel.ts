@@ -10,53 +10,60 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category DeleteChannel
+ * @category LeaveChannel
  * @category generated
  */
-export const deleteChannelStruct = new beet.BeetArgsStruct<{
+export const leaveChannelStruct = new beet.BeetArgsStruct<{
   instructionDiscriminator: number[] /* size: 8 */
 }>(
   [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
-  'DeleteChannelInstructionArgs',
+  'LeaveChannelInstructionArgs',
 )
 /**
- * Accounts required by the _deleteChannel_ instruction
+ * Accounts required by the _leaveChannel_ instruction
  *
  * @property [_writable_] channel
+ * @property [_writable_] membership
  * @property [_writable_, **signer**] authority
  * @category Instructions
- * @category DeleteChannel
+ * @category LeaveChannel
  * @category generated
  */
-export interface DeleteChannelInstructionAccounts {
+export interface LeaveChannelInstructionAccounts {
   channel: web3.PublicKey
+  membership: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const deleteChannelInstructionDiscriminator = [
-  145, 225, 187, 221, 157, 142, 114, 133,
+export const leaveChannelInstructionDiscriminator = [
+  104, 0, 75, 134, 95, 80, 68, 186,
 ]
 
 /**
- * Creates a _DeleteChannel_ instruction.
+ * Creates a _LeaveChannel_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @category Instructions
- * @category DeleteChannel
+ * @category LeaveChannel
  * @category generated
  */
-export function createDeleteChannelInstruction(
-  accounts: DeleteChannelInstructionAccounts,
+export function createLeaveChannelInstruction(
+  accounts: LeaveChannelInstructionAccounts,
   programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
 ) {
-  const [data] = deleteChannelStruct.serialize({
-    instructionDiscriminator: deleteChannelInstructionDiscriminator,
+  const [data] = leaveChannelStruct.serialize({
+    instructionDiscriminator: leaveChannelInstructionDiscriminator,
   })
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.channel,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.membership,
       isWritable: true,
       isSigner: false,
     },

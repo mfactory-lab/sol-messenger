@@ -16,7 +16,11 @@ import {
   createDeleteChannelInstruction,
   createDeleteMemberInstruction,
   createInitChannelInstruction,
-  createJoinChannelInstruction, createPostMessageInstruction, errorFromCode, errorFromName,
+  createJoinChannelInstruction,
+  createLeaveChannelInstruction,
+  createPostMessageInstruction,
+  errorFromCode,
+  errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -187,15 +191,16 @@ export class MessengerClient {
     const cekEncrypted = await this.encryptCEK(cek)
 
     const [membership] = await this.getMembershipPDA(channel.publicKey)
+    const authority = this.provider.publicKey
 
     const tx = new Transaction()
 
     tx.add(
       createInitChannelInstruction({
+        key: this.keypair.publicKey,
         channel: channel.publicKey,
         membership,
-        authority: this.provider.publicKey,
-        key: this.keypair.publicKey,
+        authority,
       }, {
         data: {
           name: props.name,
@@ -220,16 +225,14 @@ export class MessengerClient {
   /**
    * Delete channel
    */
-  async deleteChannel(channel: PublicKey, authorityMembership?: PublicKey) {
-    const [membership] = await this.getMembershipPDA(channel)
-
+  async deleteChannel(channel: PublicKey) {
     const tx = new Transaction()
+    const authority = this.provider.publicKey
 
     tx.add(
       createDeleteChannelInstruction({
         channel,
-        authority: this.provider.publicKey,
-        authorityMembership: authorityMembership ?? membership,
+        authority,
       }),
     )
 
@@ -249,20 +252,47 @@ export class MessengerClient {
    */
   async joinChannel(props: JoinChannelProps) {
     const [membership] = await this.getMembershipPDA(props.channel)
-
+    const authority = this.provider.publicKey
     const tx = new Transaction()
 
     tx.add(
       createJoinChannelInstruction({
         channel: props.channel,
-        authority: this.provider.publicKey,
         key: this.keypair.publicKey,
         membership,
+        authority,
       }, {
         data: {
           name: props.name,
           authority: props.authority,
         },
+      }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair])
+    } catch (e) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Leave the channel
+   */
+  async leaveChannel(props: LeaveChannelProps) {
+    const [membership] = await this.getMembershipPDA(props.channel)
+    const authority = this.provider.publicKey
+    const tx = new Transaction()
+
+    tx.add(
+      createLeaveChannelInstruction({
+        channel: props.channel,
+        membership,
+        authority,
       }),
     )
 
@@ -328,17 +358,15 @@ export class MessengerClient {
    * Delete channel member
    */
   async deleteMember(props: DeleteMemberProps) {
-    const [authorityMembership] = await this.getMembershipPDA(props.channel)
     const [membership] = await this.getMembershipPDA(props.channel, props.key)
-
+    const authority = this.provider.publicKey
     const tx = new Transaction()
 
     tx.add(
       createDeleteMemberInstruction({
         channel: props.channel,
-        authority: this.provider.publicKey,
-        authorityMembership,
         membership,
+        authority,
       }),
     )
 
@@ -441,6 +469,10 @@ interface JoinChannelProps {
   channel: PublicKey
   name: string
   authority?: PublicKey
+}
+
+interface LeaveChannelProps {
+  channel: PublicKey
 }
 
 interface AddMemberProps {

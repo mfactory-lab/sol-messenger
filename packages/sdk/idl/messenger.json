@@ -1,5 +1,5 @@
 {
-  "version": "0.0.5",
+  "version": "0.0.6",
   "name": "messenger",
   "instructions": [
     {
@@ -54,11 +54,6 @@
           "isSigner": true
         },
         {
-          "name": "authorityMembership",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
@@ -103,6 +98,32 @@
           }
         }
       ]
+    },
+    {
+      "name": "leaveChannel",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "addMember",
@@ -202,11 +223,6 @@
           "name": "authority",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "authorityMembership",
-          "isMut": true,
-          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -332,7 +348,7 @@
           {
             "name": "key",
             "docs": [
-              "The public key used to encrypt the `CEK`"
+              "The device key used to encrypt the `CEK`"
             ],
             "type": "publicKey"
           },
@@ -396,16 +412,25 @@
         "fields": [
           {
             "name": "name",
+            "docs": [
+              "Member name"
+            ],
             "type": "string"
           },
           {
             "name": "cek",
+            "docs": [
+              "Content Encryption Key"
+            ],
             "type": {
               "defined": "CEKData"
             }
           },
           {
             "name": "key",
+            "docs": [
+              "Device key"
+            ],
             "type": {
               "option": "publicKey"
             }
@@ -633,6 +658,26 @@
         },
         {
           "name": "membership",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "LeaveChannelEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "authority",
           "type": "publicKey",
           "index": true
         },
