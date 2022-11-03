@@ -30,6 +30,13 @@ channel.command('all').action(actions.channel.all)
 channel.command('show').argument('<CHANNEL>').action(actions.channel.show)
 channel.command('delete').argument('<CHANNEL>').action(actions.channel.deleteChannel)
 channel.command('delete-all').action(actions.channel.deleteAllChannels)
+
+channel.command('init')
+  .requiredOption('--name <NAME>')
+  .option('--member-name <MEMBER_NAME>', 'Default: authority addr')
+  .option('--max-messages <LIMIT>', 'Default: 15')
+  .action(actions.channel.init)
+
 channel.command('delete-member')
   .argument('<CHANNEL>')
   .argument('<MEMBERSHIP>')

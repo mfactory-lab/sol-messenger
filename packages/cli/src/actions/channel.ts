@@ -2,6 +2,17 @@ import { PublicKey } from '@solana/web3.js'
 import log from 'loglevel'
 import { useContext } from '../context'
 
+export async function init(opts: any) {
+  const { client } = useContext()
+  const channel = await client.initChannel({
+    name: opts.name,
+    memberName: opts.memberName,
+    maxMessages: opts.maxMessages ?? 15,
+  })
+  log.info(JSON.stringify(channel, null, 2))
+  log.info('Done')
+}
+
 export async function show(addr: string, _opts: any) {
   const { client } = useContext()
   const channel = await client.loadChannel(new PublicKey(addr))
