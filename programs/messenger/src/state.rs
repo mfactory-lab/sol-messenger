@@ -68,8 +68,8 @@ impl Channel {
         Ok(())
     }
 
-    pub fn authorize(&self, key: Pubkey) -> bool {
-        self.creator == key || is_admin(&key)
+    pub fn authorize(&self, key: &Pubkey) -> bool {
+        self.creator == *key || ADMIN_AUTHORITY.contains(&key.to_string().as_str())
     }
 }
 

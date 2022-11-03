@@ -1,12 +1,7 @@
-use anchor_lang::prelude::*;
-
-pub fn is_admin(key: &Pubkey) -> bool {
-    [
-        // The program key can be used as admin
-        crate::id(),
-    ]
-    .contains(key)
-}
+pub const ADMIN_AUTHORITY: &[&str] = &[
+    // messenger manager
+    "HUsJRv7yzLECt4mTR3NY5u9TX2ZJc5E89xHW9uWr2Dr7",
+];
 
 pub const MAX_CHANNEL_NAME_LENGTH: usize = 32;
 pub const MAX_MEMBER_NAME_LENGTH: usize = 32;

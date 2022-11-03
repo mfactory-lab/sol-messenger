@@ -16,7 +16,7 @@ pub fn handler(ctx: Context<DeleteChannel>) -> Result<()> {
 
 #[derive(Accounts)]
 pub struct DeleteChannel<'info> {
-    #[account(mut, close = authority, constraint = channel.authorize(authority.key()) @ ErrorCode::Unauthorized)]
+    #[account(mut, close = authority, constraint = channel.authorize(authority.key) @ ErrorCode::Unauthorized)]
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(mut)]
