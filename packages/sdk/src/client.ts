@@ -358,7 +358,7 @@ export class MessengerClient {
    * Delete channel member
    */
   async deleteMember(props: DeleteMemberProps) {
-    const [membership] = await this.getMembershipPDA(props.channel, props.key)
+    const [membership] = props.membership ? [props.membership] : await this.getMembershipPDA(props.channel, props.key)
     const authority = this.provider.publicKey
     const tx = new Transaction()
 
@@ -489,6 +489,7 @@ interface AuthorizeMemberProps {
 
 interface DeleteMemberProps {
   channel: PublicKey
+  membership?: PublicKey
   key?: PublicKey
 }
 
