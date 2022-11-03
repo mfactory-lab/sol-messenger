@@ -3,7 +3,7 @@ import solanaLogo from '@/assets/img/solana-logo.svg'
 </script>
 
 <template>
-  <div class="row">
+  <div class="row info-row">
     <div class="col-6 flex-center info-col">
       <div class="info-title">
         How IT WORKS
@@ -26,8 +26,8 @@ import solanaLogo from '@/assets/img/solana-logo.svg'
   </div>
 </template>
 
-<style lang="scss">
-  .row {
+<style lang="scss" scoped>
+  .info-row {
     padding: 70px 0 100px 0;
     font-size: 11px;
     color: #455A64;

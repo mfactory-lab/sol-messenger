@@ -7,13 +7,16 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AppFooter: typeof import('./../src/components/app-footer.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
     AppServiceInfo: typeof import('./../src/components/AppServiceInfo.vue')['default']
+    AppToggle: typeof import('./../src/components/app-toggle.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']
     Messenger: typeof import('./../src/components/Messenger.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Toggle: typeof import('@/components/app-toggle.vue')['default']
   }
 }
