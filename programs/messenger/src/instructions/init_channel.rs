@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::NewChannelEvent, state::*, ErrorCode};
+use crate::{constants::MAX_CHANNEL_NAME_LENGTH, events::NewChannelEvent, state::*, ErrorCode};
 
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     data.validate()?;
@@ -76,7 +76,7 @@ pub struct InitChannel<'info> {
         payer = authority,
         space = ChannelMembership::space()
     )]
-    pub membership: Account<'info, ChannelMembership>,
+    pub membership: Box<Account<'info, ChannelMembership>>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

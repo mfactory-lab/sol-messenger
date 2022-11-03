@@ -4,6 +4,7 @@ pub mod delete_channel;
 pub mod delete_member;
 pub mod init_channel;
 pub mod join_channel;
+pub mod leave_channel;
 pub mod post_message;
 
 pub use add_member::*;
@@ -12,4 +13,5 @@ pub use delete_channel::*;
 pub use delete_member::*;
 pub use init_channel::*;
 pub use join_channel::*;
+pub use leave_channel::*;
 pub use post_message::*;

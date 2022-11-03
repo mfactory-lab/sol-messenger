@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::JoinChannelEvent, state::*, ErrorCode};
+use crate::{constants::MAX_MEMBER_NAME_LENGTH, events::JoinChannelEvent, state::*, ErrorCode};
 
 pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
     data.validate()?;
@@ -62,7 +62,7 @@ pub struct JoinChannel<'info> {
         payer = authority,
         space = ChannelMembership::space()
     )]
-    pub membership: Account<'info, ChannelMembership>,
+    pub membership: Box<Account<'info, ChannelMembership>>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

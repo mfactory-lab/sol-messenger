@@ -26,7 +26,7 @@ pub fn handler(ctx: Context<DeleteMember>) -> Result<()> {
 
 #[derive(Accounts)]
 pub struct DeleteMember<'info> {
-    #[account(mut, constraint = channel.creator.key() == authority.key())]
+    #[account(mut, constraint = channel.authorize(authority.key()))]
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(mut, has_one = channel, close = authority)]
@@ -34,9 +34,6 @@ pub struct DeleteMember<'info> {
 
     #[account(mut)]
     pub authority: Signer<'info>,
-
-    #[account(mut, has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ ErrorCode::Unauthorized)]
-    pub authority_membership: Account<'info, ChannelMembership>,
 
     pub system_program: Program<'info, System>,
 }

@@ -34,6 +34,15 @@ pub struct JoinChannelEvent {
 }
 
 #[event]
+pub struct LeaveChannelEvent {
+    #[index]
+    pub channel: Pubkey,
+    #[index]
+    pub authority: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
 pub struct AddMemberEvent {
     #[index]
     pub channel: Pubkey,
