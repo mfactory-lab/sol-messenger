@@ -1,7 +1,7 @@
 import { BorshCoder, EventManager } from '@project-serum/anchor'
 import type { AnchorProvider } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
-import type { Commitment } from '@solana/web3.js'
+import type { Commitment, Signer } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
 import type { CEKData } from './generated'
 
@@ -128,7 +128,7 @@ export class MessengerClient {
     const accounts = await ChannelMembership.gpaBuilder()
       .addFilter('accountDiscriminator', channelMembershipDiscriminator)
       .addFilter('authority', this.provider.publicKey)
-      .addFilter('key', key)
+      .addFilter('key', key ?? null)
       .run(this.provider.connection)
 
     return accounts.map((acc) => {
@@ -150,7 +150,7 @@ export class MessengerClient {
    * Get channel membership PDA
    */
   async getMembershipPDA(channel: PublicKey, addr?: PublicKey) {
-    addr = addr ?? this.keypair.publicKey
+    addr = addr ?? this.keypair!.publicKey
     return await PublicKey.findProgramAddress([channel.toBuffer(), addr.toBuffer()], this.programId)
   }
 
@@ -158,14 +158,14 @@ export class MessengerClient {
    * Encrypt {@link cek} with {@link key or @link keypair.publicKey}
    */
   async encryptCEK(cek: Uint8Array, key?: PublicKey) {
-    return encryptCEK(cek, key ?? this.keypair.publicKey)
+    return encryptCEK(cek, key ?? this.keypair!.publicKey)
   }
 
   /**
    * Decrypt {@link cek} with {@link secretKey} or {@link keypair.secretKey}
    */
   async decryptCEK(cek: CEKData, secretKey?: Uint8Array) {
-    return decryptCEK(cek, secretKey ?? this.keypair.secretKey)
+    return decryptCEK(cek, secretKey ?? this.keypair!.secretKey)
   }
 
   /**
@@ -197,7 +197,7 @@ export class MessengerClient {
 
     tx.add(
       createInitChannelInstruction({
-        key: this.keypair.publicKey,
+        key: this.keypair!.publicKey,
         channel: channel.publicKey,
         membership,
         authority,
@@ -214,8 +214,8 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair])
-    } catch (e) {
+      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair as Signer])
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -240,7 +240,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
 
@@ -258,13 +258,13 @@ export class MessengerClient {
     tx.add(
       createJoinChannelInstruction({
         channel: props.channel,
-        key: this.keypair.publicKey,
+        key: this.keypair!.publicKey,
         membership,
         authority,
       }, {
         data: {
           name: props.name,
-          authority: props.authority,
+          authority: props.authority ?? null,
         },
       }),
     )
@@ -272,8 +272,8 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [this.keypair])
-    } catch (e) {
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer])
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -299,8 +299,8 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [this.keypair])
-    } catch (e) {
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer])
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -347,7 +347,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
 
@@ -374,7 +374,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -412,7 +412,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
 
@@ -450,7 +450,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
