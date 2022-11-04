@@ -9,6 +9,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppFooter: typeof import('./../src/components/app-footer.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
+    AppMessengerPanel: typeof import('./../src/components/app-messenger-panel.vue')['default']
     AppServiceInfo: typeof import('./../src/components/AppServiceInfo.vue')['default']
     AppToggle: typeof import('./../src/components/app-toggle.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']

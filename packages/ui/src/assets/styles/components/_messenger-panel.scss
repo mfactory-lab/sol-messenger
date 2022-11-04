@@ -1,0 +1,26 @@
+$main-color: #fff;
+
+.q-menu {
+  border-radius: 0;
+}
+
+.panel-search {
+  .q-field__control {
+    &:before {
+      content: none;
+    }
+  }
+  .q-field {
+    padding: 0;
+  }
+  .q-field__native {
+    padding: 0;
+    font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    color: $main-color;
+
+    &::placeholder {
+      color: $main-color;
+    }
+  }
+}

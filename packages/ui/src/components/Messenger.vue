@@ -79,6 +79,7 @@ const messages = computed(() => {
   }
   return data
 })
+const currentChanel = computed(() => state.channel)
 
 const allowSend = computed(() => isAuthorizedMember.value && !state.sending)
 const canAddMember = computed(() => isAuthorizedMember.value)
@@ -250,9 +251,19 @@ function isSomeoneMessage(sender: any) {
   }
   return String(pubkey) !== String(sender)
 }
+const test = (val: string) => console.log('catch ', val)
 </script>
 
 <template>
+  <div class="messenger-wrapper">
+    <app-messenger-panel
+      chat-name="Private chat One111"
+      :members-count="8"
+      :messages-count="10"
+      :current-channel="currentChanel"
+      @change="test"
+    />
+  </div>
   <div class="messenger">
     <div class="row q-gutter-md">
       <div class="col col-3">
@@ -551,6 +562,10 @@ function isSomeoneMessage(sender: any) {
 </template>
 
 <style lang="scss" scoped>
+.messenger-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
 .messenger {
   max-width: 800px;
   margin: 0 auto;
