@@ -280,6 +280,14 @@ const test = (val: string) => console.log('catch ', val)
           No channels
         </div>
         <q-inner-loading :showing="state.loading" color="primary" />
+        <app-chat-control
+          @createChannel="addNewChannel"
+          @joinChannel="joinChannelState.dialog = true"
+          :can-join-channel="canJoinChannel"
+          :is-authorized-member="isAuthorizedMember"
+          :is-pending-member="isPendingMember"
+          :is-wallet-connected="isWalletConnected"
+        ></app-chat-control>
       </q-card>
     </div>
   </div>
