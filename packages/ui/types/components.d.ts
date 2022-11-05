@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AppChanelListItem: typeof import('./../src/components/app-chanel-list-item.vue')['default']
     AppFooter: typeof import('./../src/components/app-footer.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
     AppMessengerPanel: typeof import('./../src/components/app-messenger-panel.vue')['default']

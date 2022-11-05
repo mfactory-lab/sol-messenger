@@ -4,6 +4,7 @@ import { isChannelMembershipStatusPending } from '@app/sdk'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
+import AppChanelListItem from "@/components/app-chanel-list-item.vue";
 const { notify } = useQuasar()
 const wallet = useWallet()
 
@@ -263,6 +264,24 @@ const test = (val: string) => console.log('catch ', val)
       :current-channel="currentChanel"
       @change="test"
     />
+    <div class="messenger-main">
+      <q-card class="messenger-channels">
+        <template v-if="channels.length > 0">
+          <q-list separator>
+          <app-chanel-list-item
+            v-for="ch in channels" :key="ch.name"
+            :channel="ch"
+            :state="state"
+            @selectChannel="selectChannel(ch.pubkey)"
+            />
+          </q-list>
+        </template>
+        <div v-else class="messenger-channels-empty">
+          No channels
+        </div>
+        <q-inner-loading :showing="state.loading" color="primary" />
+      </q-card>
+    </div>
   </div>
   <div class="messenger">
     <div class="row q-gutter-md">
@@ -606,6 +625,9 @@ const test = (val: string) => console.log('catch ', val)
   overflow: hidden;
   position: relative;
   padding: 0;
+  border-radius: 0;
+  max-width: 170px;
+
   &-empty {
     min-height: 100px;
     color: #aaa;
