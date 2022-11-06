@@ -19,7 +19,7 @@ const sendMessage = (message: any) => emit('sendMessage', message);
 <template>
   <q-card class="messenger-card overflow-hidden" square>
     <div class="messenger-content">
-      <div v-if="channel" class="row justify-center">
+      <div v-if="channel" class="row justify-center channel-wrapper">
         <div v-if="messages.length > 0" class="messenger-messages">
           <q-chat-message
             v-for="msg in messages"
@@ -54,6 +54,10 @@ const sendMessage = (message: any) => emit('sendMessage', message);
 
   .messenger-content {
     flex: 1;
+
+    .channel-wrapper {
+      height: 100%;
+    }
   }
 
   .messenger-messages {

@@ -615,6 +615,7 @@ const filteredChannels = computed(() => {
   .messenger-main {
     display: flex;
     flex-direction: row;
+    height: 400px;
 
     .messenger-card {
       flex: 1;
@@ -629,7 +630,10 @@ const filteredChannels = computed(() => {
 .messenger-card {
   margin: 0 auto;
 }
-
+.messenger-channels-empty {
+  flex: 1;
+  height: 100%;
+}
 .messenger-messages {
   width: 100%;
   max-width: 600px;
@@ -663,7 +667,15 @@ const filteredChannels = computed(() => {
   padding: 0;
   border-radius: 0;
   max-width: 170px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #FDFCFC;
 
+  .channels-list {
+    flex: 1;
+    overflow-y: auto;
+  }
   &-empty {
     min-height: 100px;
     color: #aaa;

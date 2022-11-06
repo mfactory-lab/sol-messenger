@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page class="page-wrapper">
     <div class="container">
       <div class="messenger-container">
         <messenger />
@@ -12,13 +12,13 @@
 </template>
 
 <style lang="scss" scoped>
+
 .messenger-container {
   margin-top: 2rem
 }
-
 .q-page {
   position: relative;
-  padding-top:60px;
+  padding-top: 40px;
 
   &:before {
     position: absolute;
@@ -29,6 +29,10 @@
     left: 0;
     content: "";
     z-index: -1;
+  }
+
+  @media(max-width: $breakpoint-sm) {
+    padding-top: 1px;
   }
 }
 </style>

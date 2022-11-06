@@ -78,6 +78,7 @@ const test = (e: any) => {
           margin-right: 4px;
           font-weight: 500;
           opacity: 0.8;
+          white-space: nowrap;
 
           &:hover {
             opacity: 1;
