@@ -289,6 +289,15 @@ const test = (val: string) => console.log('catch ', val)
           :is-wallet-connected="isWalletConnected"
         ></app-chat-control>
       </q-card>
+      <chat-wrapper
+        :channel="state.channel"
+        :allow-send="allowSend"
+        :channel-loading-state="state.channelLoading"
+        :is-someone-message="isSomeoneMessage"
+        :messages="messages"
+        :post-message-state="postMessageState"
+        :sending-state="state.sending"
+      ></chat-wrapper>
     </div>
   </div>
   <div class="messenger">
@@ -592,6 +601,15 @@ const test = (val: string) => console.log('catch ', val)
 .messenger-wrapper {
   max-width: 800px;
   margin: 0 auto;
+
+  .messenger-main {
+    display: flex;
+    flex-direction: row;
+
+    .messenger-card {
+      flex: 1;
+    }
+  }
 }
 .messenger {
   max-width: 800px;
