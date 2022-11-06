@@ -6,6 +6,7 @@ $main-color: #fff;
 
 .panel-search {
   .q-field__control {
+    height: auto;
     &:before {
       content: none;
     }

@@ -252,24 +252,34 @@ function isSomeoneMessage(sender: any) {
   }
   return String(pubkey) !== String(sender)
 }
-const test = (val: string) => console.log('catch ', val)
+const channelFilter = reactive({
+  text: ''
+})
+const onSearch = (val: string) => {
+  channelFilter.text = val;
+}
+
+const filteredChannels = computed(() => {
+  return channels.value.filter(channel => channel.data.name.includes(channelFilter.text))
+})
 </script>
 
 <template>
   <div class="messenger-wrapper">
     <app-messenger-panel
-      chat-name="Private chat One111"
-      :members-count="8"
-      :messages-count="10"
       :current-channel="currentChanel"
-      @change="test"
+      :is-wallet-connected="isWalletConnected"
+      @change="onSearch"
+      @showMembers="membersDialog = true"
+      @deleteChannel="handleDeleteChannel"
+      @addMember="addMemberState.dialog = true"
     />
     <div class="messenger-main">
       <q-card class="messenger-channels">
-        <template v-if="channels.length > 0">
-          <q-list separator>
+        <template v-if="filteredChannels.length > 0">
+          <q-list separator class="channels-list">
           <app-chanel-list-item
-            v-for="ch in channels" :key="ch.name"
+            v-for="ch in filteredChannels" :key="ch.name"
             :channel="ch"
             :state="state"
             @selectChannel="selectChannel(ch.pubkey)"
