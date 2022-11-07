@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 
 const props = defineProps({
-  channel: Object as PropType<{ pubkey: string }>,
+  channel: Object as PropType<{ data: any; pubkey: string }>,
   state: Object,
 })
 const emit = defineEmits(['selectChannel'])
