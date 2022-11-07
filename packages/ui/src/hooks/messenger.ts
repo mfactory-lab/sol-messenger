@@ -156,40 +156,30 @@ export function useChannelAddMember() {
   const state = reactive({
     dialog: false,
     loading: false,
-    name: '',
-    authority: '',
-    key: '',
   })
 
-  async function submit() {
+  async function submit(data: { authority: string; name: string; key: string }) {
     state.loading = true
     if (!messengerState.channelAddr) {
       info('Please select a channel')
       return
     }
     try {
-      await addMember(state.authority, state.key, state.name)
-      reset()
+      await addMember(data.authority, data.key, data.name)
       ok('Member was added')
+      return true
     } catch (e) {
       error('Something went wrong')
       console.log(e)
     } finally {
       state.loading = false
     }
-  }
-
-  function reset() {
-    state.loading = false
-    state.name = ''
-    state.authority = ''
-    state.key = ''
+    return false
   }
 
   return {
     state,
     submit,
-    reset,
   }
 }
 
