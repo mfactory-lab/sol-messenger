@@ -478,28 +478,24 @@ const showMembersDialog = () => {
   <!--    </div> -->
   <!--  </div> -->
 
-  <!-- New channel dialog -->
   <new-channel-dialog
-    :channel-state="newChannelState"
-    :state-creating="state.creating"
-    @handleNewChannel="handleNewChannel"
+    v-model="newChannelState.dialog"
+    :loading="state.creating"
+    @submit="(state) => console.log(state)"
   />
 
-  <!-- Add member dialog -->
   <add-member-dialog
     :member-state="addMemberState"
     @submit="handleAddMember"
     @reset="handleAddMemberReset"
   />
 
-  <!-- Join channel dialog -->
   <join-channel-dialog
     :join-channel-state="joinChannelState"
     @handleJoinChannelReset="handleJoinChannelReset"
     @handleJoinChannel="handleJoinChannel"
   />
 
-  <!-- Member list dialog -->
   <member-list-dialog
     :members-dialog="!!membersDialog"
     :is-authorized-member="isAuthorizedMember"

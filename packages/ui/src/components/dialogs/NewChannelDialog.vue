@@ -1,28 +1,29 @@
 <script setup lang="ts">
-
-const props = defineProps({
-  channelState: { type: Object, default: null },
-  stateCreating: {type: Boolean, default: false }
+defineProps({
+  loading: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['handleNewChannel'])
+defineEmits(['submit'])
 
-const handleNewChannel = () => emit('handleNewChannel');
-
+const state = reactive({
+  name: '',
+  maxMessages: 15,
+})
 </script>
+
 <template>
-  <q-dialog v-model="channelState.dialog" class="new-channel-dialog">
+  <q-dialog class="new-channel-dialog">
     <q-card>
       <q-card-section>
-        <q-form class="messenger-new-channel-form" @submit.prevent="handleNewChannel">
+        <q-form class="messenger-new-channel-form" @submit.prevent="$emit('submit', state)">
           <q-input
-            v-model="channelState.name"
+            v-model="state.name"
             label="Channel name *"
             lazy-rules
             :rules="[val => val && val.length > 2 || 'Please type something']"
           />
           <q-input
-            v-model="channelState.maxMessages"
+            v-model="state.maxMessages"
             label="Max messages"
             lazy-rules
             :rules="[val => +val > 0 || 'Invalid value']"
@@ -31,11 +32,12 @@ const handleNewChannel = () => emit('handleNewChannel');
             Create Channel
           </q-btn>
         </q-form>
-        <q-inner-loading :showing="stateCreating" />
+        <q-inner-loading :showing="loading" />
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
+
 <style scoped lang="scss">
 .new-channel-dialog {
   .q-card {
