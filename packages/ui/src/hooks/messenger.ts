@@ -15,7 +15,6 @@ export function useChannel() {
   const isPendingMember = computed(() => state.channelMembership?.status.__kind === 'Pending')
   const isChannelCreator = computed(() => isAuthorizedMember.value
     && state.channel?.creator.toString() === String(wallet.publicKey.value ?? '-'))
-  const channels = computed(() => state.allChannels)
 
   const allowSend = computed(() => isAuthorizedMember.value && !state.sending)
   const canAddMember = computed(() => isAuthorizedMember.value)
@@ -53,7 +52,6 @@ export function useChannel() {
     isAuthorizedMember,
     isPendingMember,
     isChannelCreator,
-    channels,
     canJoinChannel,
     canDeleteMember,
     canAddMember,

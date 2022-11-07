@@ -1,32 +1,20 @@
 <script lang="ts" setup>
 import { matMoreHoriz } from '@quasar/extras/material-icons'
+import { useWallet } from 'solana-wallets-vue'
 
-const props = defineProps({
-  channels: null,
-  currentChannel: null,
-  isWalletConnected: { type: Boolean, default: false },
-})
 const emit = defineEmits(['change', 'showMembers', 'deleteChannel', 'addMember'])
-const {
-  state,
-  postMessage,
-  addMember, deleteMember, authorizeMember,
-  createChannel, loadChannel, deleteChannel, joinChannel,
-} = useMessengerStore()
+
+const wallet = useWallet()
+const { state } = useMessengerStore()
+
+const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
 const searchText = ref('')
-const currentChanel = computed(() => props.currentChannel)
-const memberCount = ref()
-const messageCount = ref()
+const channel = computed(() => state.channel)
+const memberCount = computed(() => `${channel.value?.memberCount}\xA0members`)
+const messageCount = computed(() => `${channel.value?.messageCount}\xA0messages`)
 
-watch(currentChanel, (channel) => {
-  console.log(channel, channel?.name, channel?.memberCount)
-  memberCount.value = `${channel?.memberCount}\xA0members`
-  messageCount.value = `${channel?.messageCount}\xA0messages`
-})
-const onSearch = (value: string) => {
-  emit('change', value)
-}
+const onSearch = (value: string) => emit('change', value)
 const showMembers = () => emit('showMembers')
 const onDeleteChannel = () => emit('deleteChannel')
 const onAddMember = () => emit('addMember')
@@ -60,7 +48,7 @@ const onAddMember = () => emit('addMember')
 
       <q-space class="" />
       <div class="chat-name">
-        {{ currentChanel?.name }}
+        {{ channel?.name }}
       </div>
 
       <div>
@@ -68,13 +56,13 @@ const onAddMember = () => emit('addMember')
           <q-icon :name="matMoreHoriz" />
           <q-menu anchor="bottom left" self="top left">
             <q-list style="min-width: 150px" bordered>
-              <q-item v-close-popup clickable :disable="!currentChanel" @click="showMembers">
+              <q-item v-close-popup clickable :disable="!channel" @click="showMembers">
                 <q-item-section>Members</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!currentChanel" @click="onAddMember">
+              <q-item v-close-popup clickable :disable="!channel" @click="onAddMember">
                 <q-item-section>Add member</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!currentChanel" @click="onDeleteChannel">
+              <q-item v-close-popup clickable :disable="!channel" @click="onDeleteChannel">
                 <q-item-section>Delete</q-item-section>
               </q-item>
             </q-list>
