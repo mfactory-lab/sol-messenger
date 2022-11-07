@@ -122,7 +122,7 @@ export function useMonitorTransaction() {
     }
   }
 
-  return { monitorTransaction, sending }
+  return { monitorTransaction, sending: loading }
 }
 
 interface MonitorTransactionParams {

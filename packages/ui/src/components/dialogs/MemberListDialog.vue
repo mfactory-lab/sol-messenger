@@ -1,18 +1,19 @@
 <script lang="ts" setup>
-import {ChannelMembership} from "@app/sdk";
-import {shortenAddress} from "@/utils";
+import type { ChannelMembership } from '@app/sdk'
+import { shortenAddress } from '@/utils'
 
 const props = defineProps({
-  membersDialog: {type: Boolean, default: false },
+  membersDialog: { type: Boolean, default: false },
   isAuthorizedMember: { type: Boolean, default: false },
-  authorizeMemberState: {type: Object, default: {}},
+  authorizeMemberState: { type: Object, default: {} },
   deleteMemberState: { type: Object, default: {} },
-  wallet: { type: Object, default: {} }
+  wallet: { type: Object, default: {} },
 })
+const emit = defineEmits(['handleAuthorizeMember', 'handleDeleteMember'])
 onMounted(() => {
-  console.log(props.membersDialog);
+  console.log(props.membersDialog)
 })
-const x = computed(() => props.membersDialog);
+const x = computed(() => props.membersDialog)
 watch(x, (y) => {
   console.log('---', y)
 })
@@ -24,8 +25,6 @@ const isChannelCreator = computed(() => isAuthorizedMember.value)
 
 const canDeleteMember = (member: any) => computed(() => isChannelCreator.value
   && String(member.key) !== String(userStore.keypair?.publicKey)).value
-
-const emit = defineEmits(['handleAuthorizeMember', 'handleDeleteMember'])
 
 const handleAuthorizeMember = (key: string) => emit('handleAuthorizeMember', key)
 const handleDeleteMember = (key: string) => emit('handleDeleteMember', key)
@@ -43,18 +42,18 @@ function getStatusColor(status: any) {
   }
   return 'grey'
 }
-
 </script>
+
 <template>
   <q-dialog v-model="membersDialog">
     <q-card>
       <q-card-section>
         <q-list separator>
           <q-item
-              v-for="m in state.channelMembers"
-              :key="m.pubkey.toString()"
-              active-class="bg-teal-1"
-              :active="`${m.pubkey}` === `${state.channelMembershipAddr}`"
+            v-for="m in state.channelMembers"
+            :key="m.pubkey.toString()"
+            active-class="bg-teal-1"
+            :active="`${m.pubkey}` === `${state.channelMembershipAddr}`"
           >
             <q-item-section>
               <q-item-label>

@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-const emit = defineEmits(['sendMessage',])
-
 const props = defineProps({
-  message: {type: String, default: ''},
-  allowSend: { type: Boolean, default: false },
-  sendingState: { type: Boolean, default: false }
+  message: { type: String, default: '' },
+  disabled: { type: Boolean, default: false },
+  sending: { type: Boolean, default: false },
 })
 
-const sendMessage = (message: string) => emit('sendMessage', message)
+defineEmits(['submit'])
+
+const message = ref(props.message)
 </script>
+
 <template>
-  <q-form class="channel-form" @submit.prevent="sendMessage(message)">
+  <q-form class="channel-form" @submit.prevent="$emit('submit', message)">
     <q-toolbar class="row message-control">
       <q-input
         ref="inputFocus"
@@ -21,14 +22,15 @@ const sendMessage = (message: string) => emit('sendMessage', message)
         dense
         borderless
         autofocus
-        :disable="!allowSend && false"
+        :disable="disabled"
       />
-      <q-btn class="send-btn" square flat type="submit" :disable="!allowSend && false" :loading="sendingState">
+      <q-btn class="send-btn" square flat type="submit" :disable="disabled" :loading="sending">
         Send
       </q-btn>
     </q-toolbar>
   </q-form>
 </template>
+
 <style lang="scss" scoped>
 .message-control {
   background: #f2f2f2;

@@ -1,44 +1,49 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 const props = defineProps({
-  channel: null,
-  state: null
+  channel: Object as PropType<{ pubkey: string }>,
+  state: Object,
 })
 const emit = defineEmits(['selectChannel'])
 
-const selectChannel = () => emit('selectChannel');
+const selectChannel = () => emit('selectChannel')
 
 const getBadgeColor = (text: string) => {
   if (!text) {
-    return {background: '#000'}
+    return { background: '#000' }
   }
-  let hash = 0;
+  let hash = 0
   for (let i = 0; i < text.length; i++) {
-    hash = text.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash;
+    hash = text.charCodeAt(i) + ((hash << 5) - hash)
+    hash = hash & hash
   }
-  let color = '#';
+  let color = '#'
   for (let i = 0; i < 3; i++) {
-    const value = (hash >> (i * 8)) & 255;
-    color += ('00' + value.toString(16)).substr(-2);
+    const value = (hash >> (i * 8)) & 255
+    color += (`00${value.toString(16)}`).substr(-2)
   }
-  return {background: color};
+  return { background: color }
 }
 </script>
 
 <template>
   <q-item
     active-class="bg-blue-grey-1 text-grey-8"
-    :active="String(state.channelAddr) === String(channel.pubkey)"
+    :active="`${state.channelAddr}` === `${channel.pubkey}`"
   >
     <q-item-section class="chat-item cursor-pointer" @click="selectChannel">
-
-      <div class="chat-badge" :style="getBadgeColor(String(channel.pubkey))">
-        <span>{{ channel.data.name.slice(0,2) }}</span>
+      <div class="chat-badge" :style="getBadgeColor(`${channel.pubkey}`)">
+        <span>{{ channel.data.name.slice(0, 2) }}</span>
       </div>
 
-      <div class="chat-name">{{ channel.data.name }}</div>
+      <div class="chat-name">
+        {{ channel.data.name }}
+      </div>
 
-      <div class="message-count">{{ channel.data.messageCount }}</div>
+      <div class="message-count">
+        {{ channel.data.messageCount }}
+      </div>
     </q-item-section>
   </q-item>
 </template>

@@ -4,7 +4,7 @@ import { isChannelMembershipStatusPending } from '@app/sdk'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
-import AppChanelListItem from "@/components/app-chanel-list-item.vue";
+import MessengerChannel from '@/components/MessengerChannel.vue'
 const { notify } = useQuasar()
 const wallet = useWallet()
 
@@ -220,7 +220,7 @@ async function handleDeleteChannel() {
 }
 
 async function selectChannel(addr: any) {
-  membersDialog.value = false; // @todo fix autoopen dialog when switch channel
+  membersDialog.value = false // @todo fix autoopen dialog when switch channel
   await loadChannel(addr)
 }
 
@@ -254,10 +254,10 @@ function isSomeoneMessage(sender: any) {
   return String(pubkey) !== String(sender)
 }
 const channelFilter = reactive({
-  text: ''
+  text: '',
 })
 const onSearch = (val: string) => {
-  channelFilter.text = val;
+  channelFilter.text = val
 }
 
 const filteredChannels = computed(() => {
@@ -265,30 +265,29 @@ const filteredChannels = computed(() => {
 })
 
 const showMembersDialog = () => {
-  membersDialog.value = true;
+  membersDialog.value = true
 }
-
 </script>
 
 <template>
   <div class="messenger-wrapper">
-    <app-messenger-panel
+    <messenger-toolbar
       :current-channel="currentChanel"
       :is-wallet-connected="isWalletConnected"
       @change="onSearch"
-      @showMembers="showMembersDialog"
-      @deleteChannel="handleDeleteChannel"
-      @addMember="addMemberState.dialog = true"
+      @show-members="showMembersDialog"
+      @delete-channel="handleDeleteChannel"
+      @add-member="addMemberState.dialog = true"
     />
     <div class="messenger-main">
       <q-card class="messenger-channels">
         <template v-if="filteredChannels.length > 0">
           <q-list separator class="channels-list">
-          <app-chanel-list-item
-            v-for="ch in filteredChannels" :key="ch.name"
-            :channel="ch"
-            :state="state"
-            @selectChannel="selectChannel(ch.pubkey)"
+            <messenger-channel
+              v-for="ch in filteredChannels" :key="ch.name"
+              :channel="ch"
+              :state="state"
+              @select-channel="selectChannel(ch.pubkey)"
             />
           </q-list>
         </template>
@@ -296,16 +295,16 @@ const showMembersDialog = () => {
           No channels
         </div>
         <q-inner-loading :showing="state.loading" color="primary" />
-        <app-chat-control
-          @createChannel="addNewChannel"
-          @joinChannel="joinChannelState.dialog = true"
+        <channel-control
           :can-join-channel="canJoinChannel"
           :is-authorized-member="isAuthorizedMember"
           :is-pending-member="isPendingMember"
           :is-wallet-connected="isWalletConnected"
-        ></app-chat-control>
+          @create-channel="addNewChannel"
+          @join-channel="joinChannelState.dialog = true"
+        />
       </q-card>
-      <chat-wrapper
+      <channel-wrapper
         :channel="state.channel"
         :allow-send="allowSend"
         :channel-loading-state="state.channelLoading"
@@ -313,193 +312,194 @@ const showMembersDialog = () => {
         :messages="messages"
         :post-message-state="postMessageState"
         :sending-state="state.sending"
-      ></chat-wrapper>
+      />
     </div>
   </div>
-  <div class="messenger">
-    <div class="row q-gutter-md">
-      <div class="col col-3">
-        <div class="messenger-add-channel">
-          <q-btn color="primary" rounded @click="addNewChannel">
-            Add New Channel
-          </q-btn>
-        </div>
-        <q-card class="messenger-channels">
-          <template v-if="channels.length > 0">
-            <q-list separator>
-              <q-item
-                v-for="ch in channels" :key="ch.name"
-                active-class="bg-blue-grey-1 text-grey-8"
-                :active="String(state.channelAddr) === String(ch.pubkey)"
-              >
-                <q-item-section class="cursor-pointer" @click="selectChannel(ch.pubkey)">
-                  <q-item-label>{{ ch.data.name }}</q-item-label>
-                  <q-item-label caption lines="2">
-                    <div>members: {{ ch.data.memberCount }}</div>
-                    <div>messages: {{ ch.data.messageCount }}</div>
-                  </q-item-label>
-                </q-item-section>
 
-                <!--                <q-item-section side> -->
-                <!--                  <q-btn-dropdown v-if="isWalletConnected" unelevated rounded> -->
-                <!--                    <q-list> -->
-                <!--                      <q-item -->
-                <!--                        v-if="String(ch.data.creator) === String(wallet.publicKey.value)" -->
-                <!--                        v-close-popup clickable -->
-                <!--                        @click="removeChannel(ch.pubkey)" -->
-                <!--                      > -->
-                <!--                        <q-item-section class="text-negative"> -->
-                <!--                          <q-item-label>Delete channel</q-item-label> -->
-                <!--                        </q-item-section> -->
-                <!--                      </q-item> -->
-                <!--                    </q-list> -->
-                <!--                  </q-btn-dropdown> -->
-                <!--                </q-item-section> -->
-              </q-item>
-            </q-list>
-          </template>
-          <div v-else class="messenger-channels-empty">
-            No channels
-          </div>
-          <q-inner-loading :showing="state.loading" color="primary" />
-        </q-card>
-      </div>
-      <div class="col">
-        <div v-if="state.channel">
-          <div class="row">
-            <div class="col">
-              <q-btn-group rounded unelevated>
-                <q-btn
-                  v-if="canAddMember"
-                  color="secondary" text-color="dark"
-                  :loading="addMemberState.loading"
-                  @click="addMemberState.dialog = true"
-                >
-                  add&nbsp;member
-                </q-btn>
+  <!--  <div class="messenger"> -->
+  <!--    <div class="row q-gutter-md"> -->
+  <!--      <div class="col col-3"> -->
+  <!--        <div class="messenger-add-channel"> -->
+  <!--          <q-btn color="primary" rounded @click="addNewChannel"> -->
+  <!--            Add New Channel -->
+  <!--          </q-btn> -->
+  <!--        </div> -->
+  <!--        <q-card class="messenger-channels"> -->
+  <!--          <template v-if="channels.length > 0"> -->
+  <!--            <q-list separator> -->
+  <!--              <q-item -->
+  <!--                v-for="ch in channels" :key="ch.name" -->
+  <!--                active-class="bg-blue-grey-1 text-grey-8" -->
+  <!--                :active="String(state.channelAddr) === String(ch.pubkey)" -->
+  <!--              > -->
+  <!--                <q-item-section class="cursor-pointer" @click="selectChannel(ch.pubkey)"> -->
+  <!--                  <q-item-label>{{ ch.data.name }}</q-item-label> -->
+  <!--                  <q-item-label caption lines="2"> -->
+  <!--                    <div>members: {{ ch.data.memberCount }}</div> -->
+  <!--                    <div>messages: {{ ch.data.messageCount }}</div> -->
+  <!--                  </q-item-label> -->
+  <!--                </q-item-section> -->
 
-                <q-btn
-                  v-if="canJoinChannel"
-                  color="secondary" text-color="dark"
-                  :loading="joinChannelState.loading"
-                  :disable="isPendingMember"
-                  @click="joinChannelState.dialog = true"
-                >
-                  {{ isPendingMember ? 'pending&nbsp;access' : 'join&nbsp;channel' }}
-                </q-btn>
+  <!--                &lt;!&ndash;                <q-item-section side> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                  <q-btn-dropdown v-if="isWalletConnected" unelevated rounded> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                    <q-list> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                      <q-item &ndash;&gt; -->
+  <!--                &lt;!&ndash;                        v-if="String(ch.data.creator) === String(wallet.publicKey.value)" &ndash;&gt; -->
+  <!--                &lt;!&ndash;                        v-close-popup clickable &ndash;&gt; -->
+  <!--                &lt;!&ndash;                        @click="removeChannel(ch.pubkey)" &ndash;&gt; -->
+  <!--                &lt;!&ndash;                      > &ndash;&gt; -->
+  <!--                &lt;!&ndash;                        <q-item-section class="text-negative"> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                          <q-item-label>Delete channel</q-item-label> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                        </q-item-section> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                      </q-item> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                    </q-list> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                  </q-btn-dropdown> &ndash;&gt; -->
+  <!--                &lt;!&ndash;                </q-item-section> &ndash;&gt; -->
+  <!--              </q-item> -->
+  <!--            </q-list> -->
+  <!--          </template> -->
+  <!--          <div v-else class="messenger-channels-empty"> -->
+  <!--            No channels -->
+  <!--          </div> -->
+  <!--          <q-inner-loading :showing="state.loading" color="primary" /> -->
+  <!--        </q-card> -->
+  <!--      </div> -->
+  <!--      <div class="col"> -->
+  <!--        <div v-if="state.channel"> -->
+  <!--          <div class="row"> -->
+  <!--            <div class="col"> -->
+  <!--              <q-btn-group rounded unelevated> -->
+  <!--                <q-btn -->
+  <!--                  v-if="canAddMember" -->
+  <!--                  color="secondary" text-color="dark" -->
+  <!--                  :loading="addMemberState.loading" -->
+  <!--                  @click="addMemberState.dialog = true" -->
+  <!--                > -->
+  <!--                  add&nbsp;member -->
+  <!--                </q-btn> -->
 
-                <q-btn v-if="isWalletConnected" color="blue-grey" @click="membersDialog = true">
-                  members
-                  <q-badge v-if="pendingMemberCount > 0" color="info" rounded floating>
-                    {{ pendingMemberCount }}
-                  </q-badge>
-                </q-btn>
+  <!--                <q-btn -->
+  <!--                  v-if="canJoinChannel" -->
+  <!--                  color="secondary" text-color="dark" -->
+  <!--                  :loading="joinChannelState.loading" -->
+  <!--                  :disable="isPendingMember" -->
+  <!--                  @click="joinChannelState.dialog = true" -->
+  <!--                > -->
+  <!--                  {{ isPendingMember ? 'pending&nbsp;access' : 'join&nbsp;channel' }} -->
+  <!--                </q-btn> -->
 
-                <q-btn v-if="isChannelCreator" color="negative" @click="handleDeleteChannel">
-                  delete
-                </q-btn>
-              </q-btn-group>
-            </div>
-            <div class="col">
-              <div class="channel-name">
-                {{ state.channel.name }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <q-card class="messenger-card overflow-hidden">
-          <div v-if="state.channel" class="row justify-center">
-            <div v-if="messages.length > 0" class="messenger-messages">
-              <q-chat-message
-                v-for="msg in messages"
-                :key="msg.id"
-                :name="msg.senderFormatted"
-                :text="msg.text"
-                :sent="isSomeoneMessage(msg.sender)"
-              />
-            </div>
-            <div v-else class="messenger-empty">
-              No messages
-            </div>
-          </div>
-          <div v-else class="messenger-empty">
-            Please select a channel
-          </div>
+  <!--                <q-btn v-if="isWalletConnected" color="blue-grey" @click="membersDialog = true"> -->
+  <!--                  members -->
+  <!--                  <q-badge v-if="pendingMemberCount > 0" color="info" rounded floating> -->
+  <!--                    {{ pendingMemberCount }} -->
+  <!--                  </q-badge> -->
+  <!--                </q-btn> -->
 
-          <!-- Channel (new message form) -->
-          <q-form class="channel-form" @submit.prevent="sendMessage">
-            <q-toolbar class="bg-primary text-white row">
-              <q-input
-                ref="inputFocus"
-                v-model="postMessageState.message"
-                class="col-grow q-mr-sm"
-                bg-color="white"
-                placeholder="Type a message"
-                dense
-                outlined
-                rounded
-                autofocus
-                :disable="!allowSend"
-              />
-              <q-btn rounded flat type="submit" :disable="!allowSend" :loading="state.sending">
-                Send
-              </q-btn>
-            </q-toolbar>
-          </q-form>
-          <q-inner-loading :showing="state.channelLoading" />
-        </q-card>
+  <!--                <q-btn v-if="isChannelCreator" color="negative" @click="handleDeleteChannel"> -->
+  <!--                  delete -->
+  <!--                </q-btn> -->
+  <!--              </q-btn-group> -->
+  <!--            </div> -->
+  <!--            <div class="col"> -->
+  <!--              <div class="channel-name"> -->
+  <!--                {{ state.channel.name }} -->
+  <!--              </div> -->
+  <!--            </div> -->
+  <!--          </div> -->
+  <!--        </div> -->
+  <!--        <q-card class="messenger-card overflow-hidden"> -->
+  <!--          <div v-if="state.channel" class="row justify-center"> -->
+  <!--            <div v-if="messages.length > 0" class="messenger-messages"> -->
+  <!--              <q-chat-message -->
+  <!--                v-for="msg in messages" -->
+  <!--                :key="msg.id" -->
+  <!--                :name="msg.senderFormatted" -->
+  <!--                :text="msg.text" -->
+  <!--                :sent="isSomeoneMessage(msg.sender)" -->
+  <!--              /> -->
+  <!--            </div> -->
+  <!--            <div v-else class="messenger-empty"> -->
+  <!--              No messages -->
+  <!--            </div> -->
+  <!--          </div> -->
+  <!--          <div v-else class="messenger-empty"> -->
+  <!--            Please select a channel -->
+  <!--          </div> -->
 
-        <div v-if="state.channel" class="q-my-md q-px-lg">
-          <q-btn flat class="text-blue-2" @click="toggleDebug()">
-            debug info
-          </q-btn>
-          <template v-if="showDebug">
-            <div
-              v-for="row in [
-                ['Authorized', isAuthorizedMember],
-                ['Pending Access', isPendingMember],
-                ['Channel Creator', isChannelCreator],
-                ['Channel', state.channel],
-                ['Membership', state.channelMembership],
-                ['Members', state.channelMembers],
-              ]"
-              :key="row[0]" class="row q-mt-md"
-            >
-              <div class="col col-4">
-                {{ row[0] }}
-              </div>
-              <div class="col">
-                <pre class="no-margin">{{ row[1] }}</pre>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!--          &lt;!&ndash; Channel (new message form) &ndash;&gt; -->
+  <!--          <q-form class="channel-form" @submit.prevent="sendMessage"> -->
+  <!--            <q-toolbar class="bg-primary text-white row"> -->
+  <!--              <q-input -->
+  <!--                ref="inputFocus" -->
+  <!--                v-model="postMessageState.message" -->
+  <!--                class="col-grow q-mr-sm" -->
+  <!--                bg-color="white" -->
+  <!--                placeholder="Type a message" -->
+  <!--                dense -->
+  <!--                outlined -->
+  <!--                rounded -->
+  <!--                autofocus -->
+  <!--                :disable="!allowSend" -->
+  <!--              /> -->
+  <!--              <q-btn rounded flat type="submit" :disable="!allowSend" :loading="state.sending"> -->
+  <!--                Send -->
+  <!--              </q-btn> -->
+  <!--            </q-toolbar> -->
+  <!--          </q-form> -->
+  <!--          <q-inner-loading :showing="state.channelLoading" /> -->
+  <!--        </q-card> -->
+
+  <!--        <div v-if="state.channel" class="q-my-md q-px-lg"> -->
+  <!--          <q-btn flat class="text-blue-2" @click="toggleDebug()"> -->
+  <!--            debug info -->
+  <!--          </q-btn> -->
+  <!--          <template v-if="showDebug"> -->
+  <!--            <div -->
+  <!--              v-for="row in [ -->
+  <!--                ['Authorized', isAuthorizedMember], -->
+  <!--                ['Pending Access', isPendingMember], -->
+  <!--                ['Channel Creator', isChannelCreator], -->
+  <!--                ['Channel', state.channel], -->
+  <!--                ['Membership', state.channelMembership], -->
+  <!--                ['Members', state.channelMembers], -->
+  <!--              ]" -->
+  <!--              :key="row[0]" class="row q-mt-md" -->
+  <!--            > -->
+  <!--              <div class="col col-4"> -->
+  <!--                {{ row[0] }} -->
+  <!--              </div> -->
+  <!--              <div class="col"> -->
+  <!--                <pre class="no-margin">{{ row[1] }}</pre> -->
+  <!--              </div> -->
+  <!--            </div> -->
+  <!--          </template> -->
+  <!--        </div> -->
+  <!--      </div> -->
+  <!--    </div> -->
+  <!--  </div> -->
 
   <!-- New channel dialog -->
   <new-channel-dialog
     :channel-state="newChannelState"
     :state-creating="state.creating"
     @handleNewChannel="handleNewChannel"
-  ></new-channel-dialog>
+  />
 
   <!-- Add member dialog -->
   <add-member-dialog
     :member-state="addMemberState"
-    @handleAddMemberReset="handleAddMemberReset"
-    @handleAddMember="handleAddMember"
-  ></add-member-dialog>
+    @submit="handleAddMember"
+    @reset="handleAddMemberReset"
+  />
 
   <!-- Join channel dialog -->
   <join-channel-dialog
     :join-channel-state="joinChannelState"
     @handleJoinChannelReset="handleJoinChannelReset"
     @handleJoinChannel="handleJoinChannel"
-  ></join-channel-dialog>
+  />
 
-   <!-- Member list dialog -->
+  <!-- Member list dialog -->
   <member-list-dialog
     :members-dialog="!!membersDialog"
     :is-authorized-member="isAuthorizedMember"
@@ -508,8 +508,7 @@ const showMembersDialog = () => {
     :delete-member-state="deleteMemberState"
     @handleAuthorizeMember="handleAuthorizeMember"
     @handleDeleteMember="handleDeleteMember"
-  ></member-list-dialog>
-
+  />
 </template>
 
 <style lang="scss" scoped>

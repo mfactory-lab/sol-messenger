@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import {matMoreHoriz} from '@quasar/extras/material-icons'
+import { matMoreHoriz } from '@quasar/extras/material-icons'
 
 const props = defineProps({
   channels: null,
   currentChannel: null,
-  isWalletConnected: {type: Boolean, default: false}
+  isWalletConnected: { type: Boolean, default: false },
 })
 const emit = defineEmits(['change', 'showMembers', 'deleteChannel', 'addMember'])
 const {
@@ -27,9 +27,9 @@ watch(currentChanel, (channel) => {
 const onSearch = (value: string) => {
   emit('change', value)
 }
-const showMembers = () => emit('showMembers');
-const onDeleteChannel = () => emit('deleteChannel');
-const onAddMember = () => emit('addMember');
+const showMembers = () => emit('showMembers')
+const onDeleteChannel = () => emit('deleteChannel')
+const onAddMember = () => emit('addMember')
 </script>
 
 <template>
@@ -58,23 +58,23 @@ const onAddMember = () => emit('addMember');
         </div>
       </div>
 
-      <q-space class=""/>
+      <q-space class="" />
       <div class="chat-name">
         {{ currentChanel?.name }}
       </div>
 
       <div>
         <q-btn class="chat-menu" flat unelevated :disable="!isWalletConnected">
-          <q-icon :name="matMoreHoriz"/>
+          <q-icon :name="matMoreHoriz" />
           <q-menu anchor="bottom left" self="top left">
             <q-list style="min-width: 150px" bordered>
-              <q-item v-close-popup clickable @click="showMembers" :disable="!currentChanel">
+              <q-item v-close-popup clickable :disable="!currentChanel" @click="showMembers">
                 <q-item-section>Members</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable @click="onAddMember" :disable="!currentChanel">
+              <q-item v-close-popup clickable :disable="!currentChanel" @click="onAddMember">
                 <q-item-section>Add member</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable @click="onDeleteChannel" :disable="!currentChanel">
+              <q-item v-close-popup clickable :disable="!currentChanel" @click="onDeleteChannel">
                 <q-item-section>Delete</q-item-section>
               </q-item>
             </q-list>

@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 const props = defineProps({
-  joinChannelState: {type: Object, default: {}}
+  joinChannelState: { type: Object, default: {} },
 })
 
 const emit = defineEmits(['handleJoinChannelReset', 'handleJoinChannel'])
 
 const handleJoinChannel = () => emit('handleJoinChannel')
 const handleJoinChannelReset = () => emit('handleJoinChannelReset')
-
 </script>
+
 <template>
   <q-dialog v-model="joinChannelState.dialog" class="join-channel-dialog" @hide="handleJoinChannelReset">
     <q-card>

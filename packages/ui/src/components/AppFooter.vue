@@ -1,9 +1,7 @@
 <script setup lang="ts">
-const isDarkMode = ref(false)
-const test = (e: any) => {
-  console.log('test', e)
-  isDarkMode.value = !isDarkMode.value
-}
+import { useDarkTheme } from '@/hooks/theme'
+
+const { toggle, isActive } = useDarkTheme()
 </script>
 
 <template>
@@ -32,10 +30,10 @@ const test = (e: any) => {
         <div class="col-12 col-md-6 social-col">
           <div class="social">
             <div class="theme">
-              <app-toggle
-                :value="isDarkMode"
-                label="Dark mode"
-                @input="test($event)"
+              Dark theme
+              <q-toggle
+                :model-value="isActive"
+                @click="toggle"
               />
             </div>
             <div class="social-link social-link-text">
@@ -143,15 +141,15 @@ const test = (e: any) => {
       margin-left: 8px;
 
       &.telegram {
-        background-image: url('/src/assets/img/telegram.svg');
+        background-image: url('@/assets/img/telegram.svg');
       }
 
       &.twitter {
-        background-image: url('/src/assets/img/twitter.svg');
+        background-image: url('@/assets/img/twitter.svg');
       }
 
       &.discord {
-        background-image: url('/src/assets/img/discord.svg');
+        background-image: url('@/assets/img/discord.svg');
       }
     }
 
@@ -161,7 +159,7 @@ const test = (e: any) => {
       padding: 11px 14px;
       height: 47px;
       background-color: #fff;
-      background-image: url('/src/assets/img/telegram.svg');
+      background-image: url('@/assets/img/telegram.svg');
       background-repeat: no-repeat;
       background-position: 80% 50%;
       border-radius: 50px;

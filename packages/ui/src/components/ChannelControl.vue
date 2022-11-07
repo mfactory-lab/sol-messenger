@@ -1,36 +1,27 @@
 <script lang="ts" setup>
-import addIcon from "@/assets/img/add.svg";
-import joinIcon from "@/assets/img/join.svg";
-
-const emit = defineEmits(['createChannel', 'joinChannel',])
-const props = defineProps({
-  isWalletConnected: { type: Boolean, default: false },
-  isAuthorizedMember: { type: Boolean, default: false },
-  canJoinChannel: { type: Boolean, default: false },
+defineProps({
   isPendingMember: { type: Boolean, default: false },
-  joinChannelState: {type: Object, default: {}}
+  canJoinChannel: { type: Boolean, default: false },
+  isJoining: { type: Boolean, default: false },
 })
-
-const createChannel = () => emit('createChannel');
-const joinChannel = () => emit('joinChannel');
-
+defineEmits(['createChannel', 'joinChannel'])
 </script>
 
 <template>
   <q-item>
     <q-item-section class="button-wrapper">
-      <q-btn class="control-button" @click="createChannel" square>
-        <img
-          :src="addIcon"/>
+      <q-btn class="control-button" square @click="$emit('createChannel')">
+        <img src="@/assets/img/add.svg" alt="">
       </q-btn>
       <q-btn
+        v-if="canJoinChannel"
         class="control-button"
         square
-        @click="joinChannel"
-        :loading="joinChannelState.loading"
+        :loading="isJoining"
         :disable="isPendingMember"
-        v-if="canJoinChannel">
-        <img :src="joinIcon"/>
+        @click="$emit('joinChannel')"
+      >
+        <img src="@/assets/img/join.svg" alt="">
       </q-btn>
     </q-item-section>
   </q-item>

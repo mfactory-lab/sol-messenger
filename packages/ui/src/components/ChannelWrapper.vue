@@ -1,19 +1,17 @@
 <script lang="ts" setup>
-import AppSendMessage from "@/components/AppSendMessage.vue";
-
-const emit = defineEmits(['sendMessage',])
-
 const props = defineProps({
-  channel: {type: Object, default: {}},
-  messages: {type: Array, default: []},
-  postMessageState: {type: Object, default: {message: ''}},
-  isSomeoneMessage: {type: Function, default: () => false},
-  allowSend: {type: Boolean, default: false},
-  sendingState: {type: Boolean, default: false},
-  channelLoadingState: {type: Boolean, default: false}
-});
+  channel: { type: Object, default: {} },
+  messages: { type: Array, default: [] },
+  postMessageState: { type: Object, default: { message: '' } },
+  isSomeoneMessage: { type: Function, default: () => false },
+  allowSend: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
+  channelLoadingState: { type: Boolean, default: false },
+})
 
-const sendMessage = (message: any) => emit('sendMessage', message);
+const emit = defineEmits(['sendMessage'])
+
+const sendMessage = (message: any) => emit('sendMessage', props.message)
 </script>
 
 <template>
@@ -38,15 +36,16 @@ const sendMessage = (message: any) => emit('sendMessage', message);
       </div>
     </div>
 
-    <app-send-message
-      @sendMessage="sendMessage"
+    <channel-form
       :message="postMessageState.message"
-      :sending-state="sendingState"
-      :allow-send="allowSend"
-    ></app-send-message>
-    <q-inner-loading :showing="channelLoadingState"/>
+      :sending="sendingState"
+      :disabled="!allowSend"
+      @submit="sendMessage"
+    />
+    <q-inner-loading :showing="channelLoadingState" />
   </q-card>
 </template>
+
 <style lang="scss" scoped>
 .messenger-card {
   display: flex;

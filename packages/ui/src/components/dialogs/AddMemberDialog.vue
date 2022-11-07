@@ -1,18 +1,15 @@
 <script lang="ts" setup>
-const porps = defineProps({
-  memberState: {type: Object, default: {}}
+defineProps({
+  memberState: { type: Object, default: {} },
 })
-const emit = defineEmits(['handleAddMemberReset', 'handleAddMember'])
-
-const handleAddMember = () => emit('handleAddMember')
-const handleAddMemberReset = () => emit('handleAddMemberReset')
+defineEmits(['submit', 'reset'])
 </script>
 
 <template>
-  <q-dialog v-model="memberState.dialog" class="add-member-dialog" @hide="handleAddMemberReset">
+  <q-dialog v-model="memberState.dialog" class="add-member-dialog" @hide="$emit('reset')">
     <q-card>
       <q-card-section>
-        <q-form class="add-member-form" @submit.prevent="handleAddMember">
+        <q-form class="add-member-form" @submit.prevent="$emit('submit')">
           <q-input
             v-model="memberState.name"
             label="Member name *"
@@ -43,6 +40,7 @@ const handleAddMemberReset = () => emit('handleAddMemberReset')
     </q-card>
   </q-dialog>
 </template>
+
 <style scoped lang="scss">
 .add-member-dialog {
   .q-card {
