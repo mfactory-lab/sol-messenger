@@ -159,7 +159,6 @@ const showMembersDialog = () => {
 
   <add-member-dialog
     v-model="channelAddMember.state.dialog"
-    :member-state="channelAddMember"
     @submit="channelAddMember.submit"
     @reset="channelAddMember.reset"
   />
