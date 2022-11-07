@@ -1,30 +1,36 @@
 <script lang="ts" setup>
 defineProps({
-  memberState: { type: Object, default: {} },
+  loading: { type: Boolean, default: false },
 })
-defineEmits(['submit', 'reset'])
+
+defineEmits(['submit'])
+
+const state = reactive({
+  name: '',
+  key: '',
+})
 </script>
 
 <template>
-  <q-dialog v-model="memberState.dialog" class="add-member-dialog" @hide="$emit('reset')">
+  <q-dialog class="add-member-dialog">
     <q-card>
       <q-card-section>
-        <q-form class="add-member-form" @submit.prevent="$emit('submit')">
+        <q-form class="add-member-form" @submit.prevent="$emit('submit', state)">
           <q-input
-            v-model="memberState.name"
+            v-model="state.name"
             label="Member name *"
             hint="Min length 3 chars"
             lazy-rules
             :rules="[val => val && val.length > 2 || 'Please type something']"
           />
           <q-input
-            v-model="memberState.key"
+            v-model="state.key"
             label="Member Wallet *"
             lazy-rules
             :rules="[val => val && val.length > 32 || 'Invalid public key']"
           />
           <q-input
-            v-model="memberState.key"
+            v-model="state.key"
             label="Member Device Key"
             hint="Default: The same as member wallet"
             lazy-rules
@@ -35,7 +41,7 @@ defineEmits(['submit', 'reset'])
             Add Member
           </q-btn>
         </q-form>
-        <q-inner-loading :showing="memberState.loading" />
+        <q-inner-loading :showing="loading" />
       </q-card-section>
     </q-card>
   </q-dialog>
