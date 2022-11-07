@@ -220,6 +220,7 @@ async function handleDeleteChannel() {
 }
 
 async function selectChannel(addr: any) {
+  membersDialog.value = false; // @todo fix autoopen dialog when switch channel
   await loadChannel(addr)
 }
 
@@ -262,6 +263,11 @@ const onSearch = (val: string) => {
 const filteredChannels = computed(() => {
   return channels.value.filter(channel => channel.data.name.includes(channelFilter.text))
 })
+
+const showMembersDialog = () => {
+  membersDialog.value = true;
+}
+
 </script>
 
 <template>
@@ -270,7 +276,7 @@ const filteredChannels = computed(() => {
       :current-channel="currentChanel"
       :is-wallet-connected="isWalletConnected"
       @change="onSearch"
-      @showMembers="membersDialog = true"
+      @showMembers="showMembersDialog"
       @deleteChannel="handleDeleteChannel"
       @addMember="addMemberState.dialog = true"
     />
@@ -473,138 +479,37 @@ const filteredChannels = computed(() => {
   </div>
 
   <!-- New channel dialog -->
-  <q-dialog v-model="newChannelState.dialog" class="new-channel-dialog">
-    <q-card>
-      <q-card-section>
-        <q-form class="messenger-new-channel-form" @submit.prevent="handleNewChannel">
-          <q-input
-            v-model="newChannelState.name"
-            label="Channel name *"
-            lazy-rules
-            :rules="[val => val && val.length > 2 || 'Please type something']"
-          />
-          <q-input
-            v-model="newChannelState.maxMessages"
-            label="Max messages"
-            lazy-rules
-            :rules="[val => +val > 0 || 'Invalid value']"
-          />
-          <q-btn type="submit" color="info" :ripple="false" rounded>
-            Create Channel
-          </q-btn>
-        </q-form>
-        <q-inner-loading :showing="state.creating" />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+  <new-channel-dialog
+    :channel-state="newChannelState"
+    :state-creating="state.creating"
+    @handleNewChannel="handleNewChannel"
+  ></new-channel-dialog>
 
   <!-- Add member dialog -->
-  <q-dialog v-model="addMemberState.dialog" class="add-member-dialog" @hide="handleAddMemberReset">
-    <q-card>
-      <q-card-section>
-        <q-form class="add-member-form" @submit.prevent="handleAddMember">
-          <q-input
-            v-model="addMemberState.name"
-            label="Member name *"
-            hint="Min length 3 chars"
-            lazy-rules
-            :rules="[val => val && val.length > 2 || 'Please type something']"
-          />
-          <q-input
-            v-model="addMemberState.key"
-            label="Member Wallet *"
-            lazy-rules
-            :rules="[val => val && val.length > 32 || 'Invalid public key']"
-          />
-          <q-input
-            v-model="addMemberState.key"
-            label="Member Device Key"
-            hint="Default: The same as member wallet"
-            lazy-rules
-            :rules="[val => !val || (val.length > 32 || 'Invalid public key')]"
-          />
-          <br>
-          <q-btn type="submit" color="info" :ripple="false" rounded>
-            Add Member
-          </q-btn>
-        </q-form>
-        <q-inner-loading :showing="addMemberState.loading" />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+  <add-member-dialog
+    :member-state="addMemberState"
+    @handleAddMemberReset="handleAddMemberReset"
+    @handleAddMember="handleAddMember"
+  ></add-member-dialog>
 
   <!-- Join channel dialog -->
-  <q-dialog v-model="joinChannelState.dialog" class="join-channel-dialog" @hide="handleJoinChannelReset">
-    <q-card>
-      <q-card-section>
-        <q-form class="join-channel-form" @submit.prevent="handleJoinChannel">
-          <q-input
-            v-model="joinChannelState.name"
-            placeholder="Member name *"
-            lazy-rules
-            :rules="[val => val && val.length > 2 || 'Please type something']"
-          />
-          <q-input
-            v-model="joinChannelState.authority"
-            placeholder="Authorize By"
-            lazy-rules
-            :rules="[val => !val || (val && val.length > 32 || 'Invalid public key')]"
-          />
-          <br>
-          <q-btn type="submit" color="info" :ripple="false" rounded>
-            Join Channel
-          </q-btn>
-        </q-form>
-        <q-inner-loading :showing="joinChannelState.loading" />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+  <join-channel-dialog
+    :join-channel-state="joinChannelState"
+    @handleJoinChannelReset="handleJoinChannelReset"
+    @handleJoinChannel="handleJoinChannel"
+  ></join-channel-dialog>
 
-  <!-- Member list dialog -->
-  <q-dialog v-model="membersDialog">
-    <q-card>
-      <q-card-section>
-        <q-list separator>
-          <q-item v-for="m in state.channelMembers" :key="m.pubkey.toString()" active-class="bg-teal-1" :active="`${m.pubkey}` === `${state.channelMembershipAddr}`">
-            <q-item-section>
-              <q-item-label>
-                {{ formatMemberName(m.data) }}
-                <q-badge :color="getStatusColor(m.data.status)">
-                  {{ m.data.status.__kind }}
-                </q-badge>
-              </q-item-label>
-              <q-item-label caption lines="2">
-                <div>Authority: {{ m.data.authority }}</div>
-                <div>Key: {{ m.data.key }}</div>
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side class="q-gutter-sm">
-              <q-btn
-                v-if="m.data.status.__kind === 'Pending'
-                  && isAuthorizedMember
-                  && (!m.data.status.authority || String(m.data.status.authority) === String(wallet.publicKey.value))"
-                color="teal" rounded size="xs" unelevated class="full-width"
-                :loading="authorizeMemberState.loading"
-                :disabled="authorizeMemberState.loading"
-                @click="handleAuthorizeMember(m.data.key)"
-              >
-                Authorize
-              </q-btn>
-              <q-btn
-                v-if="canDeleteMember(m.data)"
-                color="negative" rounded size="xs" unelevated class="full-width"
-                :loading="deleteMemberState.loading"
-                :disabled="deleteMemberState.loading"
-                @click="handleDeleteMember(m.data.key)"
-              >
-                Delete
-              </q-btn>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+   <!-- Member list dialog -->
+  <member-list-dialog
+    :members-dialog="!!membersDialog"
+    :is-authorized-member="isAuthorizedMember"
+    :wallet="wallet"
+    :authorize-member-state="authorizeMemberState"
+    :delete-member-state="deleteMemberState"
+    @handleAuthorizeMember="handleAuthorizeMember"
+    @handleDeleteMember="handleDeleteMember"
+  ></member-list-dialog>
+
 </template>
 
 <style lang="scss" scoped>
@@ -694,23 +599,5 @@ const filteredChannels = computed(() => {
   margin: 0 0 1.5rem;
   font-weight: 900;
   color: $primary
-}
-.channel-form {
-  // ..
-}
-.new-channel-dialog {
-  .q-card {
-    width: 320px;
-  }
-}
-.add-member-dialog {
-  .q-card {
-    width: 320px;
-  }
-}
-.join-channel-dialog {
-  .q-card {
-    width: 320px;
-  }
 }
 </style>

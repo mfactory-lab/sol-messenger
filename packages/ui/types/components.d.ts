@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AddMemberDialog: typeof import('./../src/components/dialogs/AddMemberDialog.vue')['default']
     AppChanelListItem: typeof import('./../src/components/app-chanel-list-item.vue')['default']
     AppChatControl: typeof import('./../src/components/AppChatControl.vue')['default']
     AppFooter: typeof import('./../src/components/app-footer.vue')['default']
@@ -19,7 +20,10 @@ declare module '@vue/runtime-core' {
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']
+    JoinChannelDialog: typeof import('./../src/components/dialogs/JoinChannelDialog.vue')['default']
+    MemberListDialog: typeof import('./../src/components/dialogs/MemberListDialog.vue')['default']
     Messenger: typeof import('./../src/components/Messenger.vue')['default']
+    NewChannelDialog: typeof import('./../src/components/dialogs/NewChannelDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Toggle: typeof import('@/components/app-toggle.vue')['default']
