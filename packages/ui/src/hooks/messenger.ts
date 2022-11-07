@@ -63,6 +63,34 @@ export function useChannel() {
   }
 }
 
+export function useChannelDelete() {
+  const { state: messengerState, deleteChannel } = useMessengerStore()
+  const { info, ok, error } = useHelper()
+
+  const state = reactive({
+    loading: false,
+  })
+
+  async function submit() {
+    if (!messengerState.channelAddr) {
+      info('Please select a channel')
+      return
+    }
+    try {
+      state.loading = true
+      await deleteChannel(messengerState.channelAddr)
+      ok('Channel was deleted!')
+    } catch (e) {
+      console.log('Error', e)
+      error('Something went wrong')
+    } finally {
+      state.loading = false
+    }
+  }
+
+  return { state, submit }
+}
+
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
   const { isWalletConnected, ok, error } = useHelper()
@@ -228,6 +256,7 @@ export function useChannelJoin() {
   return {
     state,
     submit,
+    reset,
   }
 }
 
