@@ -42,6 +42,7 @@ const onAddMember = () => emit('addMember')
           debounce="300"
           borderless
           @update:model-value="onSearch(searchText)"
+          @clear="onSearch('')"
         />
       </div>
     </div>
