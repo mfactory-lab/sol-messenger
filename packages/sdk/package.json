@@ -7,7 +7,7 @@
     "generate": "DEBUG='(solita|rustbin):(info|error)' solita"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.63.1",
+    "@solana/web3.js": "^1.66.0",
     "@stablelib/random": "^1.0.2",
     "@stablelib/sha256": "^1.0.1",
     "@stablelib/x25519": "^1.0.3",
@@ -17,6 +17,6 @@
     "uint8arrays": "^3.1.1"
   },
   "devDependencies": {
-    "@metaplex-foundation/solita": "^0.18.0"
+    "@metaplex-foundation/solita": "^0.19.0"
   }
 }

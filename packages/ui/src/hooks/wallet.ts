@@ -1,6 +1,5 @@
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import { watch } from 'vue'
 import { shortenAddress } from '@/utils'
 
 export const WALLET_CONNECT_EVENT = Symbol('WALLET_CONNECT_EVENT')
@@ -23,9 +22,8 @@ export function initWallet() {
       }
 
       const onConnect = () => {
-        const publicKey = w.publicKey!
+        const publicKey = w.adapter.publicKey!
         connection.onAccountChange(publicKey, (acc) => {
-          console.log('ACCOUNT_CHANGE_EVENT', acc)
           emit(ACCOUNT_CHANGE_EVENT, acc)
         })
         connection.onLogs(publicKey, (logs) => {
@@ -60,11 +58,11 @@ export function initWallet() {
         })
       }
 
-      w.once('connect', onConnect)
-      w.once('disconnect', onDisconnect)
+      w.adapter.once('connect', onConnect)
+      w.adapter.once('disconnect', onDisconnect)
 
-      w.removeAllListeners('error')
-      w.on('error', onError)
+      w.adapter.removeAllListeners('error')
+      w.adapter.on('error', onError)
     },
     { immediate: true },
   )
