@@ -1,27 +1,28 @@
 <script lang="ts" setup>
+import type { PropType } from 'vue'
+
 const props = defineProps({
-  joinChannelState: { type: Object, default: {} },
+  loading: { type: Boolean, default: false },
+  defaultState: Object as PropType<{ name: any; authority: string }>,
 })
 
-const emit = defineEmits(['handleJoinChannelReset', 'handleJoinChannel'])
-
-const handleJoinChannel = () => emit('handleJoinChannel')
-const handleJoinChannelReset = () => emit('handleJoinChannelReset')
+const emit = defineEmits(['submit', 'reset'])
+const state = ref(props.defaultState)
 </script>
 
 <template>
-  <q-dialog v-model="joinChannelState.dialog" class="join-channel-dialog" @hide="handleJoinChannelReset">
+  <q-dialog class="join-channel-dialog" @hide="$emit('reset')">
     <q-card>
       <q-card-section>
-        <q-form class="join-channel-form" @submit.prevent="handleJoinChannel">
+        <q-form class="join-channel-form" @submit.prevent="$emit('submit', state)">
           <q-input
-            v-model="joinChannelState.name"
+            v-model="state.name"
             placeholder="Member name *"
             lazy-rules
             :rules="[val => val && val.length > 2 || 'Please type something']"
           />
           <q-input
-            v-model="joinChannelState.authority"
+            v-model="state.authority"
             placeholder="Authorize By"
             lazy-rules
             :rules="[val => !val || (val && val.length > 32 || 'Invalid public key')]"

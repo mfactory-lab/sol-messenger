@@ -38,12 +38,12 @@ const {
   canJoinChannel,
   pendingMemberCount,
 } = useChannel()
-const { state: newChannelState, submit: handleNewChannel, reset: handleNewChannelReset } = useChannelCreate()
-const { state: deleteChannelState, submit: handleDeleteChannel } = useChannelDelete()
-const { state: joinChannelState, submit: handleJoinChannel, reset: handleJoinChannelReset } = useChannelJoin()
+const newChannelState = useChannelCreate()
+const deleteChannelState = useChannelDelete()
+const joinChannelState = useChannelJoin()
 const channelAddMember = useChannelAddMember()
-const { state: authorizeMemberState, submit: handleAuthorizeMember } = useChannelAuthorizeMember()
-const { state: deleteMemberState, submit: handleDeleteMember } = useChannelDeleteMember()
+const authorizeMemberState = useChannelAuthorizeMember()
+const deleteMemberState = useChannelDeleteMember()
 
 const postMessageState = reactive({
   message: '',
@@ -58,14 +58,7 @@ async function sendMessage() {
   // }
 }
 
-function addNewChannel() {
-  // if (checkWalletConnected()) {
-  newChannelState.dialog = true
-  // }
-}
-
 async function selectChannel(addr: any) {
-  membersDialog.value = false // @todo fix autoopen dialog when switch channel
   await loadChannel(addr)
 }
 
@@ -102,7 +95,7 @@ const filteredChannels = computed(() => {
 })
 
 const showMembersDialog = () => {
-  membersDialog.value = true
+  authorizeMemberState.state.dialog = true
 }
 </script>
 
@@ -111,8 +104,8 @@ const showMembersDialog = () => {
     <messenger-toolbar
       @change="onSearch"
       @show-members="showMembersDialog"
-      @delete-channel="handleDeleteChannel"
-      @add-member="addMember.state.dialog = true"
+      @delete-channel="deleteMemberState.submit(state.channelAddr)"
+      @add-member="channelAddMember.state.dialog = true"
     />
     <div class="messenger-main">
       <q-card class="messenger-channels">
@@ -135,8 +128,8 @@ const showMembersDialog = () => {
           :is-authorized-member="isAuthorizedMember"
           :is-pending-member="isPendingMember"
           :is-wallet-connected="isWalletConnected"
-          @create-channel="addNewChannel"
-          @join-channel="joinChannelState.dialog = true"
+          @create-channel="newChannelState.state.dialog = true"
+          @join-channel="joinChannelState.state.dialog = true"
         />
       </q-card>
       <channel-wrapper
@@ -147,37 +140,44 @@ const showMembersDialog = () => {
         :messages="messages"
         :post-message-state="postMessageState"
         :sending-state="state.sending"
+        @send-message="sendMessage"
       />
     </div>
   </div>
 
   <new-channel-dialog
-    v-model="newChannelState.dialog"
-    :loading="state.creating"
-    @submit="(state) => console.log(state)"
+    v-model="newChannelState.state.dialog"
+    :loading="newChannelState.state.loading"
+    :default-state="newChannelState.state"
+    @submit="newChannelState.submit"
+    @reset="newChannelState.reset"
   />
 
   <add-member-dialog
     v-model="channelAddMember.state.dialog"
+    :loading="channelAddMember.state.loading"
+    :default-state="channelAddMember.state"
     @submit="channelAddMember.submit"
+    @reset="channelAddMember.reset"
   />
 
-<!--  <join-channel-dialog -->
-<!--    v-model="joinChannelState.dialog" -->
-<!--    :join-channel-state="joinChannelState" -->
-<!--    @handleJoinChannelReset="handleJoinChannelReset" -->
-<!--    @handleJoinChannel="handleJoinChannel" -->
-<!--  /> -->
+  <join-channel-dialog
+    v-model="joinChannelState.state.dialog"
+    :loading="joinChannelState.state.loading"
+    :default-state="joinChannelState.state"
+    @submit="joinChannelState.submit"
+    @reset="joinChannelState.reset"
+  />
 
-<!--  <member-list-dialog -->
-<!--    :members-dialog="!!membersDialog" -->
-<!--    :is-authorized-member="isAuthorizedMember" -->
-<!--    :wallet="wallet" -->
-<!--    :authorize-member-state="authorizeMemberState" -->
-<!--    :delete-member-state="deleteMemberState" -->
-<!--    @handleAuthorizeMember="handleAuthorizeMember" -->
-<!--    @handleDeleteMember="handleDeleteMember" -->
-<!--  /> -->
+  <member-list-dialog
+    v-model="authorizeMemberState.state.dialog"
+    :is-authorized-member="isAuthorizedMember"
+    :wallet="wallet"
+    :authorize-member-state="authorizeMemberState.state"
+    :delete-member-state="deleteMemberState.state"
+    @submit="authorizeMemberState.submit"
+    @delete-member="deleteMemberState.submit"
+  />
 </template>
 
 <style lang="scss" scoped>

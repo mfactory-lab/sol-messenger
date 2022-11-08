@@ -5,18 +5,12 @@ import { shortenAddress } from '@/utils'
 const props = defineProps({
   membersDialog: { type: Boolean, default: false },
   isAuthorizedMember: { type: Boolean, default: false },
-  authorizeMemberState: { type: Object, default: {} },
-  deleteMemberState: { type: Object, default: {} },
-  wallet: { type: Object, default: {} },
+  authorizeMemberState: { type: Object },
+  deleteMemberState: { type: Object },
+  wallet: { type: Object },
 })
-const emit = defineEmits(['handleAuthorizeMember', 'handleDeleteMember'])
-onMounted(() => {
-  console.log(props.membersDialog)
-})
-const x = computed(() => props.membersDialog)
-watch(x, (y) => {
-  console.log('---', y)
-})
+const emit = defineEmits(['submit', 'deleteMember'])
+
 const { state } = useMessengerStore()
 const userStore = useUserStore()
 // @todo use props or state params ??
@@ -25,9 +19,6 @@ const isChannelCreator = computed(() => isAuthorizedMember.value)
 
 const canDeleteMember = (member: any) => computed(() => isChannelCreator.value
   && String(member.key) !== String(userStore.keypair?.publicKey)).value
-
-const handleAuthorizeMember = (key: string) => emit('handleAuthorizeMember', key)
-const handleDeleteMember = (key: string) => emit('handleDeleteMember', key)
 
 function formatMemberName(member: ChannelMembership) {
   if (member?.name && member.name !== '') {
@@ -45,7 +36,7 @@ function getStatusColor(status: any) {
 </script>
 
 <template>
-  <q-dialog v-model="membersDialog">
+  <q-dialog>
     <q-card>
       <q-card-section>
         <q-list separator>
@@ -75,7 +66,7 @@ function getStatusColor(status: any) {
                 color="teal" rounded size="xs" unelevated class="full-width"
                 :loading="authorizeMemberState.loading"
                 :disabled="authorizeMemberState.loading"
-                @click="handleAuthorizeMember(m.data.key)"
+                @click="$emit('submit', m.data.key)"
               >
                 Authorize
               </q-btn>
@@ -84,7 +75,7 @@ function getStatusColor(status: any) {
                 color="negative" rounded size="xs" unelevated class="full-width"
                 :loading="deleteMemberState.loading"
                 :disabled="deleteMemberState.loading"
-                @click="handleDeleteMember(m.data.key)"
+                @click="$emit('deleteMember', m.data.key)"
               >
                 Delete
               </q-btn>

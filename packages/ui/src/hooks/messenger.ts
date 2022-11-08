@@ -97,6 +97,7 @@ export function useChannelCreate() {
     dialog: false,
     name: '',
     maxMessages: DEFAULT_MAX_MESSAGES,
+    loading: false,
   })
 
   async function submit() {
@@ -114,6 +115,7 @@ export function useChannelCreate() {
 
   function reset() {
     state.dialog = false
+    state.loading = false
     state.name = ''
     state.maxMessages = 15
   }
@@ -131,6 +133,7 @@ export function useChannelAuthorizeMember() {
 
   const state = reactive({
     loading: false,
+    dialog: false,
   })
 
   async function submit(key: any) {
@@ -177,9 +180,15 @@ export function useChannelAddMember() {
     return false
   }
 
+  function reset() {
+    state.loading = false
+    state.dialog = false
+  }
+
   return {
     state,
     submit,
+    reset,
   }
 }
 

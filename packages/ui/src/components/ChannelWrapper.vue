@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 const props = defineProps({
-  channel: { type: Object, default: {} },
-  messages: { type: Array, default: [] },
-  postMessageState: { type: Object, default: { message: '' } },
+  channel: { type: Object },
+  messages: { type: Array },
+  postMessageState: { type: Object },
   isSomeoneMessage: { type: Function, default: () => false },
   allowSend: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
@@ -11,7 +11,7 @@ const props = defineProps({
 
 const emit = defineEmits(['sendMessage'])
 
-const sendMessage = (message: any) => emit('sendMessage', props.message)
+const sendMessage = (message: any) => emit('sendMessage', message)
 </script>
 
 <template>
@@ -38,7 +38,7 @@ const sendMessage = (message: any) => emit('sendMessage', props.message)
 
     <channel-form
       :message="postMessageState.message"
-      :sending="sendingState"
+      :sending="loading"
       :disabled="!allowSend"
       @submit="sendMessage"
     />

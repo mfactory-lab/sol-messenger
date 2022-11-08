@@ -1,18 +1,17 @@
 <script lang="ts" setup>
-defineProps({
+import type { PropType } from 'vue'
+
+const props = defineProps({
   loading: { type: Boolean, default: false },
+  defaultState: Object as PropType<{ name: any; key: string }>,
 })
 
-defineEmits(['submit'])
-
-const state = reactive({
-  name: '',
-  key: '',
-})
+defineEmits(['submit', 'reset'])
+const state = ref(props.defaultState)
 </script>
 
 <template>
-  <q-dialog class="add-member-dialog">
+  <q-dialog class="add-member-dialog" @hide="$emit('reset')">
     <q-card>
       <q-card-section>
         <q-form class="add-member-form" @submit.prevent="$emit('submit', state)">

@@ -8,20 +8,12 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AddMemberDialog: typeof import('./../src/components/dialogs/AddMemberDialog.vue')['default']
-    AppChanelListItem: typeof import('@/components/MessengerChannel.vue')['default']
-    AppChatControl: typeof import('@/components/ChannelControl.vue')['default']
     AppFooter: typeof import('./../src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
-    AppMessengerPanel: typeof import('@/components/MessengerToolbar.vue')['default']
     AppServiceInfo: typeof import('./../src/components/AppServiceInfo.vue')['default']
-    AppToggle: typeof import('./../src/components/app-toggle.vue')['default']
     ChannelControl: typeof import('./../src/components/ChannelControl.vue')['default']
     ChannelForm: typeof import('./../src/components/ChannelForm.vue')['default']
-    ChannelList: typeof import('@/components/MessengerChannel.vue')['default']
     ChannelWrapper: typeof import('./../src/components/ChannelWrapper.vue')['default']
-    ChatControl: typeof import('@/components/ChannelControl.vue')['default']
-    ChatSendForm: typeof import('@/components/ChannelForm.vue')['default']
-    ChatWrapper: typeof import('./../src/components/ChatWrapper.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']
@@ -33,6 +25,5 @@ declare module '@vue/runtime-core' {
     NewChannelDialog: typeof import('./../src/components/dialogs/NewChannelDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Toggle: typeof import('@/components/app-toggle.vue')['default']
   }
 }

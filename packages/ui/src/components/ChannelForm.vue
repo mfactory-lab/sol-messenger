@@ -5,13 +5,18 @@ const props = defineProps({
   sending: { type: Boolean, default: false },
 })
 
-defineEmits(['submit'])
+const emit = defineEmits(['submit'])
 
 const message = ref(props.message)
+
+const sendMessage = () => {
+  emit('submit', message)
+  message.value = ''
+}
 </script>
 
 <template>
-  <q-form class="channel-form" @submit.prevent="$emit('submit', message)">
+  <q-form class="channel-form" @submit.prevent="sendMessage">
     <q-toolbar class="row message-control">
       <q-input
         ref="inputFocus"

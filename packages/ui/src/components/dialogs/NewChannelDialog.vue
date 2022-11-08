@@ -1,18 +1,18 @@
 <script setup lang="ts">
-defineProps({
+import type { PropType } from 'vue'
+
+const props = defineProps({
   loading: { type: Boolean, default: false },
+  defaultState: Object as PropType<{ name: any; maxMessages: number }>,
 })
 
-defineEmits(['submit'])
+defineEmits(['submit', 'reset'])
 
-const state = reactive({
-  name: '',
-  maxMessages: 15,
-})
+const state = ref(props.defaultState)
 </script>
 
 <template>
-  <q-dialog class="new-channel-dialog">
+  <q-dialog class="new-channel-dialog" @hide="$emit('reset')">
     <q-card>
       <q-card-section>
         <q-form class="messenger-new-channel-form" @submit.prevent="$emit('submit', state)">

@@ -9,10 +9,20 @@ const { state } = useMessengerStore()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
-const searchText = ref('')
+const searchText = ref<String>('')
 const channel = computed(() => state.channel)
-const memberCount = computed(() => `${channel.value?.memberCount}\xA0members`)
-const messageCount = computed(() => `${channel.value?.messageCount}\xA0messages`)
+const memberCount = computed(() => {
+  if (channel.value?.memberCount === null || channel.value?.memberCount === undefined) {
+    return ''
+  }
+  return `${channel.value?.memberCount}\xA0members`
+})
+const messageCount = computed(() => {
+  if (channel.value?.messageCount === null || channel.value?.messageCount === undefined) {
+    return ''
+  }
+  return `${channel.value?.messageCount}\xA0messages`
+})
 
 const onSearch = (value: string) => emit('change', value)
 const showMembers = () => emit('showMembers')
@@ -62,7 +72,7 @@ const onAddMember = () => emit('addMember')
               <q-item v-close-popup clickable :disable="!channel" @click="onAddMember">
                 <q-item-section>Add member</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!channel" @click="onDeleteChannel">
+              <q-item v-close-popup clickable :disable="!channel" @click="$emit('deleteChannel')">
                 <q-item-section>Delete</q-item-section>
               </q-item>
             </q-list>
@@ -139,6 +149,7 @@ $accent-color: #FFD140;
       white-space: nowrap;
       text-overflow: ellipsis;
       flex: 1;
+      text-align: right;
     }
 
     .chat-menu {
