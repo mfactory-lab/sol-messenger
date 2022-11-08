@@ -62,7 +62,7 @@ export function useChannel() {
 }
 
 export function useChannelDelete() {
-  const { state: messengerState, deleteChannel } = useMessengerStore()
+  const messenger = useMessengerStore()
   const { info, ok, error } = useHelper()
 
   const state = reactive({
@@ -70,13 +70,15 @@ export function useChannelDelete() {
   })
 
   async function submit() {
-    if (!messengerState.channelAddr) {
+    if (!messenger.state.channelAddr) {
       info('Please select a channel')
       return
     }
     try {
       state.loading = true
-      await deleteChannel(messengerState.channelAddr)
+      await messenger.deleteChannel(
+        messenger.state.channelAddr,
+      )
       ok('Channel was deleted!')
     } catch (e) {
       console.log('Error', e)

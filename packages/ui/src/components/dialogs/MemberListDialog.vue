@@ -13,6 +13,7 @@ const emit = defineEmits(['submit', 'deleteMember'])
 
 const { state } = useMessengerStore()
 const userStore = useUserStore()
+
 // @todo use props or state params ??
 const isAuthorizedMember = computed(() => state.channelMembership?.status.__kind === 'Authorized')
 const isChannelCreator = computed(() => isAuthorizedMember.value)

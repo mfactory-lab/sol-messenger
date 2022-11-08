@@ -38,6 +38,7 @@ const {
   canJoinChannel,
   pendingMemberCount,
 } = useChannel()
+
 const newChannelState = useChannelCreate()
 const deleteChannelState = useChannelDelete()
 const joinChannelState = useChannelJoin()
@@ -48,8 +49,6 @@ const deleteMemberState = useChannelDeleteMember()
 const postMessageState = reactive({
   message: '',
 })
-
-const currentChanel = computed(() => state.channel)
 
 async function sendMessage() {
   // if (checkWalletConnected()) {
@@ -102,7 +101,7 @@ const showMembersDialog = () => {
 <template>
   <div class="messenger-wrapper">
     <messenger-toolbar
-      @change="onSearch"
+      @search="onSearch"
       @show-members="showMembersDialog"
       @delete-channel="deleteMemberState.submit(state.channelAddr)"
       @add-member="channelAddMember.state.dialog = true"
