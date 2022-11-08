@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import solanaLogo from '@/assets/img/solana-logo.svg'
-</script>
-
 <template>
   <div class="row info-row">
     <div class="col-6 flex-center info-col">
@@ -20,7 +16,7 @@ import solanaLogo from '@/assets/img/solana-logo.svg'
     </div>
     <div class="col-6 logo-wrap">
       <router-link to="/">
-        <img :src="solanaLogo" alt="solana logo">
+        <img src="@/assets/img/solana-logo.svg" alt="solana logo">
       </router-link>
     </div>
   </div>
@@ -53,6 +49,7 @@ import solanaLogo from '@/assets/img/solana-logo.svg'
       text-transform: uppercase;
       margin-bottom: 16px;
     }
+
     ul {
       list-style-type: none;
       margin: 0;
