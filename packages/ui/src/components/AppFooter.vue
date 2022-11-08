@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useDarkTheme } from '@/hooks/theme'
-
 const { toggle, isActive } = useDarkTheme()
 </script>
 
@@ -9,16 +8,11 @@ const { toggle, isActive } = useDarkTheme()
     <div class="container">
       <div class="row">
         <div class="col-12 col-md-6">
-          <div
-            class="footer-links"
-          >
+          <div class="footer-links">
             <ul>
-              <li><a href="#">JPOOL</a></li>
-              <li><a href="#">GAME</a></li>
-              <li><a href="#">HATCHING</a></li>
-              <li><a href="#">FREE MINT</a></li>
-              <li><a href="#">NFT AUCTION</a></li>
-              <li><a href="#">NFT Marketplace</a></li>
+              <li><a target="_blank" href="https://jpool.one">JPOOL</a></li>
+              <li><a target="_blank" href="https://heartandsol.one">GAME</a></li>
+              <li><a href="https://magiceden.io/marketplace/heartandsol">NFT Marketplace</a></li>
             </ul>
           </div>
 
