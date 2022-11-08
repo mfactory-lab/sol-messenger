@@ -18,7 +18,7 @@ const { toggle, isActive } = useDarkTheme()
               <li><a href="#">HATCHING</a></li>
               <li><a href="#">FREE MINT</a></li>
               <li><a href="#">NFT AUCTION</a></li>
-              <li><a href="#">NFT MArketplace</a></li>
+              <li><a href="#">NFT Marketplace</a></li>
             </ul>
           </div>
 

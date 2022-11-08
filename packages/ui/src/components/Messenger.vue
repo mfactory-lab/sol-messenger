@@ -1,79 +1,29 @@
 <script lang="ts" setup>
-import type { ChannelMembership } from '@app/sdk'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import {
-  useChannel,
-  useChannelAddMember,
-  useChannelAuthorizeMember,
-  useChannelCreate, useChannelDelete,
-  useChannelDeleteMember,
-  useChannelJoin,
-} from '@/hooks/messenger'
-import { shortenAddress } from '@/utils'
-import MessengerChannel from '@/components/MessengerChannel.vue'
+
 const { notify } = useQuasar()
 const wallet = useWallet()
 
-const {
-  state,
-  postMessage,
-  addMember, deleteMember, authorizeMember,
-  loadChannel, deleteChannel, joinChannel,
-} = useMessengerStore()
-
-const membersDialog = ref(false)
-const showDebug = ref(false)
-const toggleDebug = useToggle(showDebug)
-
-const {
-  isWalletConnected,
-  isAuthorizedMember,
-  isPendingMember,
-  isChannelCreator,
-  messages,
-  allowSend,
-  canAddMember,
-  canDeleteMember,
-  canJoinChannel,
-  pendingMemberCount,
-} = useChannel()
-const newChannelState = useChannelCreate()
-const deleteChannelState = useChannelDelete()
-const joinChannelState = useChannelJoin()
-const channelAddMember = useChannelAddMember()
-const authorizeMemberState = useChannelAuthorizeMember()
-const deleteMemberState = useChannelDeleteMember()
+const { state, postMessage, loadChannel } = useMessengerStore()
+const { isWalletConnected, isAuthorizedMember, isPendingMember, messages, allowSend, canJoinChannel } = useChannel()
+const newChannel = useChannelCreate()
+const joinChannel = useChannelJoin()
+const addMember = useChannelAddMember()
+const authorizeMember = useChannelAuthorizeMember()
+const deleteMember = useChannelDeleteMember()
 
 const postMessageState = reactive({
   message: '',
 })
 
-const currentChanel = computed(() => state.channel)
-
 async function sendMessage() {
-  // if (checkWalletConnected()) {
   await postMessage(postMessageState.message)
   postMessageState.message = ''
-  // }
 }
 
 async function selectChannel(addr: any) {
   await loadChannel(addr)
-}
-
-function getStatusColor(status: any) {
-  if (status?.__kind === 'Authorized') {
-    return 'positive'
-  }
-  return 'grey'
-}
-
-function formatMemberName(member: ChannelMembership) {
-  if (member?.name && member.name !== '') {
-    return member.name
-  }
-  return shortenAddress(member.authority)
 }
 
 function isSomeoneMessage(sender: any) {
@@ -95,17 +45,17 @@ const filteredChannels = computed(() => {
 })
 
 const showMembersDialog = () => {
-  authorizeMemberState.state.dialog = true
+  authorizeMember.state.dialog = true
 }
 </script>
 
 <template>
   <div class="messenger-wrapper">
     <messenger-toolbar
-      @change="onSearch"
+      @search="onSearch"
       @show-members="showMembersDialog"
-      @delete-channel="deleteMemberState.submit(state.channelAddr)"
-      @add-member="channelAddMember.state.dialog = true"
+      @delete-channel="deleteMember.submit(state.channelAddr)"
+      @add-member="addMember.state.dialog = true"
     />
     <div class="messenger-main">
       <q-card class="messenger-channels">
@@ -128,8 +78,8 @@ const showMembersDialog = () => {
           :is-authorized-member="isAuthorizedMember"
           :is-pending-member="isPendingMember"
           :is-wallet-connected="isWalletConnected"
-          @create-channel="newChannelState.state.dialog = true"
-          @join-channel="joinChannelState.state.dialog = true"
+          @create-channel="newChannel.state.dialog = true"
+          @join-channel="joinChannel.state.dialog = true"
         />
       </q-card>
       <channel-wrapper
@@ -146,37 +96,37 @@ const showMembersDialog = () => {
   </div>
 
   <new-channel-dialog
-    v-model="newChannelState.state.dialog"
-    :loading="newChannelState.state.loading"
-    :default-state="newChannelState.state"
-    @submit="newChannelState.submit"
-    @reset="newChannelState.reset"
+    v-model="newChannel.state.dialog"
+    :loading="newChannel.state.loading"
+    :default-state="newChannel.state"
+    @submit="newChannel.submit"
+    @reset="newChannel.reset"
   />
 
   <add-member-dialog
-    v-model="channelAddMember.state.dialog"
-    :loading="channelAddMember.state.loading"
-    :default-state="channelAddMember.state"
-    @submit="channelAddMember.submit"
-    @reset="channelAddMember.reset"
+    v-model="addMember.state.dialog"
+    :loading="addMember.state.loading"
+    :default-state="addMember.state"
+    @submit="addMember.submit"
+    @reset="addMember.reset"
   />
 
   <join-channel-dialog
-    v-model="joinChannelState.state.dialog"
-    :loading="joinChannelState.state.loading"
-    :default-state="joinChannelState.state"
-    @submit="joinChannelState.submit"
-    @reset="joinChannelState.reset"
+    v-model="joinChannel.state.dialog"
+    :loading="joinChannel.state.loading"
+    :default-state="joinChannel.state"
+    @submit="joinChannel.submit"
+    @reset="joinChannel.reset"
   />
 
   <member-list-dialog
-    v-model="authorizeMemberState.state.dialog"
+    v-model="authorizeMember.state.dialog"
     :is-authorized-member="isAuthorizedMember"
     :wallet="wallet"
-    :authorize-member-state="authorizeMemberState.state"
-    :delete-member-state="deleteMemberState.state"
-    @submit="authorizeMemberState.submit"
-    @delete-member="deleteMemberState.submit"
+    :authorize-member-state="authorizeMember.state"
+    :delete-member-state="deleteMember.state"
+    @submit="authorizeMember.submit"
+    @delete-member="deleteMember.submit"
   />
 </template>
 

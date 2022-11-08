@@ -2,7 +2,7 @@
 import { matMoreHoriz } from '@quasar/extras/material-icons'
 import { useWallet } from 'solana-wallets-vue'
 
-const emit = defineEmits(['change', 'showMembers', 'deleteChannel', 'addMember'])
+const emit = defineEmits(['search', 'showMembers', 'deleteChannel', 'addMember'])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
@@ -24,7 +24,7 @@ const messageCount = computed(() => {
   return `${channel.value?.messageCount}\xA0messages`
 })
 
-const onSearch = (value: string) => emit('change', value)
+const onSearch = (value: string) => emit('search', value)
 const showMembers = () => emit('showMembers')
 const onDeleteChannel = () => emit('deleteChannel')
 const onAddMember = () => emit('addMember')
