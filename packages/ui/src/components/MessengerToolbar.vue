@@ -67,6 +67,9 @@ const onAddMember = () => emit('addMember')
           <q-icon :name="matMoreHoriz" />
           <q-menu anchor="bottom left" self="top left">
             <q-list style="min-width: 150px" bordered>
+              <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
+                <q-item-section>Device key</q-item-section>
+              </q-item>
               <q-item v-close-popup clickable :disable="!channel" @click="showMembers">
                 <q-item-section>Members</q-item-section>
               </q-item>

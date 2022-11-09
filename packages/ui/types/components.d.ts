@@ -25,5 +25,6 @@ declare module '@vue/runtime-core' {
     NewChannelDialog: typeof import('./../src/components/dialogs/NewChannelDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UserInfoDialog: typeof import('./../src/components/dialogs/UserInfoDialog.vue')['default']
   }
 }

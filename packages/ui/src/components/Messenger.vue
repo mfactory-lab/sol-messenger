@@ -47,6 +47,8 @@ const filteredChannels = computed(() => {
 const showMembersDialog = () => {
   authorizeMember.state.dialog = true
 }
+
+const showDeviceKeyDialog = ref<Boolean>(false)
 </script>
 
 <template>
@@ -56,6 +58,7 @@ const showMembersDialog = () => {
       @show-members="showMembersDialog"
       @delete-channel="deleteMember.submit(state.channelAddr)"
       @add-member="addMember.state.dialog = true"
+      @show-device-key="showDeviceKeyDialog = true"
     />
     <div class="messenger-main">
       <q-card class="messenger-channels">
@@ -128,6 +131,10 @@ const showMembersDialog = () => {
     @submit="authorizeMember.submit"
     @delete-member="deleteMember.submit"
   />
+
+  <user-info-dialog
+    v-model="showDeviceKeyDialog"
+  ></user-info-dialog>
 </template>
 
 <style lang="scss" scoped>
