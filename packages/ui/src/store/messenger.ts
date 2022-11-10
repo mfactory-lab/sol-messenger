@@ -57,6 +57,8 @@ export const useMessengerStore = defineStore('messenger', () => {
       ), userStore.keypair as Keypair)
   })
 
+  let listeners: number[] = []
+
   watch(() => connectionStore.cluster, (c) => {
     console.log(c)
     init().then()
@@ -67,8 +69,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       loadChannel(state.channelAddr).then()
     }
   }, { immediate: true })
-
-  let listeners: number[] = []
 
   async function initEvents() {
     console.log('Register events...')
