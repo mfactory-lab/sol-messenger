@@ -17,8 +17,8 @@ const postMessageState = reactive({
   message: '',
 })
 
-async function sendMessage() {
-  await postMessage(postMessageState.message)
+async function sendMessage(message: any) {
+  await postMessage(message.value)
   postMessageState.message = ''
 }
 
