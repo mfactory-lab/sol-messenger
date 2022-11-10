@@ -6,7 +6,7 @@ const { notify } = useQuasar()
 const wallet = useWallet()
 
 const { state, postMessage, loadChannel } = useMessengerStore()
-const { isWalletConnected, isAuthorizedMember, isPendingMember, messages, allowSend, canJoinChannel } = useChannel()
+const { isWalletConnected, isAuthorizedMember, isPendingMember, messages, allowSend, canJoinChannel, isChannelCreator } = useChannel()
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
 const addMember = useChannelAddMember()
@@ -49,6 +49,8 @@ const showMembersDialog = () => {
 }
 
 const showDeviceKeyDialog = ref<Boolean>(false)
+const showDebug = ref(false)
+const toggleDebug = useToggle(showDebug)
 </script>
 
 <template>
@@ -134,7 +136,33 @@ const showDeviceKeyDialog = ref<Boolean>(false)
 
   <user-info-dialog
     v-model="showDeviceKeyDialog"
-  ></user-info-dialog>
+  />
+
+  <div v-if="state.channel" class="q-my-md q-px-lg">
+    <q-btn flat class="text-blue-2" @click="toggleDebug()">
+      debug info
+    </q-btn>
+    <template v-if="showDebug">
+      <div
+        v-for="row in [
+          ['Authorized', isAuthorizedMember],
+          ['Pending Access', isPendingMember],
+          ['Channel Creator', isChannelCreator],
+          ['Channel', state.channel],
+          ['Membership', state.channelMembership],
+          ['Members', state.channelMembers],
+        ]"
+        :key="row[0]" class="row q-mt-md"
+      >
+        <div class="col col-4">
+          {{ row[0] }}
+        </div>
+        <div class="col">
+          <pre class="no-margin">{{ row[1] }}</pre>
+        </div>
+      </div>
+    </template>
+  </div>
 </template>
 
 <style lang="scss" scoped>

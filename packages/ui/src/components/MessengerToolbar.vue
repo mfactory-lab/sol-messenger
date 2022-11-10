@@ -2,10 +2,11 @@
 import { matMoreHoriz } from '@quasar/extras/material-icons'
 import { useWallet } from 'solana-wallets-vue'
 
-const emit = defineEmits(['search', 'showMembers', 'deleteChannel', 'addMember'])
+const emit = defineEmits(['search', 'showMembers', 'deleteChannel', 'addMember', 'showDeviceKey'])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
+const { canAddMember, isChannelCreator } = useChannel()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
@@ -73,10 +74,10 @@ const onAddMember = () => emit('addMember')
               <q-item v-close-popup clickable :disable="!channel" @click="showMembers">
                 <q-item-section>Members</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!channel" @click="onAddMember">
+              <q-item v-close-popup clickable :disable="!canAddMember" @click="onAddMember">
                 <q-item-section>Add member</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!channel" @click="$emit('deleteChannel')">
+              <q-item v-close-popup clickable :disable="!isChannelCreator" @click="$emit('deleteChannel')">
                 <q-item-section>Delete</q-item-section>
               </q-item>
             </q-list>
@@ -183,6 +184,11 @@ $accent-color: #FFD140;
     .panel-info {
       border: none;
       border-top: 1px solid #fff;
+      padding: 5px 10px;
+      .chat-info,
+      .chat-name {
+        font-size: 11px;
+      }
     }
 
     .search-input {
