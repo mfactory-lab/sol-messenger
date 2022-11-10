@@ -32,7 +32,7 @@ const state = ref(props.defaultState)
             Join Channel
           </q-btn>
         </q-form>
-        <q-inner-loading :showing="joinChannelState.loading" />
+        <q-inner-loading :showing="loading" />
       </q-card-section>
     </q-card>
   </q-dialog>

@@ -34,16 +34,16 @@ function handleGenerateKey() {
 
         <q-space />
 
-        <div v-if="user.keypair" class="user-device">
-          <div>
-            <b>Device Key</b>
-            &nbsp;
-            <q-btn size="xs" rounded unelevated @click="handleGenerateKey">
-              regenerate
-            </q-btn>
-          </div>
-          <q-badge>{{ user.keypair?.publicKey }}</q-badge>
-        </div>
+        <!--        <div v-if="user.keypair" class="user-device"> -->
+        <!--          <div> -->
+        <!--            <b>Device Key</b> -->
+        <!--            &nbsp; -->
+        <!--            <q-btn size="xs" rounded unelevated @click="handleGenerateKey"> -->
+        <!--              regenerate -->
+        <!--            </q-btn> -->
+        <!--          </div> -->
+        <!--          <q-badge>{{ user.keypair?.publicKey }}</q-badge> -->
+        <!--        </div> -->
 
         <div class="app-header__right">
           <div class="app-header__buttons">

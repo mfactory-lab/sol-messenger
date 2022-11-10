@@ -173,7 +173,6 @@ function ok() {
       </q-card-section>
       <q-separator />
       <q-card-section>
-        <copy-to-clipboard :text="walletAddress" />
         {{ walletAddress }}
       </q-card-section>
       <q-separator />
