@@ -2,12 +2,7 @@ use std::collections::VecDeque;
 
 use anchor_lang::{prelude::*, solana_program::program_pack::IsInitialized};
 
-use crate::ErrorCode;
-
-pub const MAX_CHANNEL_NAME_LENGTH: usize = 32;
-pub const MAX_MEMBER_NAME_LENGTH: usize = 32;
-pub const MAX_MESSAGE_LENGTH: usize = 400; // ~ 255 raw bytes
-pub const MAX_CEK_LENGTH: usize = 100; // ~ 32 raw bytes
+use crate::{constants::*, ErrorCode};
 
 #[account]
 pub struct Channel {
@@ -72,6 +67,10 @@ impl Channel {
         }
         Ok(())
     }
+
+    pub fn authorize(&self, key: &Pubkey) -> bool {
+        self.creator == *key || ADMIN_AUTHORITY.contains(&key.to_string().as_str())
+    }
 }
 
 impl IsInitialized for Channel {
@@ -87,7 +86,7 @@ pub struct ChannelMembership {
     pub channel: Pubkey,
     /// Authority of membership
     pub authority: Pubkey,
-    /// The public key used to encrypt the `CEK`
+    /// The device key used to encrypt the `CEK`
     pub key: Pubkey,
     /// The content encryption key (CEK) of the channel
     pub cek: CEKData,

@@ -11,11 +11,13 @@ pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Resu
         ChannelMembershipStatus::Pending { authority } => {
             if let Some(authority) = authority {
                 if authority.key() != auth.key() {
+                    msg!("Error: Should be authorized by {}", authority.key());
                     return Err(ErrorCode::Unauthorized.into());
                 }
             }
         }
         _ => {
+            msg!("Error: Member already authorized");
             return Err(ErrorCode::Unauthorized.into());
         }
     }

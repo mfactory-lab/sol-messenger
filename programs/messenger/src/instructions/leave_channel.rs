@@ -1,21 +1,21 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    events::DeleteMemberEvent,
+    events::LeaveChannelEvent,
     state::{Channel, ChannelMembership},
 };
 
-pub fn handler(ctx: Context<DeleteMember>) -> Result<()> {
+pub fn handler(ctx: Context<LeaveChannel>) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
-    let membership = &ctx.accounts.membership;
+    let authority = &ctx.accounts.authority;
 
     channel.member_count = channel.member_count.saturating_sub(1);
 
     let timestamp = Clock::get()?.unix_timestamp;
 
-    emit!(DeleteMemberEvent {
+    emit!(LeaveChannelEvent {
         channel: channel.key(),
-        membership: membership.key(),
+        authority: authority.key(),
         timestamp,
     });
 
@@ -23,12 +23,12 @@ pub fn handler(ctx: Context<DeleteMember>) -> Result<()> {
 }
 
 #[derive(Accounts)]
-pub struct DeleteMember<'info> {
-    #[account(mut, constraint = channel.authorize(authority.key))]
+pub struct LeaveChannel<'info> {
+    #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
 
-    #[account(mut, has_one = channel, close = authority)]
-    pub membership: Account<'info, ChannelMembership>,
+    #[account(mut, has_one = channel, has_one = authority, close = authority)]
+    pub membership: Box<Account<'info, ChannelMembership>>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

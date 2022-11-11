@@ -1,7 +1,7 @@
 import { BorshCoder, EventManager } from '@project-serum/anchor'
 import type { AnchorProvider } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
-import type { Commitment } from '@solana/web3.js'
+import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
 import type { CEKData } from './generated'
 
@@ -16,7 +16,11 @@ import {
   createDeleteChannelInstruction,
   createDeleteMemberInstruction,
   createInitChannelInstruction,
-  createJoinChannelInstruction, createPostMessageInstruction, errorFromCode, errorFromName,
+  createJoinChannelInstruction,
+  createLeaveChannelInstruction,
+  createPostMessageInstruction,
+  errorFromCode,
+  errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -121,11 +125,13 @@ export class MessengerClient {
    * Load list of {@link ChannelMembership} for the {@link key}
    */
   async loadMemberships(key?: PublicKey) {
-    const accounts = await ChannelMembership.gpaBuilder()
+    const request = ChannelMembership.gpaBuilder()
       .addFilter('accountDiscriminator', channelMembershipDiscriminator)
       .addFilter('authority', this.provider.publicKey)
-      .addFilter('key', key)
-      .run(this.provider.connection)
+    if (key) {
+      request.addFilter('key', key ?? null)
+    }
+    const accounts = await request.run(this.provider.connection)
 
     return accounts.map((acc) => {
       return {
@@ -146,7 +152,7 @@ export class MessengerClient {
    * Get channel membership PDA
    */
   async getMembershipPDA(channel: PublicKey, addr?: PublicKey) {
-    addr = addr ?? this.keypair.publicKey
+    addr = addr ?? this.keypair!.publicKey
     return await PublicKey.findProgramAddress([channel.toBuffer(), addr.toBuffer()], this.programId)
   }
 
@@ -154,14 +160,14 @@ export class MessengerClient {
    * Encrypt {@link cek} with {@link key or @link keypair.publicKey}
    */
   async encryptCEK(cek: Uint8Array, key?: PublicKey) {
-    return encryptCEK(cek, key ?? this.keypair.publicKey)
+    return encryptCEK(cek, key ?? this.keypair!.publicKey)
   }
 
   /**
    * Decrypt {@link cek} with {@link secretKey} or {@link keypair.secretKey}
    */
   async decryptCEK(cek: CEKData, secretKey?: Uint8Array) {
-    return decryptCEK(cek, secretKey ?? this.keypair.secretKey)
+    return decryptCEK(cek, secretKey ?? this.keypair!.secretKey)
   }
 
   /**
@@ -187,15 +193,16 @@ export class MessengerClient {
     const cekEncrypted = await this.encryptCEK(cek)
 
     const [membership] = await this.getMembershipPDA(channel.publicKey)
+    const authority = this.provider.publicKey
 
     const tx = new Transaction()
 
     tx.add(
       createInitChannelInstruction({
+        key: this.keypair!.publicKey,
         channel: channel.publicKey,
         membership,
-        authority: this.provider.publicKey,
-        key: this.keypair.publicKey,
+        authority,
       }, {
         data: {
           name: props.name,
@@ -209,8 +216,8 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair])
-    } catch (e) {
+      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair as Signer], props.opts)
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -220,24 +227,22 @@ export class MessengerClient {
   /**
    * Delete channel
    */
-  async deleteChannel(channel: PublicKey, authorityMembership?: PublicKey) {
-    const [membership] = await this.getMembershipPDA(channel)
-
+  async deleteChannel({ channel, opts }: DeleteChannelProps) {
     const tx = new Transaction()
+    const authority = this.provider.publicKey
 
     tx.add(
       createDeleteChannelInstruction({
         channel,
-        authority: this.provider.publicKey,
-        authorityMembership: authorityMembership ?? membership,
+        authority,
       }),
     )
 
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
 
@@ -249,19 +254,19 @@ export class MessengerClient {
    */
   async joinChannel(props: JoinChannelProps) {
     const [membership] = await this.getMembershipPDA(props.channel)
-
+    const authority = this.provider.publicKey
     const tx = new Transaction()
 
     tx.add(
       createJoinChannelInstruction({
         channel: props.channel,
-        authority: this.provider.publicKey,
-        key: this.keypair.publicKey,
+        key: this.keypair!.publicKey,
         membership,
+        authority,
       }, {
         data: {
           name: props.name,
-          authority: props.authority,
+          authority: props.authority ?? null,
         },
       }),
     )
@@ -269,8 +274,35 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [this.keypair])
-    } catch (e) {
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer], props.opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Leave the channel
+   */
+  async leaveChannel(props: LeaveChannelProps) {
+    const [membership] = await this.getMembershipPDA(props.channel)
+    const authority = this.provider.publicKey
+    const tx = new Transaction()
+
+    tx.add(
+      createLeaveChannelInstruction({
+        channel: props.channel,
+        membership,
+        authority,
+      }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer])
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -317,7 +349,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
 
@@ -328,17 +360,15 @@ export class MessengerClient {
    * Delete channel member
    */
   async deleteMember(props: DeleteMemberProps) {
-    const [authorityMembership] = await this.getMembershipPDA(props.channel)
-    const [membership] = await this.getMembershipPDA(props.channel, props.key)
-
+    const [membership] = props.membership ? [props.membership] : await this.getMembershipPDA(props.channel, props.key)
+    const authority = this.provider.publicKey
     const tx = new Transaction()
 
     tx.add(
       createDeleteMemberInstruction({
         channel: props.channel,
-        authority: this.provider.publicKey,
-        authorityMembership,
         membership,
+        authority,
       }),
     )
 
@@ -346,7 +376,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -384,7 +414,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
 
@@ -422,7 +452,7 @@ export class MessengerClient {
 
     try {
       signature = await this.provider.sendAndConfirm(tx)
-    } catch (e) {
+    } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
 
@@ -430,17 +460,29 @@ export class MessengerClient {
   }
 }
 
+interface DeleteChannelProps {
+  channel: PublicKey
+  opts?: ConfirmOptions
+}
+
 interface InitChannelProps {
   name: string
   memberName?: string
   maxMessages: number
   channel?: Keypair
+  opts?: ConfirmOptions
 }
 
 interface JoinChannelProps {
   channel: PublicKey
   name: string
   authority?: PublicKey
+  opts?: ConfirmOptions
+}
+
+interface LeaveChannelProps {
+  channel: PublicKey
+  opts?: ConfirmOptions
 }
 
 interface AddMemberProps {
@@ -448,6 +490,7 @@ interface AddMemberProps {
   invitee: PublicKey
   key?: PublicKey
   name?: string
+  opts?: ConfirmOptions
 }
 
 interface AuthorizeMemberProps {
@@ -457,10 +500,13 @@ interface AuthorizeMemberProps {
 
 interface DeleteMemberProps {
   channel: PublicKey
+  membership?: PublicKey
   key?: PublicKey
+  opts?: ConfirmOptions
 }
 
 interface PostMessageProps {
   channel: PublicKey
   message: string
+  opts?: ConfirmOptions
 }

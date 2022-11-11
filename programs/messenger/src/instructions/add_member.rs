@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::AddMemberEvent, state::*, ErrorCode};
+use crate::{constants::MAX_CHANNEL_NAME_LENGTH, events::AddMemberEvent, state::*, ErrorCode};
 
 pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     data.validate()?;
@@ -38,8 +38,11 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct AddMemberData {
+    /// Member name
     pub name: String,
+    /// Content Encryption Key
     pub cek: CEKData,
+    /// Device key
     pub key: Option<Pubkey>,
 }
 

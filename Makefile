@@ -7,7 +7,8 @@ cwd = $(shell pwd)
 #cluster = https://mainnet.rpcpool.com
 #cluster = mainnet
 #cluster = devnet
-cluster = https://devnet.genesysgo.net
+#cluster = https://devnet.genesysgo.net
+cluster = "https://devnet.rpcpool.com"
 
 program = messenger
 program_id = $(shell sed -n 's/^ *${program}.*=.*"\([^"]*\)".*/\1/p' Anchor.toml | head -1)

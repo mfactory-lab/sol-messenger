@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 use instructions::*;
 
+mod constants;
 mod events;
 mod instructions;
 mod state;
@@ -22,6 +23,10 @@ pub mod messenger {
 
     pub fn join_channel(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
         join_channel::handler(ctx, data)
+    }
+
+    pub fn leave_channel(ctx: Context<LeaveChannel>) -> Result<()> {
+        leave_channel::handler(ctx)
     }
 
     pub fn add_member(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {

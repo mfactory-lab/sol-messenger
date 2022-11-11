@@ -8,7 +8,8 @@
     "ui:build:staging": "pnpm --filter=ui run build:staging",
     "ui:preview": "pnpm --filter=ui run preview",
     "sdk:gen": "pnpm --filter=sdk run generate && pnpm lint:fix",
-    "lint:fix": "eslint --cache --fix --ext .js,.vue,.ts ./packages/**"
+    "lint:fix": "eslint --cache --fix --ext .js,.vue,.ts ./packages/**",
+    "cli": "ts-node ./packages/cli/src/index.ts"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.25.0"
