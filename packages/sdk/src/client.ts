@@ -1,7 +1,7 @@
 import { BorshCoder, EventManager } from '@project-serum/anchor'
 import type { AnchorProvider } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
-import type { Commitment, Signer } from '@solana/web3.js'
+import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
 import type { CEKData } from './generated'
 
@@ -125,11 +125,13 @@ export class MessengerClient {
    * Load list of {@link ChannelMembership} for the {@link key}
    */
   async loadMemberships(key?: PublicKey) {
-    const accounts = await ChannelMembership.gpaBuilder()
+    const request = ChannelMembership.gpaBuilder()
       .addFilter('accountDiscriminator', channelMembershipDiscriminator)
       .addFilter('authority', this.provider.publicKey)
-      .addFilter('key', key ?? null)
-      .run(this.provider.connection)
+    if (key) {
+      request.addFilter('key', key ?? null)
+    }
+    const accounts = await request.run(this.provider.connection)
 
     return accounts.map((acc) => {
       return {
@@ -214,7 +216,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair as Signer])
+      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair as Signer], props.opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
@@ -225,7 +227,7 @@ export class MessengerClient {
   /**
    * Delete channel
    */
-  async deleteChannel(channel: PublicKey) {
+  async deleteChannel({ channel, opts }: DeleteChannelProps) {
     const tx = new Transaction()
     const authority = this.provider.publicKey
 
@@ -239,7 +241,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx)
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
@@ -272,7 +274,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer])
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer], props.opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
@@ -458,21 +460,29 @@ export class MessengerClient {
   }
 }
 
+interface DeleteChannelProps {
+  channel: PublicKey
+  opts?: ConfirmOptions
+}
+
 interface InitChannelProps {
   name: string
   memberName?: string
   maxMessages: number
   channel?: Keypair
+  opts?: ConfirmOptions
 }
 
 interface JoinChannelProps {
   channel: PublicKey
   name: string
   authority?: PublicKey
+  opts?: ConfirmOptions
 }
 
 interface LeaveChannelProps {
   channel: PublicKey
+  opts?: ConfirmOptions
 }
 
 interface AddMemberProps {
@@ -480,6 +490,7 @@ interface AddMemberProps {
   invitee: PublicKey
   key?: PublicKey
   name?: string
+  opts?: ConfirmOptions
 }
 
 interface AuthorizeMemberProps {
@@ -491,9 +502,11 @@ interface DeleteMemberProps {
   channel: PublicKey
   membership?: PublicKey
   key?: PublicKey
+  opts?: ConfirmOptions
 }
 
 interface PostMessageProps {
   channel: PublicKey
   message: string
+  opts?: ConfirmOptions
 }
