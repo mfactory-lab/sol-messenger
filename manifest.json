@@ -40,18 +40,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.57826ecb.js",
+    "file": "assets/index.e663b8ff.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.5cac5ab3.js"
+      "_vendor.c11a8fd8.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.27c96537.css"
+      "assets/index.40abf70f.css"
     ],
     "assets": [
       "assets/ledger.40cf6861.svg",
@@ -66,24 +66,24 @@
       "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff"
     ]
   },
-  "_vendor.5cac5ab3.js": {
-    "file": "assets/vendor.5cac5ab3.js"
+  "_vendor.c11a8fd8.js": {
+    "file": "assets/vendor.c11a8fd8.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.b31c13a1.js",
+    "file": "assets/empty.a96558f4.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.5cac5ab3.js"
+      "_vendor.c11a8fd8.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.6dc74c95.js",
+    "file": "assets/_...all_.c45dabea.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.5cac5ab3.js",
+      "_vendor.c11a8fd8.js",
       "index.html"
     ],
     "css": [
@@ -95,7 +95,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.27c96537.css",
+    "file": "assets/index.40abf70f.css",
     "src": "index.css"
   }
 }
