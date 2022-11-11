@@ -12,7 +12,6 @@
 </template>
 
 <style lang="scss" scoped>
-
 .messenger-container {
   margin-top: 2rem
 }

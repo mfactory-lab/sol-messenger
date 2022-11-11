@@ -1,6 +1,6 @@
 <template>
   <div class="row info-row">
-    <div class="offset-0 offset-md-3"></div>
+    <div class="offset-0 offset-md-3" />
     <div class="col-6 col-md-3 flex-center info-col">
       <div class="info-title">
         How IT WORKS
@@ -20,7 +20,7 @@
         <img src="@/assets/img/solana-logo.svg" alt="solana logo">
       </router-link>
     </div>
-    <div class="offset-0 offset-md-1"></div>
+    <div class="offset-0 offset-md-1" />
   </div>
 </template>
 

@@ -41,7 +41,7 @@ const getBadgeColor = (text: string) => {
         {{ channel.data.name }}
       </div>
 
-      <div class="message-count" v-if="!!channel.data.messageCount">
+      <div v-if="!!channel.data.messageCount" class="message-count">
         {{ channel.data.messageCount }}
       </div>
     </q-item-section>
