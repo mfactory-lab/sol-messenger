@@ -1,7 +1,11 @@
 {
+  "cSpell.words": ["Vite", "vitest", "vueuse", "pinia", "demi", "vitejs", "pnpm"],
   "prettier.enable": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
+  },
+  "files.associations": {
+    "*.css": "postcss"
   },
   "editor.formatOnSave": false
 }
