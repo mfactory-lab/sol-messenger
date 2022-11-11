@@ -205,7 +205,6 @@ async function handleDeleteChannel() {
     info('Please select a channel')
     return
   }
-  await deleteChannel(state.channelAddr)
   try {
     await deleteChannel(state.channelAddr)
     ok('Channel was deleted!')
