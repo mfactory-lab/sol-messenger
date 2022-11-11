@@ -41,7 +41,7 @@ const getBadgeColor = (text: string) => {
         {{ channel.data.name }}
       </div>
 
-      <div class="message-count">
+      <div class="message-count" v-if="!!channel.data.messageCount">
         {{ channel.data.messageCount }}
       </div>
     </q-item-section>
@@ -77,7 +77,6 @@ const getBadgeColor = (text: string) => {
   text-overflow: ellipsis;
   flex: 1;
   margin: 0 10px;
-  text-align: center;
 }
 .message-count {
   border-radius: 50%;

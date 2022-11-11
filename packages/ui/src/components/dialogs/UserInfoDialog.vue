@@ -27,7 +27,9 @@ const copy = () => {
         <span>{{ userStore.keypair?.publicKey }}</span>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn flat label="regenerate" color="primary" @click="userStore.generateKey" />
+        <q-btn class="dialog-submit-btn" text-color="white" rounded @click="userStore.generateKey">
+          Regenerate
+        </q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -37,5 +39,8 @@ const copy = () => {
 .dialog-wrapper {
   width: 700px;
   max-width: 80vw;
+}
+.q-card__actions .q-btn.dialog-submit-btn {
+  padding: 0 14px;
 }
 </style>

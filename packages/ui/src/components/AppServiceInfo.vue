@@ -1,6 +1,7 @@
 <template>
   <div class="row info-row">
-    <div class="col-6 flex-center info-col">
+    <div class="offset-0 offset-md-3"></div>
+    <div class="col-6 col-md-3 flex-center info-col">
       <div class="info-title">
         How IT WORKS
       </div>
@@ -14,11 +15,12 @@
         </ul>
       </div>
     </div>
-    <div class="col-6 logo-wrap">
+    <div class="col-6 col-md-5  logo-wrap">
       <router-link to="/">
         <img src="@/assets/img/solana-logo.svg" alt="solana logo">
       </router-link>
     </div>
+    <div class="offset-0 offset-md-1"></div>
   </div>
 </template>
 
@@ -31,8 +33,6 @@
     font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     .info-col {
-      padding-left: 200px;
-
       @media (max-width: $breakpoint-sm) {
         padding-left: 50px;
       }

@@ -20,6 +20,7 @@ const state = ref(props.defaultState)
             v-model="state.name"
             label="Channel name *"
             lazy-rules
+            maxlength="32"
             :rules="[val => val && val.length > 2 || 'Please type something']"
           />
           <q-input
@@ -28,7 +29,9 @@ const state = ref(props.defaultState)
             lazy-rules
             :rules="[val => +val > 0 || 'Invalid value']"
           />
-          <q-btn type="submit" color="info" :ripple="false" rounded>
+          <q-btn
+            type="submit" class="dialog-submit-btn" text-color="white" :ripple="false" rounded
+          >
             Create Channel
           </q-btn>
         </q-form>

@@ -15,12 +15,12 @@ const sendMessage = (message: any) => emit('sendMessage', message)
 </script>
 
 <template>
-  <q-card class="messenger-card overflow-hidden" square>
+  <q-card class="messenger-card" square>
     <div class="messenger-content">
       <div v-if="channel" class="row justify-center channel-wrapper">
         <div v-if="messages.length > 0" class="messenger-messages">
           <q-chat-message
-            v-for="msg in messages"
+            v-for="msg in messages.concat(messages)"
             :key="msg.id"
             :name="msg.senderFormatted"
             :text="msg.text"
@@ -53,6 +53,7 @@ const sendMessage = (message: any) => emit('sendMessage', message)
 
   .messenger-content {
     flex: 1;
+    overflow-y: auto;
 
     .channel-wrapper {
       height: 100%;
@@ -63,8 +64,8 @@ const sendMessage = (message: any) => emit('sendMessage', message)
     width: 100%;
     max-width: 600px;
     max-height: 400px;
-    padding: 20px 30px;
-    overflow-y: auto;
+    padding: 20px 0 20px 30px;
+    overflow: hidden;
     min-height: 200px;
   }
 
@@ -76,6 +77,7 @@ const sendMessage = (message: any) => emit('sendMessage', message)
     align-content: center;
     align-items: center;
     justify-content: center;
+    height: 100%;
   }
 }
 </style>

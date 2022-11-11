@@ -83,7 +83,7 @@ const { toggle, isActive } = useDarkTheme()
           }
         }
 
-        &:nth-last-of-type {
+        &:last-of-type {
           a {
             border: none;
           }

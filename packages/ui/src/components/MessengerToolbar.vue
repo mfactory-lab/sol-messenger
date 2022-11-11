@@ -104,10 +104,14 @@ $accent-color: #FFD140;
     max-width: 170px;
     padding: 0 15px;
     width: 100%;
+    display: flex;
+    border-right: 1px solid #fff;
+    align-items: center;
+    height: 100%;
 
     input {
       font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-size: 11px;
+      font-size: 13px;
       color: $main-color;
       border: none;
       background: none;
@@ -121,7 +125,6 @@ $accent-color: #FFD140;
   }
 
   .panel-info {
-    border-left: 1px solid $main-color;
     flex: 1;
     display: flex;
     font-family: 'Montserrat', sans-serif;

@@ -178,10 +178,10 @@ function ok() {
       <q-separator />
       <q-card-section>
         <div class="q-gutter-md row justify-between">
-          <q-btn outline rounded @click="disconnect">
+          <q-btn class="dialog-submit-btn" text-color="white" rounded @click="disconnect">
             Disconnect
           </q-btn>
-          <q-btn outline rounded @click="ok">
+          <q-btn class="dialog-submit-btn" text-color="white" rounded @click="ok">
             Ok
           </q-btn>
         </div>

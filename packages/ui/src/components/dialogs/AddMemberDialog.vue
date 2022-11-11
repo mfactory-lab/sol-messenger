@@ -36,7 +36,7 @@ const state = ref(props.defaultState)
             :rules="[val => !val || (val.length > 32 || 'Invalid public key')]"
           />
           <br>
-          <q-btn type="submit" color="info" :ripple="false" rounded>
+          <q-btn type="submit" class="dialog-submit-btn" text-color="white" :ripple="false" rounded>
             Add Member
           </q-btn>
         </q-form>
