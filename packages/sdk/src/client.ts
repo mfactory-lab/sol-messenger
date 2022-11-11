@@ -301,7 +301,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer])
+      signature = await this.provider.sendAndConfirm(tx)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
