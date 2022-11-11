@@ -72,18 +72,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.da377ea9.js",
+    "file": "assets/index.036070ac.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.cf3dae5c.js"
+      "_vendor.74ebb7b4.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.f0112937.css"
+      "assets/index.11c14795.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -106,24 +106,24 @@
       "assets/logo-bg.8b37e04a.svg"
     ]
   },
-  "_vendor.cf3dae5c.js": {
-    "file": "assets/vendor.cf3dae5c.js"
+  "_vendor.74ebb7b4.js": {
+    "file": "assets/vendor.74ebb7b4.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.06be1943.js",
+    "file": "assets/empty.1f6ac738.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.cf3dae5c.js"
+      "_vendor.74ebb7b4.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.4cb9a979.js",
+    "file": "assets/_...all_.acbbb7c4.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.cf3dae5c.js",
+      "_vendor.74ebb7b4.js",
       "index.html"
     ],
     "css": [
@@ -135,7 +135,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.f0112937.css",
+    "file": "assets/index.11c14795.css",
     "src": "index.css"
   }
 }
