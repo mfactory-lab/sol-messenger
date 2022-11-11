@@ -1,0 +1,55 @@
+<script lang="ts" setup>
+import type { PropType } from 'vue'
+
+const props = defineProps({
+  loading: { type: Boolean, default: false },
+  defaultState: Object as PropType<{ name: any; key: string }>,
+})
+
+defineEmits(['submit', 'reset'])
+const state = ref(props.defaultState)
+</script>
+
+<template>
+  <q-dialog class="add-member-dialog" @hide="$emit('reset')">
+    <q-card>
+      <q-card-section>
+        <q-form class="add-member-form" @submit.prevent="$emit('submit', state)">
+          <q-input
+            v-model="state.name"
+            label="Member name *"
+            hint="Min length 3 chars"
+            lazy-rules
+            :rules="[val => val && val.length > 2 || 'Please type something']"
+          />
+          <q-input
+            v-model="state.key"
+            label="Member Wallet *"
+            lazy-rules
+            :rules="[val => val && val.length > 32 || 'Invalid public key']"
+          />
+          <q-input
+            v-model="state.key"
+            label="Member Device Key"
+            hint="Default: The same as member wallet"
+            lazy-rules
+            :rules="[val => !val || (val.length > 32 || 'Invalid public key')]"
+          />
+          <br>
+          <q-btn type="submit" class="dialog-submit-btn" text-color="white" :ripple="false" rounded>
+            Add Member
+          </q-btn>
+        </q-form>
+        <q-inner-loading :showing="loading" />
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+</template>
+
+<style scoped lang="scss">
+.add-member-dialog {
+  .q-card {
+    width: 320px;
+  }
+}
+</style>

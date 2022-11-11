@@ -7,12 +7,24 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AddMemberDialog: typeof import('./../src/components/dialogs/AddMemberDialog.vue')['default']
+    AppFooter: typeof import('./../src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
+    AppServiceInfo: typeof import('./../src/components/AppServiceInfo.vue')['default']
+    ChannelControl: typeof import('./../src/components/ChannelControl.vue')['default']
+    ChannelForm: typeof import('./../src/components/ChannelForm.vue')['default']
+    ChannelWrapper: typeof import('./../src/components/ChannelWrapper.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']
+    JoinChannelDialog: typeof import('./../src/components/dialogs/JoinChannelDialog.vue')['default']
+    MemberListDialog: typeof import('./../src/components/dialogs/MemberListDialog.vue')['default']
     Messenger: typeof import('./../src/components/Messenger.vue')['default']
+    MessengerChannel: typeof import('./../src/components/MessengerChannel.vue')['default']
+    MessengerToolbar: typeof import('./../src/components/MessengerToolbar.vue')['default']
+    NewChannelDialog: typeof import('./../src/components/dialogs/NewChannelDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UserInfoDialog: typeof import('./../src/components/dialogs/UserInfoDialog.vue')['default']
   }
 }

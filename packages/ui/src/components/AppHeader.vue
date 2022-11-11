@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
+
 const user = useUserStore()
 const { dialog } = useQuasar()
 
@@ -19,36 +20,35 @@ function handleGenerateKey() {
   <q-header class="app-header">
     <div class="container">
       <q-toolbar>
-        <div class="app-header__logo">
-          <router-link to="/">
-            SOM
-          </router-link>
-        </div>
-
-        <q-space />
-
-        <div class="app-header__nav">
-          <a href="https://jpool.one" target="_blank">JPOOL</a>
-          <a href="https://dev.svt.one" target="_blank">Validator toolkit</a>
-        </div>
-
-        <q-space />
-
-        <div v-if="user.keypair" class="user-device">
-          <div>
-            <b>Device Key</b>
-            &nbsp;
-            <q-btn size="xs" rounded unelevated @click="handleGenerateKey">
-              regenerate
-            </q-btn>
+        <div class="app-header__info">
+          <div class="app-header__logo">
+            <div class="logo-wrapper">
+              <router-link to="/" />
+            </div>
           </div>
-          <q-badge>{{ user.keypair?.publicKey }}</q-badge>
+
+          <div class="app-header__title">
+            <h1>BLOCKCHAIN messenger <span class="marked">SOLANA</span> </h1>
+          </div>
         </div>
+
+        <q-space />
+
+        <!--        <div v-if="user.keypair" class="user-device"> -->
+        <!--          <div> -->
+        <!--            <b>Device Key</b> -->
+        <!--            &nbsp; -->
+        <!--            <q-btn size="xs" rounded unelevated @click="handleGenerateKey"> -->
+        <!--              regenerate -->
+        <!--            </q-btn> -->
+        <!--          </div> -->
+        <!--          <q-badge>{{ user.keypair?.publicKey }}</q-badge> -->
+        <!--        </div> -->
 
         <div class="app-header__right">
           <div class="app-header__buttons">
-            <cluster-selector class="app-header__cluster-btn" />
-            <connect-wallet class="app-header__wallet-btn" />
+            <cluster-selector class="app-header__cluster-btn header-btn" />
+            <connect-wallet class="app-header__wallet-btn header-btn" />
           </div>
         </div>
       </q-toolbar>

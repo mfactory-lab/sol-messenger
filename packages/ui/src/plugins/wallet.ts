@@ -35,6 +35,7 @@ import {
 } from '@solana/wallet-adapter-wallets'
 
 export const install = ({ app }: { app: App<Element> }) => {
+  // const network = WalletAdapterNetwork.Mainnet;
   app.use(SolanaWallets as any, {
     wallets: [
       new PhantomWalletAdapter(),
