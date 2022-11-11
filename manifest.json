@@ -1,4 +1,12 @@
 {
+  "src/assets/img/solana-logo.svg": {
+    "file": "assets/solana-logo.3caace62.svg",
+    "src": "src/assets/img/solana-logo.svg"
+  },
+  "src/assets/img/wallets/clover.svg": {
+    "file": "assets/clover.968404b0.svg",
+    "src": "src/assets/img/wallets/clover.svg"
+  },
   "src/assets/img/wallets/ledger.svg": {
     "file": "assets/ledger.40cf6861.svg",
     "src": "src/assets/img/wallets/ledger.svg"
@@ -6,6 +14,26 @@
   "src/assets/img/wallets/mathwallet.svg": {
     "file": "assets/mathwallet.1d763e81.svg",
     "src": "src/assets/img/wallets/mathwallet.svg"
+  },
+  "src/assets/img/add.svg": {
+    "file": "assets/add.1481b8ed.svg",
+    "src": "src/assets/img/add.svg"
+  },
+  "src/assets/img/join.svg": {
+    "file": "assets/join.627c8616.svg",
+    "src": "src/assets/img/join.svg"
+  },
+  "src/assets/img/telegram.svg": {
+    "file": "assets/telegram.360d0c59.svg",
+    "src": "src/assets/img/telegram.svg"
+  },
+  "src/assets/img/twitter.svg": {
+    "file": "assets/twitter.e4e729c2.svg",
+    "src": "src/assets/img/twitter.svg"
+  },
+  "src/assets/img/discord.svg": {
+    "file": "assets/discord.4c88a6e4.svg",
+    "src": "src/assets/img/discord.svg"
   },
   "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
@@ -35,27 +63,38 @@
     "file": "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff"
   },
+  "src/assets/img/logo-bg.svg": {
+    "file": "assets/logo-bg.8b37e04a.svg",
+    "src": "src/assets/img/logo-bg.svg"
+  },
   "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff": {
     "file": "assets/Eva-Icons.ba7db2a0.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.dc035750.js",
+    "file": "assets/index.da377ea9.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.03aa46ac.js"
+      "_vendor.cf3dae5c.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.40abf70f.css"
+      "assets/index.f0112937.css"
     ],
     "assets": [
+      "assets/clover.968404b0.svg",
       "assets/ledger.40cf6861.svg",
       "assets/mathwallet.1d763e81.svg",
+      "assets/solana-logo.3caace62.svg",
+      "assets/add.1481b8ed.svg",
+      "assets/join.627c8616.svg",
+      "assets/telegram.360d0c59.svg",
+      "assets/twitter.e4e729c2.svg",
+      "assets/discord.4c88a6e4.svg",
       "assets/Eva-Icons.f19a427f.woff2",
       "assets/Eva-Icons.ba7db2a0.woff",
       "assets/KFOkCnqEu92Fr1MmgVxIIzQ.34e9582c.woff",
@@ -63,27 +102,28 @@
       "assets/KFOmCnqEu92Fr1Mu4mxM.f2abf7fb.woff",
       "assets/KFOlCnqEu92Fr1MmEU9fBBc-.9ce7f3ac.woff",
       "assets/KFOlCnqEu92Fr1MmWUlfBBc-.e0fd57c0.woff",
-      "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff"
+      "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff",
+      "assets/logo-bg.8b37e04a.svg"
     ]
   },
-  "_vendor.03aa46ac.js": {
-    "file": "assets/vendor.03aa46ac.js"
+  "_vendor.cf3dae5c.js": {
+    "file": "assets/vendor.cf3dae5c.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.bea60241.js",
+    "file": "assets/empty.06be1943.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.03aa46ac.js"
+      "_vendor.cf3dae5c.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.77a1b5d4.js",
+    "file": "assets/_...all_.4cb9a979.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.03aa46ac.js",
+      "_vendor.cf3dae5c.js",
       "index.html"
     ],
     "css": [
@@ -95,7 +135,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.40abf70f.css",
+    "file": "assets/index.f0112937.css",
     "src": "index.css"
   }
 }
