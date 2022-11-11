@@ -32,7 +32,7 @@ export const useMessengerStore = defineStore('messenger', () => {
   // const secretKey = useLocalStorage('key', () => bs58.encode(Keypair.generate().secretKey))
   // const keypair = Keypair.fromSecretKey(bs58.decode(secretKey.value))
 
-  const state = reactive<MessengerStoreState>({
+  const defaultState = {
     allChannels: [],
     channel: undefined,
     channelAddr: undefined,
@@ -44,7 +44,9 @@ export const useMessengerStore = defineStore('messenger', () => {
     loading: false,
     creating: false,
     sending: false,
-  })
+  }
+
+  const state = reactive<MessengerStoreState>({ ...defaultState })
 
   const client = $computed(() => {
     return new MessengerClient(
@@ -55,15 +57,18 @@ export const useMessengerStore = defineStore('messenger', () => {
       ), userStore.keypair as Keypair)
   })
 
-  init().then()
+  let listeners: number[] = []
+
+  watch(() => connectionStore.cluster, (c) => {
+    console.log(c)
+    init().then()
+  }, { immediate: true })
 
   watch(wallet, () => {
     if (state.channelAddr) {
       loadChannel(state.channelAddr).then()
     }
   }, { immediate: true })
-
-  const listeners: number[] = []
 
   async function initEvents() {
     console.log('Register events...')
@@ -105,6 +110,8 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function init() {
+    reset()
+    listeners = []
     state.loading = true
     const channels = await client.loadAllChannels()
     // for (const channel of channels) {
@@ -120,6 +127,10 @@ export const useMessengerStore = defineStore('messenger', () => {
     await initEvents()
     state.allChannels = channels as any
     state.loading = false
+  }
+
+  function reset() {
+    Object.assign(state, defaultState)
   }
 
   async function createChannel(name: string, maxMessages = 15) {
