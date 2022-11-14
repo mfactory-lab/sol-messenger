@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{constants::MAX_CHANNEL_NAME_LENGTH, events::NewChannelEvent, state::*, ErrorCode};
+use crate::{constants::MAX_CHANNEL_NAME_LENGTH, events::NewChannelEvent, state::*, MessengerError};
 
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     data.validate()?;
@@ -14,9 +14,14 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     channel.creator = authority.key();
     channel.member_count = 1;
     channel.message_count = 0;
+    channel.flags = 0;
     channel.max_messages = data.max_messages;
     channel.messages = Vec::with_capacity(data.max_messages as usize);
     channel.created_at = clock.unix_timestamp;
+
+    if data.public {
+        channel.flags |= ChannelFlags::IsPublic;
+    }
 
     let key = &ctx.accounts.key;
 
@@ -28,6 +33,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     membership.name = data.member_name;
     membership.status = ChannelMembershipStatus::Authorized { by: None };
     membership.created_at = clock.unix_timestamp;
+    membership.flags = ChannelMembershipAccess::Owner;
     membership.bump = ctx.bumps["membership"];
 
     emit!(NewChannelEvent {
@@ -45,13 +51,14 @@ pub struct InitChannelData {
     pub name: String,
     pub max_messages: u16,
     pub member_name: String,
+    pub public: bool,
     pub cek: CEKData,
 }
 
 impl InitChannelData {
     pub fn validate(&self) -> Result<()> {
         if self.name.len() > MAX_CHANNEL_NAME_LENGTH {
-            return Err(ErrorCode::NameTooLong.into());
+            return Err(MessengerError::NameTooLong.into());
         }
         Ok(())
     }

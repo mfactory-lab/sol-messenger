@@ -1,11 +1,15 @@
-use anchor_lang::prelude::*;
-use instructions::*;
+// #![warn(clippy::all, clippy::pedantic)]
 
 mod constants;
+mod errors;
 mod events;
 mod instructions;
 mod state;
 // mod utils;
+
+use anchor_lang::prelude::*;
+use errors::*;
+use instructions::*;
 
 declare_id!("6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm");
 
@@ -45,32 +49,3 @@ pub mod messenger {
         post_message::handler(ctx, message)
     }
 }
-
-#[error_code]
-pub enum ErrorCode {
-    #[msg("Unauthorized")]
-    Unauthorized,
-
-    #[msg("Name too long")]
-    NameTooLong,
-
-    #[msg("Message too long")]
-    MessageTooLong,
-
-    #[msg("Already in use")]
-    AlreadyInUse,
-
-    #[msg("Uninitialized account")]
-    UninitializedAccount,
-}
-
-// #[macro_export]
-// macro_rules! print_error {
-//     ($err:expr) => {{
-//         || {
-//             let error_code: ErrorCode = $err;
-//             msg!("{:?} thrown at {}:{}", error_code, file!(), line!());
-//             $err
-//         }
-//     }};
-// }

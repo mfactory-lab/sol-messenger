@@ -1,11 +1,13 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::NewMessageEvent, state::*, ErrorCode};
+use crate::{events::NewMessageEvent, state::*, MessengerError};
 
 pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
 
-    channel.validate()?;
+    if channel.to_account_info().data_is_empty() {
+        return Err(MessengerError::InvalidChannel.into());
+    }
 
     let membership = &ctx.accounts.membership;
 
@@ -23,7 +25,7 @@ pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
 pub struct PostMessage<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
-    #[account(has_one = channel, has_one = authority, constraint = membership.is_authorized() @ ErrorCode::Unauthorized)]
+    #[account(has_one = channel, has_one = authority, constraint = membership.is_authorized() @ MessengerError::Unauthorized)]
     pub membership: Account<'info, ChannelMembership>,
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,

@@ -1,13 +1,15 @@
 use anchor_lang::prelude::*;
 
-use crate::{constants::MAX_MEMBER_NAME_LENGTH, events::JoinChannelEvent, state::*, ErrorCode};
+use crate::{constants::MAX_MEMBER_NAME_LENGTH, events::JoinChannelEvent, state::*, MessengerError};
 
 pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
     data.validate()?;
 
     let channel = &mut ctx.accounts.channel;
 
-    channel.validate()?;
+    if channel.to_account_info().data_is_empty() {
+        return Err(MessengerError::InvalidChannel.into());
+    }
 
     let timestamp = Clock::get()?.unix_timestamp;
 
@@ -44,7 +46,7 @@ pub struct JoinChannelData {
 impl JoinChannelData {
     pub fn validate(&self) -> Result<()> {
         if self.name.len() > MAX_MEMBER_NAME_LENGTH {
-            return Err(ErrorCode::NameTooLong.into());
+            return Err(MessengerError::NameTooLong.into());
         }
         Ok(())
     }

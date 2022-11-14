@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::DeleteChannelEvent, state::*, ErrorCode};
+use crate::{events::DeleteChannelEvent, state::*, MessengerError};
 
 pub fn handler(ctx: Context<DeleteChannel>) -> Result<()> {
     let channel = &ctx.accounts.channel;
@@ -16,7 +16,7 @@ pub fn handler(ctx: Context<DeleteChannel>) -> Result<()> {
 
 #[derive(Accounts)]
 pub struct DeleteChannel<'info> {
-    #[account(mut, close = authority, constraint = channel.authorize(authority.key) @ ErrorCode::Unauthorized)]
+    #[account(mut, close = authority, constraint = channel.authorize(authority.key) @ MessengerError::Unauthorized)]
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(mut)]

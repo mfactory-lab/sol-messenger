@@ -1,4 +1,6 @@
-use crate::{state::Message, *};
+use anchor_lang::prelude::*;
+
+use crate::state::Message;
 
 #[event]
 pub struct NewChannelEvent {

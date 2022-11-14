@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 
-use anchor_lang::{prelude::*, solana_program::program_pack::IsInitialized};
+use anchor_lang::prelude::*;
 
-use crate::{constants::*, ErrorCode};
+use crate::{constants::*, MessengerError};
 
 #[account]
 pub struct Channel {
@@ -12,6 +12,8 @@ pub struct Channel {
     pub creator: Pubkey,
     /// Creation date
     pub created_at: i64,
+    /// Channel flags
+    pub flags: u8,
     /// Number of members
     pub member_count: u16,
     /// Message counter
@@ -29,6 +31,7 @@ impl Channel {
         + (4 + MAX_CHANNEL_NAME_LENGTH) // name
         + 32 // creator key
         + 8 // creation date
+        + 1 // flags
         + 2 + 4 // member_count + message_count
         + 2 + (4 + (Message::SIZE * max_messages as usize)) // max_messages + messages
     }
@@ -37,7 +40,7 @@ impl Channel {
     pub fn add_message(&mut self, content: String, sender: &Pubkey) -> Result<Message> {
         if content.len() > MAX_MESSAGE_LENGTH {
             msg!("Message to long (size: {}, max: {})", content.len(), MAX_MESSAGE_LENGTH);
-            return Err(ErrorCode::MessageTooLong.into());
+            return Err(MessengerError::MessageTooLong.into());
         }
 
         self.message_count = self.message_count.saturating_add(1);
@@ -60,24 +63,18 @@ impl Channel {
         Ok(message)
     }
 
-    pub fn validate(&self) -> Result<()> {
-        if !self.is_initialized() {
-            msg!("Channel account is not initialized");
-            return Err(ErrorCode::UninitializedAccount.into());
-        }
-        Ok(())
-    }
-
     pub fn authorize(&self, key: &Pubkey) -> bool {
         self.creator == *key || ADMIN_AUTHORITY.contains(&key.to_string().as_str())
     }
+
+    pub fn is_public(&self) -> bool {
+        self.flags & ChannelFlags::IsPublic > 0
+    }
 }
 
-impl IsInitialized for Channel {
-    /// Checks if a channel has been initialized
-    fn is_initialized(&self) -> bool {
-        !self.name.is_empty()
-    }
+#[allow(non_snake_case, non_upper_case_globals)]
+pub mod ChannelFlags {
+    pub const IsPublic: u8 = 0b001;
 }
 
 #[account]
@@ -98,6 +95,8 @@ pub struct ChannelMembership {
     pub invited_by: Option<Pubkey>,
     /// Creation date
     pub created_at: i64,
+    /// Membership flags
+    pub flags: u8,
     /// Bump seed for deriving PDA seeds
     pub bump: u8,
 }
@@ -108,12 +107,33 @@ impl ChannelMembership {
         + 32 + 32 + 32 // channel + authority + cek_key
         + CEKData::SIZE + ChannelMembershipStatus::SIZE
         + (4 + MAX_MEMBER_NAME_LENGTH) // name
-        + (1 + 32) + 8 + 1 // invited_by + created_at + bump
+        + (1 + 32) + 1 + 8 + 1 // invited_by + created_at + flags + bump
     }
 
     pub fn is_authorized(&self) -> bool {
         matches!(self.status, ChannelMembershipStatus::Authorized { .. })
     }
+
+    pub fn can_add_member(&self) -> bool {
+        self.flags & ChannelMembershipAccess::AddMember > 0
+    }
+
+    pub fn can_delete_member(&self) -> bool {
+        self.flags & ChannelMembershipAccess::DeleteMember > 0
+    }
+
+    pub fn can_authorize_member(&self) -> bool {
+        self.flags & ChannelMembershipAccess::AuthorizeMember > 0
+    }
+}
+
+#[allow(non_snake_case, non_upper_case_globals)]
+pub mod ChannelMembershipAccess {
+    pub const AddMember: u8 = 0b001;
+    pub const DeleteMember: u8 = 0b010;
+    pub const AuthorizeMember: u8 = 0b100;
+    pub const Admin: u8 = AddMember | DeleteMember | AuthorizeMember;
+    pub const Owner: u8 = 0xff;
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
@@ -168,6 +188,8 @@ mod tests {
 
     #[test]
     fn test() {
-        unimplemented!();
+        msg!("{:?}", ChannelMembershipAccess::AddMember);
+        msg!("{:?}", ChannelMembershipAccess::AuthorizeMember);
+        msg!("{:?}", ChannelMembershipAccess::Admin);
     }
 }

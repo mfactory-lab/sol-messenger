@@ -1,13 +1,25 @@
 use anchor_lang::prelude::*;
 
-use crate::{constants::MAX_CHANNEL_NAME_LENGTH, events::AddMemberEvent, state::*, ErrorCode};
+use crate::{
+    constants::MAX_CHANNEL_NAME_LENGTH,
+    events::AddMemberEvent,
+    state::{CEKData, Channel, ChannelMembership, ChannelMembershipStatus},
+    MessengerError,
+};
 
 pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     data.validate()?;
 
     let channel = &mut ctx.accounts.channel;
 
-    channel.validate()?;
+    if channel.to_account_info().data_is_empty() {
+        return Err(MessengerError::InvalidChannel.into());
+    }
+
+    let authority_membership = &ctx.accounts.authority_membership;
+    if !authority_membership.can_add_member() {
+        return Err(MessengerError::Unauthorized.into());
+    }
 
     let timestamp = Clock::get()?.unix_timestamp;
 
@@ -49,7 +61,7 @@ pub struct AddMemberData {
 impl AddMemberData {
     pub fn validate(&self) -> Result<()> {
         if self.name.len() > MAX_CHANNEL_NAME_LENGTH {
-            return Err(ErrorCode::NameTooLong.into());
+            return Err(MessengerError::NameTooLong.into());
         }
         Ok(())
     }
@@ -73,7 +85,7 @@ pub struct AddMember<'info> {
     )]
     pub invitee_membership: Account<'info, ChannelMembership>,
 
-    #[account(mut, has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ ErrorCode::Unauthorized)]
+    #[account(mut, has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ MessengerError::Unauthorized)]
     pub authority_membership: Account<'info, ChannelMembership>,
 
     #[account(mut)]
