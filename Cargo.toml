@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "programs/*"
+  "programs/*",
 ]
 
 [profile.release]
@@ -9,4 +9,3 @@ opt-level = "z"
 lto = "fat"
 panic = "abort"
 debug = false
-#strip = true
