@@ -3,17 +3,17 @@ use anchor_lang::prelude::*;
 use crate::{events::AuthorizeMemberEvent, state::*, MessengerError};
 
 pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Result<()> {
-    let authority_membership = &ctx.accounts.authority_membership;
-    if !authority_membership.can_authorize_member() {
-        return Err(MessengerError::Unauthorized.into());
-    }
-
     let channel = &ctx.accounts.channel;
     let membership = &mut ctx.accounts.membership;
     let auth = &ctx.accounts.authority;
 
     if channel.to_account_info().data_is_empty() {
         return Err(MessengerError::InvalidChannel.into());
+    }
+
+    let authority_membership = &ctx.accounts.authority_membership;
+    if !authority_membership.can_authorize_member(channel) {
+        return Err(MessengerError::Unauthorized.into());
     }
 
     match membership.status {

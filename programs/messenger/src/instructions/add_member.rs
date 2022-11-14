@@ -17,7 +17,7 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     }
 
     let authority_membership = &ctx.accounts.authority_membership;
-    if !authority_membership.can_add_member() {
+    if !authority_membership.can_add_member(channel) {
         return Err(MessengerError::Unauthorized.into());
     }
 
@@ -30,6 +30,7 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     membership.key = data.key.unwrap_or_else(|| ctx.accounts.invitee.key());
     membership.name = data.name;
     membership.cek = data.cek;
+    membership.flags = if authority_membership.is_admin() { data.flags } else { 0 };
     membership.invited_by = Some(ctx.accounts.authority.key());
     membership.created_at = timestamp;
     membership.status = ChannelMembershipStatus::Authorized {
@@ -52,6 +53,8 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
 pub struct AddMemberData {
     /// Member name
     pub name: String,
+    /// Membership flags, only `admin` and `owner` can set membership flags
+    pub flags: u8,
     /// Content Encryption Key
     pub cek: CEKData,
     /// Device key

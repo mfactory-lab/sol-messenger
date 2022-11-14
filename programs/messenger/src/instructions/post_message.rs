@@ -9,9 +9,25 @@ pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
         return Err(MessengerError::InvalidChannel.into());
     }
 
-    let membership = &ctx.accounts.membership;
+    let authority = &ctx.accounts.authority;
 
-    let message = channel.add_message(content, &membership.authority)?;
+    if !channel.is_public() {
+        let membership: Account<'_, ChannelMembership> = Account::try_from(&ctx.accounts.membership.to_account_info())?;
+        if membership.channel != channel.key() {
+            msg!("Error: Invalid membership channel");
+            return Err(MessengerError::InvalidMembership.into());
+        }
+        if membership.authority != authority.key() {
+            msg!("Error: Invalid membership authority");
+            return Err(MessengerError::InvalidMembership.into());
+        }
+        if !membership.is_authorized() {
+            msg!("Error: Unauthorized membership");
+            return Err(MessengerError::Unauthorized.into());
+        }
+    }
+
+    let message = channel.add_message(content, authority.key)?;
 
     emit!(NewMessageEvent {
         channel: channel.key(),
@@ -25,8 +41,8 @@ pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
 pub struct PostMessage<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
-    #[account(has_one = channel, has_one = authority, constraint = membership.is_authorized() @ MessengerError::Unauthorized)]
-    pub membership: Account<'info, ChannelMembership>,
+    /// CHECK:
+    pub membership: AccountInfo<'info>,
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }

@@ -33,6 +33,10 @@ pub mod messenger {
         leave_channel::handler(ctx)
     }
 
+    pub fn grant_access_member(ctx: Context<GrantAccessMember>, data: GrantAccessMemberData) -> Result<()> {
+        grant_access_member::handler(ctx, data)
+    }
+
     pub fn add_member(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
         add_member::handler(ctx, data)
     }

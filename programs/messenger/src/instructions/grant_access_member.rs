@@ -2,39 +2,36 @@ use anchor_lang::prelude::*;
 
 use crate::{
     errors::MessengerError,
-    events::DeleteMemberEvent,
     state::{Channel, ChannelMembership},
 };
 
-pub fn handler(ctx: Context<DeleteMember>) -> Result<()> {
-    let channel = &mut ctx.accounts.channel;
-    let membership = &ctx.accounts.membership;
+pub fn handler(ctx: Context<GrantAccessMember>, data: GrantAccessMemberData) -> Result<()> {
+    let authority_membership = &ctx.accounts.authority_membership;
+    if !authority_membership.is_owner() {
+        msg!("Error: Only the channel owner can grant access");
+        return Err(MessengerError::Unauthorized.into());
+    }
+
+    let channel = &ctx.accounts.channel;
 
     if channel.to_account_info().data_is_empty() {
         return Err(MessengerError::InvalidChannel.into());
     }
 
-    let authority_membership = &ctx.accounts.authority_membership;
-    if !authority_membership.can_delete_member(channel) {
-        return Err(MessengerError::Unauthorized.into());
-    }
-
-    channel.member_count = channel.member_count.saturating_sub(1);
-
-    let timestamp = Clock::get()?.unix_timestamp;
-
-    emit!(DeleteMemberEvent {
-        channel: channel.key(),
-        membership: membership.key(),
-        timestamp,
-    });
+    let membership = &mut ctx.accounts.membership;
+    membership.flags |= data.flags;
 
     Ok(())
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+pub struct GrantAccessMemberData {
+    pub flags: u8,
+}
+
 #[derive(Accounts)]
-pub struct DeleteMember<'info> {
-    #[account(mut, constraint = channel.authorize(authority.key))]
+pub struct GrantAccessMember<'info> {
+    #[account(constraint = channel.authorize(authority.key))]
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(mut, has_one = channel, close = authority)]

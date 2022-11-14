@@ -39,7 +39,11 @@ impl Channel {
     /// Post a message to the channel
     pub fn add_message(&mut self, content: String, sender: &Pubkey) -> Result<Message> {
         if content.len() > MAX_MESSAGE_LENGTH {
-            msg!("Message to long (size: {}, max: {})", content.len(), MAX_MESSAGE_LENGTH);
+            msg!(
+                "Error: Message too long (size: {}, max: {})",
+                content.len(),
+                MAX_MESSAGE_LENGTH
+            );
             return Err(MessengerError::MessageTooLong.into());
         }
 
@@ -70,11 +74,18 @@ impl Channel {
     pub fn is_public(&self) -> bool {
         self.flags & ChannelFlags::IsPublic > 0
     }
+
+    pub fn is_permissionless(&self) -> bool {
+        self.flags & ChannelFlags::Permissionless > 0
+    }
 }
 
 #[allow(non_snake_case, non_upper_case_globals)]
 pub mod ChannelFlags {
+    /// [Channel] messages is not encrypted and [ChannelMembership] is not required
     pub const IsPublic: u8 = 0b001;
+    /// Do not check channel permission when adding, deleting, authorizing a member
+    pub const Permissionless: u8 = 0b010;
 }
 
 #[account]
@@ -114,16 +125,24 @@ impl ChannelMembership {
         matches!(self.status, ChannelMembershipStatus::Authorized { .. })
     }
 
-    pub fn can_add_member(&self) -> bool {
-        self.flags & ChannelMembershipAccess::AddMember > 0
+    pub fn is_owner(&self) -> bool {
+        self.flags == ChannelMembershipAccess::Owner
     }
 
-    pub fn can_delete_member(&self) -> bool {
-        self.flags & ChannelMembershipAccess::DeleteMember > 0
+    pub fn is_admin(&self) -> bool {
+        self.flags & ChannelMembershipAccess::Admin == ChannelMembershipAccess::Admin
     }
 
-    pub fn can_authorize_member(&self) -> bool {
-        self.flags & ChannelMembershipAccess::AuthorizeMember > 0
+    pub fn can_add_member(&self, channel: &Channel) -> bool {
+        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::AddMember > 0
+    }
+
+    pub fn can_delete_member(&self, channel: &Channel) -> bool {
+        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::DeleteMember > 0
+    }
+
+    pub fn can_authorize_member(&self, channel: &Channel) -> bool {
+        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::AuthorizeMember > 0
     }
 }
 

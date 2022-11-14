@@ -5,20 +5,17 @@ pub enum MessengerError {
     #[msg("Unauthorized")]
     Unauthorized,
 
+    #[msg("Invalid channel")]
+    InvalidChannel,
+
+    #[msg("Invalid membership")]
+    InvalidMembership,
+
     #[msg("Name too long")]
     NameTooLong,
 
     #[msg("Message too long")]
     MessageTooLong,
-
-    #[msg("Already in use")]
-    AlreadyInUse,
-
-    #[msg("Uninitialized account")]
-    UninitializedAccount,
-
-    #[msg("Invalid channel")]
-    InvalidChannel,
 }
 
 // #[macro_export]
