@@ -1,12 +1,25 @@
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
+import type { AllChannels } from '../store/messenger'
 
 const { notify } = useQuasar()
 const wallet = useWallet()
 
 const { state, postMessage, loadChannel } = useMessengerStore()
-const { isWalletConnected, isAuthorizedMember, isPendingMember, messages, allowSend, canJoinChannel, isChannelCreator } = useChannel()
+const {
+  isWalletConnected,
+  isAuthorizedMember,
+  isPendingMember,
+  messages,
+  allowSend,
+  canJoinChannel,
+  isChannelCreator,
+  loading,
+  refreshList,
+  ownChannels,
+  allChannels,
+} = useChannel()
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
 const addMember = useChannelAddMember()
@@ -16,6 +29,9 @@ const deleteMember = useChannelDeleteMember()
 const postMessageState = reactive({
   message: '',
 })
+
+const searchChannels = ref<AllChannels[]>([])
+const searchWord = ref('')
 
 async function sendMessage(message: any) {
   await postMessage(message.value)
@@ -34,15 +50,19 @@ function isSomeoneMessage(sender: any) {
   return String(pubkey) !== String(sender)
 }
 
-const channelFilter = reactive({ text: '' })
-
 const onSearch = (val: string) => {
-  channelFilter.text = val
+  if (val === '') {
+    searchChannels.value = []
+    searchWord.value = ''
+    return
+  }
+  searchChannels.value = allChannels.value.filter(
+    ch =>
+      ch.data.name.toLocaleLowerCase().includes(val.toLocaleLowerCase())
+      || ch.pubkey.toBase58().toLocaleLowerCase().includes(val.toLocaleLowerCase()),
+  )
+  searchWord.value = val
 }
-
-const filteredChannels = computed(() => {
-  return state.allChannels.filter((channel: any) => channel.data.name.includes(channelFilter.text))
-})
 
 const showMembersDialog = () => {
   authorizeMember.state.dialog = true
@@ -51,6 +71,12 @@ const showMembersDialog = () => {
 const showDeviceKeyDialog = ref<Boolean>(false)
 const showDebug = ref(false)
 const toggleDebug = useToggle(showDebug)
+
+const filterChannels = computed(() =>
+  searchChannels.value.length > 0 || searchWord.value.length > 0
+    ? searchChannels.value
+    : ownChannels.value,
+)
 </script>
 
 <template>
@@ -64,10 +90,11 @@ const toggleDebug = useToggle(showDebug)
     />
     <div class="messenger-main">
       <q-card class="messenger-channels">
-        <template v-if="filteredChannels.length > 0">
+        <template v-if="filterChannels.length > 0">
           <q-list separator class="channels-list">
             <messenger-channel
-              v-for="ch in filteredChannels" :key="ch.name"
+              v-for="ch in filterChannels"
+              :key="ch.name"
               :channel="ch"
               :state="state"
               @select-channel="selectChannel(ch.pubkey)"
@@ -85,6 +112,7 @@ const toggleDebug = useToggle(showDebug)
           :is-wallet-connected="isWalletConnected"
           @create-channel="newChannel.state.dialog = true"
           @join-channel="joinChannel.state.dialog = true"
+          @refresh-list="refreshList"
         />
       </q-card>
       <channel-wrapper
@@ -134,9 +162,7 @@ const toggleDebug = useToggle(showDebug)
     @delete-member="deleteMember.submit"
   />
 
-  <user-info-dialog
-    v-model="showDeviceKeyDialog"
-  />
+  <user-info-dialog v-model="showDeviceKeyDialog" />
 
   <div v-if="state.channel" class="q-my-md q-px-lg">
     <q-btn flat class="text-blue-2" @click="toggleDebug()">
@@ -152,7 +178,8 @@ const toggleDebug = useToggle(showDebug)
           ['Membership', state.channelMembership],
           ['Members', state.channelMembers],
         ]"
-        :key="row[0]" class="row q-mt-md"
+        :key="row[0]"
+        class="row q-mt-md"
       >
         <div class="col col-4">
           {{ row[0] }}
@@ -228,7 +255,7 @@ const toggleDebug = useToggle(showDebug)
   width: 100%;
   display: flex;
   flex-direction: column;
-  background: #FDFCFC;
+  background: #fdfcfc;
 
   .channels-list {
     flex: 1;
@@ -251,6 +278,6 @@ const toggleDebug = useToggle(showDebug)
   line-height: 1;
   margin: 0 0 1.5rem;
   font-weight: 900;
-  color: $primary
+  color: $primary;
 }
 </style>

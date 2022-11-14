@@ -2,7 +2,13 @@
 import { matMoreHoriz } from '@quasar/extras/material-icons'
 import { useWallet } from 'solana-wallets-vue'
 
-const emit = defineEmits(['search', 'showMembers', 'deleteChannel', 'addMember', 'showDeviceKey'])
+const emit = defineEmits([
+  'search',
+  'showMembers',
+  'deleteChannel',
+  'addMember',
+  'showDeviceKey',
+])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
@@ -13,13 +19,19 @@ const isWalletConnected = computed(() => !!wallet.publicKey.value)
 const searchText = ref<String>('')
 const channel = computed(() => state.channel)
 const memberCount = computed(() => {
-  if (channel.value?.memberCount === null || channel.value?.memberCount === undefined) {
+  if (
+    channel.value?.memberCount === null
+    || channel.value?.memberCount === undefined
+  ) {
     return ''
   }
   return `${channel.value?.memberCount}\xA0members`
 })
 const messageCount = computed(() => {
-  if (channel.value?.messageCount === null || channel.value?.messageCount === undefined) {
+  if (
+    channel.value?.messageCount === null
+    || channel.value?.messageCount === undefined
+  ) {
     return ''
   }
   return `${channel.value?.messageCount}\xA0messages`
@@ -29,6 +41,10 @@ const onSearch = (value: string) => emit('search', value)
 const showMembers = () => emit('showMembers')
 const onDeleteChannel = () => emit('deleteChannel')
 const onAddMember = () => emit('addMember')
+
+watch(searchText, (s) => {
+  onSearch(String(s))
+})
 </script>
 
 <template>
@@ -42,8 +58,7 @@ const onAddMember = () => emit('addMember')
           clearable
           debounce="300"
           borderless
-          @update:model-value="onSearch(searchText)"
-          @clear="onSearch('')"
+          @clear="searchText = ''"
         />
       </div>
     </div>
@@ -71,13 +86,28 @@ const onAddMember = () => emit('addMember')
               <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
                 <q-item-section>Device key</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!channel" @click="showMembers">
+              <q-item
+                v-close-popup
+                clickable
+                :disable="!channel"
+                @click="showMembers"
+              >
                 <q-item-section>Members</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!canAddMember" @click="onAddMember">
+              <q-item
+                v-close-popup
+                clickable
+                :disable="!canAddMember"
+                @click="onAddMember"
+              >
                 <q-item-section>Add member</q-item-section>
               </q-item>
-              <q-item v-close-popup clickable :disable="!isChannelCreator" @click="$emit('deleteChannel')">
+              <q-item
+                v-close-popup
+                clickable
+                :disable="!isChannelCreator"
+                @click="$emit('deleteChannel')"
+              >
                 <q-item-section>Delete</q-item-section>
               </q-item>
             </q-list>
@@ -90,7 +120,7 @@ const onAddMember = () => emit('addMember')
 
 <style lang="scss" scoped>
 $main-color: #fff;
-$accent-color: #FFD140;
+$accent-color: #ffd140;
 
 .panel-toolbar {
   color: $main-color;
@@ -110,7 +140,8 @@ $accent-color: #FFD140;
     height: 100%;
 
     input {
-      font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial,
+        sans-serif;
       font-size: 13px;
       color: $main-color;
       border: none;
@@ -127,7 +158,7 @@ $accent-color: #FFD140;
   .panel-info {
     flex: 1;
     display: flex;
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     align-items: center;
     padding: 10px;
     height: 100%;
@@ -165,7 +196,7 @@ $accent-color: #FFD140;
       cursor: pointer;
 
       &:hover {
-        background: rgb(210 230 240 / 20%);;
+        background: rgb(210 230 240 / 20%);
       }
     }
   }
@@ -195,7 +226,6 @@ $accent-color: #FFD140;
     }
 
     .search-input {
-
     }
   }
 }

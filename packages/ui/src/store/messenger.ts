@@ -7,11 +7,13 @@ import { PublicKey } from '@solana/web3.js'
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
+import { DEFAULT_CHANNELS } from '@/config'
 
 const ENCRYPTED_MOCK = '***** *** *** *** *******'
 
 interface MessengerStoreState {
-  allChannels: { pubkey: PublicKey; data: Channel }[]
+  allChannels: AllChannels[]
+  ownChannels: { pubkey: string; status: string }[]
   channel?: Channel
   channelAddr?: PublicKey
   channelMembershipAddr?: PublicKey
@@ -29,11 +31,14 @@ export const useMessengerStore = defineStore('messenger', () => {
   const userStore = useUserStore()
   const wallet = useAnchorWallet()
 
+  const deviceKey = computed(() => userStore.keypair)
+
   // const secretKey = useLocalStorage('key', () => bs58.encode(Keypair.generate().secretKey))
   // const keypair = Keypair.fromSecretKey(bs58.decode(secretKey.value))
 
   const defaultState = {
     allChannels: [],
+    ownChannels: [],
     channel: undefined,
     channelAddr: undefined,
     channelMembershipAddr: undefined,
@@ -59,16 +64,41 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   let listeners: number[] = []
 
-  watch(() => connectionStore.cluster, (c) => {
-    console.log(c)
+  watch(() => connectionStore.cluster, () => {
     init().then()
   }, { immediate: true })
 
-  watch(wallet, () => {
-    if (state.channelAddr) {
-      loadChannel(state.channelAddr).then()
+  watch(wallet, (w) => {
+    if (!w) {
+      reset()
+      init().then()
     }
   }, { immediate: true })
+
+  watch([deviceKey, () => state.allChannels], () => {
+    getOwnChannels()
+  }, { immediate: true })
+
+  async function getOwnChannels() {
+    const membership = await client.loadMemberships(userStore.keypair?.publicKey)
+    const channels: {
+      pubkey: string
+      status: 'Authorized' | 'Pending' | 'Unauthorized'
+    }[] = membership.map(v => ({
+      pubkey: v.data[0].channel.toBase58(),
+      status: v.data[0].status.__kind,
+    }))
+    DEFAULT_CHANNELS.forEach((pk) => {
+      if (!channels.find(ch => ch.pubkey === pk)) {
+        channels.push({
+          pubkey: pk,
+          status: 'Unauthorized',
+        })
+      }
+    })
+    state.ownChannels = channels
+    console.log('myChannels ====== ', state.ownChannels)
+  }
 
   async function initEvents() {
     console.log('Register events...')
@@ -127,6 +157,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     await initEvents()
     state.allChannels = channels as any
     state.loading = false
+    console.log(state)
   }
 
   function reset() {
@@ -301,6 +332,10 @@ export const useMessengerStore = defineStore('messenger', () => {
     await loadChannelMessages()
   }
 
+  async function refreshList() {
+    await init()
+  }
+
   return {
     state,
     client,
@@ -312,5 +347,11 @@ export const useMessengerStore = defineStore('messenger', () => {
     addMember,
     deleteMember,
     authorizeMember,
+    refreshList,
   }
 })
+
+export interface AllChannels {
+  pubkey: PublicKey
+  data: Channel
+}

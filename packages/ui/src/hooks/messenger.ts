@@ -7,7 +7,7 @@ const DEFAULT_MAX_MESSAGES = 15
 export function useChannel() {
   const wallet = useWallet()
 
-  const { state } = useMessengerStore()
+  const { state, refreshList } = useMessengerStore()
   const userStore = useUserStore()
 
   const isWalletConnected = computed(() => !!wallet.publicKey.value)
@@ -47,6 +47,12 @@ export function useChannel() {
     return data
   })
 
+  const ownChannels = computed(() =>
+    state.allChannels.filter(ch => !!state.ownChannels.find(myCh => myCh.pubkey === ch.pubkey.toBase58())),
+  )
+
+  const allChannels = computed(() => state.allChannels)
+
   return {
     isWalletConnected,
     isAuthorizedMember,
@@ -57,7 +63,11 @@ export function useChannel() {
     canAddMember,
     allowSend,
     pendingMemberCount,
+    ownChannels,
+    allChannels,
     messages,
+    refreshList,
+    loading: computed(() => state.loading),
   }
 }
 
