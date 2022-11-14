@@ -29,6 +29,7 @@ export interface ChannelMembershipArgs {
   name: string
   invitedBy: beet.COption<web3.PublicKey>
   createdAt: beet.bignum
+  flags: number
   bump: number
 }
 
@@ -52,6 +53,7 @@ export class ChannelMembership implements ChannelMembershipArgs {
     readonly name: string,
     readonly invitedBy: beet.COption<web3.PublicKey>,
     readonly createdAt: beet.bignum,
+    readonly flags: number,
     readonly bump: number,
   ) {}
 
@@ -68,6 +70,7 @@ export class ChannelMembership implements ChannelMembershipArgs {
       args.name,
       args.invitedBy,
       args.createdAt,
+      args.flags,
       args.bump,
     )
   }
@@ -195,6 +198,7 @@ export class ChannelMembership implements ChannelMembershipArgs {
         }
         return x
       })(),
+      flags: this.flags,
       bump: this.bump,
     }
   }
@@ -220,6 +224,7 @@ export const channelMembershipBeet = new beet.FixableBeetStruct<
     ['name', beet.utf8String],
     ['invitedBy', beet.coption(beetSolana.publicKey)],
     ['createdAt', beet.i64],
+    ['flags', beet.u8],
     ['bump', beet.u8],
   ],
   ChannelMembership.fromArgs,

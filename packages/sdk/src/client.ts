@@ -99,9 +99,8 @@ export class MessengerClient {
    */
   async loadMyChannels() {
     const accounts = await this.loadMemberships()
-    console.log(accounts)
     // return this.provider.connection.getMultipleAccountsInfo()
-    return []
+    return accounts
   }
 
   /**
@@ -122,15 +121,17 @@ export class MessengerClient {
   }
 
   /**
-   * Load list of {@link ChannelMembership} for the {@link key}
+   * Load list of {@link ChannelMembership} for the device {@link key}
    */
   async loadMemberships(key?: PublicKey) {
     const request = ChannelMembership.gpaBuilder()
       .addFilter('accountDiscriminator', channelMembershipDiscriminator)
       .addFilter('authority', this.provider.publicKey)
+
     if (key) {
-      request.addFilter('key', key ?? null)
+      request.addFilter('key', key)
     }
+
     const accounts = await request.run(this.provider.connection)
 
     return accounts.map((acc) => {
@@ -206,6 +207,7 @@ export class MessengerClient {
       }, {
         data: {
           name: props.name,
+          public: props.public ?? false,
           memberName: props.memberName ?? '',
           maxMessages: props.maxMessages,
           cek: cekEncrypted,
@@ -228,14 +230,12 @@ export class MessengerClient {
    * Delete channel
    */
   async deleteChannel({ channel, opts }: DeleteChannelProps) {
-    const tx = new Transaction()
     const authority = this.provider.publicKey
 
+    const tx = new Transaction()
+
     tx.add(
-      createDeleteChannelInstruction({
-        channel,
-        authority,
-      }),
+      createDeleteChannelInstruction({ channel, authority }),
     )
 
     let signature: string
@@ -255,6 +255,7 @@ export class MessengerClient {
   async joinChannel(props: JoinChannelProps) {
     const [membership] = await this.getMembershipPDA(props.channel)
     const authority = this.provider.publicKey
+
     const tx = new Transaction()
 
     tx.add(
@@ -288,6 +289,7 @@ export class MessengerClient {
   async leaveChannel(props: LeaveChannelProps) {
     const [membership] = await this.getMembershipPDA(props.channel)
     const authority = this.provider.publicKey
+
     const tx = new Transaction()
 
     tx.add(
@@ -361,6 +363,7 @@ export class MessengerClient {
    */
   async deleteMember(props: DeleteMemberProps) {
     const [membership] = props.membership ? [props.membership] : await this.getMembershipPDA(props.channel, props.key)
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
     const authority = this.provider.publicKey
     const tx = new Transaction()
 
@@ -369,6 +372,7 @@ export class MessengerClient {
         channel: props.channel,
         membership,
         authority,
+        authorityMembership,
       }),
     )
 
@@ -427,14 +431,17 @@ export class MessengerClient {
   async postMessage(props: PostMessageProps) {
     const [membershipAddr] = await this.getMembershipPDA(props.channel)
 
-    const membership = await this.loadMembership(membershipAddr)
-
-    if (!membership.cek.header) {
-      throw errorFromName('Unauthorized')
+    let message
+    if (props.encode) {
+      const membership = await this.loadMembership(membershipAddr)
+      if (!membership.cek.header) {
+        throw errorFromName('Unauthorized')
+      }
+      const cek = await this.decryptCEK(membership.cek)
+      message = await this.encryptMessage(props.message, cek)
+    } else {
+      message = props.message
     }
-
-    const cek = await this.decryptCEK(membership.cek)
-    const encMessage = await this.encryptMessage(props.message, cek)
 
     const tx = new Transaction()
 
@@ -443,9 +450,7 @@ export class MessengerClient {
         channel: props.channel,
         membership: membershipAddr,
         authority: this.provider.publicKey,
-      }, {
-        message: encMessage,
-      }),
+      }, { message }),
     )
 
     let signature: string
@@ -467,6 +472,7 @@ interface DeleteChannelProps {
 
 interface InitChannelProps {
   name: string
+  public?: boolean
   memberName?: string
   maxMessages: number
   channel?: Keypair
@@ -508,5 +514,6 @@ interface DeleteMemberProps {
 interface PostMessageProps {
   channel: PublicKey
   message: string
+  encode: boolean
   opts?: ConfirmOptions
 }

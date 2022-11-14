@@ -12,6 +12,7 @@ import type { CEKData } from './CEKData'
 import { cEKDataBeet } from './CEKData'
 export interface AddMemberData {
   name: string
+  flags: number
   cek: CEKData
   key: beet.COption<web3.PublicKey>
 }
@@ -23,6 +24,7 @@ export interface AddMemberData {
 export const addMemberDataBeet = new beet.FixableBeetArgsStruct<AddMemberData>(
   [
     ['name', beet.utf8String],
+    ['flags', beet.u8],
     ['cek', cEKDataBeet],
     ['key', beet.coption(beetSolana.publicKey)],
   ],

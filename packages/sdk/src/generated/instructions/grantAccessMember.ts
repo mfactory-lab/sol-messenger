@@ -7,30 +7,47 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
+import type { GrantAccessMemberData } from '../types/GrantAccessMemberData'
+import {
+  grantAccessMemberDataBeet,
+} from '../types/GrantAccessMemberData'
 
 /**
  * @category Instructions
- * @category DeleteMember
+ * @category GrantAccessMember
  * @category generated
  */
-export const deleteMemberStruct = new beet.BeetArgsStruct<{
-  instructionDiscriminator: number[] /* size: 8 */
-}>(
-  [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
-  'DeleteMemberInstructionArgs',
+export interface GrantAccessMemberInstructionArgs {
+  data: GrantAccessMemberData
+}
+/**
+ * @category Instructions
+ * @category GrantAccessMember
+ * @category generated
+ */
+export const grantAccessMemberStruct = new beet.BeetArgsStruct<
+  GrantAccessMemberInstructionArgs & {
+    instructionDiscriminator: number[] /* size: 8 */
+  }
+>(
+  [
+    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
+    ['data', grantAccessMemberDataBeet],
+  ],
+  'GrantAccessMemberInstructionArgs',
 )
 /**
- * Accounts required by the _deleteMember_ instruction
+ * Accounts required by the _grantAccessMember_ instruction
  *
- * @property [_writable_] channel
+ * @property [] channel
  * @property [_writable_] membership
  * @property [] authorityMembership
  * @property [_writable_, **signer**] authority
  * @category Instructions
- * @category DeleteMember
+ * @category GrantAccessMember
  * @category generated
  */
-export interface DeleteMemberInstructionAccounts {
+export interface GrantAccessMemberInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authorityMembership: web3.PublicKey
@@ -39,29 +56,33 @@ export interface DeleteMemberInstructionAccounts {
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const deleteMemberInstructionDiscriminator = [
-  95, 14, 98, 112, 252, 218, 205, 173,
+export const grantAccessMemberInstructionDiscriminator = [
+  236, 46, 184, 64, 57, 158, 80, 142,
 ]
 
 /**
- * Creates a _DeleteMember_ instruction.
+ * Creates a _GrantAccessMember_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
+ * @param args to provide as instruction data to the program
+ *
  * @category Instructions
- * @category DeleteMember
+ * @category GrantAccessMember
  * @category generated
  */
-export function createDeleteMemberInstruction(
-  accounts: DeleteMemberInstructionAccounts,
+export function createGrantAccessMemberInstruction(
+  accounts: GrantAccessMemberInstructionAccounts,
+  args: GrantAccessMemberInstructionArgs,
   programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
 ) {
-  const [data] = deleteMemberStruct.serialize({
-    instructionDiscriminator: deleteMemberInstructionDiscriminator,
+  const [data] = grantAccessMemberStruct.serialize({
+    instructionDiscriminator: grantAccessMemberInstructionDiscriminator,
+    ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.channel,
-      isWritable: true,
+      isWritable: false,
       isSigner: false,
     },
     {

@@ -20,6 +20,7 @@ export interface ChannelArgs {
   name: string
   creator: web3.PublicKey
   createdAt: beet.bignum
+  flags: number
   memberCount: number
   messageCount: number
   maxMessages: number
@@ -39,6 +40,7 @@ export class Channel implements ChannelArgs {
     readonly name: string,
     readonly creator: web3.PublicKey,
     readonly createdAt: beet.bignum,
+    readonly flags: number,
     readonly memberCount: number,
     readonly messageCount: number,
     readonly maxMessages: number,
@@ -53,6 +55,7 @@ export class Channel implements ChannelArgs {
       args.name,
       args.creator,
       args.createdAt,
+      args.flags,
       args.memberCount,
       args.messageCount,
       args.maxMessages,
@@ -178,6 +181,7 @@ export class Channel implements ChannelArgs {
         }
         return x
       })(),
+      flags: this.flags,
       memberCount: this.memberCount,
       messageCount: this.messageCount,
       maxMessages: this.maxMessages,
@@ -201,6 +205,7 @@ export const channelBeet = new beet.FixableBeetStruct<
     ['name', beet.utf8String],
     ['creator', beetSolana.publicKey],
     ['createdAt', beet.i64],
+    ['flags', beet.u8],
     ['memberCount', beet.u16],
     ['messageCount', beet.u32],
     ['maxMessages', beet.u16],

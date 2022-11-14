@@ -32,13 +32,56 @@ createErrorFromCodeLookup.set(0x1770, () => new UnauthorizedError())
 createErrorFromNameLookup.set('Unauthorized', () => new UnauthorizedError())
 
 /**
+ * InvalidChannel: 'Invalid channel'
+ *
+ * @category Errors
+ * @category generated
+ */
+export class InvalidChannelError extends Error {
+  readonly code: number = 0x1771
+  readonly name: string = 'InvalidChannel'
+  constructor() {
+    super('Invalid channel')
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, InvalidChannelError)
+    }
+  }
+}
+
+createErrorFromCodeLookup.set(0x1771, () => new InvalidChannelError())
+createErrorFromNameLookup.set('InvalidChannel', () => new InvalidChannelError())
+
+/**
+ * InvalidMembership: 'Invalid membership'
+ *
+ * @category Errors
+ * @category generated
+ */
+export class InvalidMembershipError extends Error {
+  readonly code: number = 0x1772
+  readonly name: string = 'InvalidMembership'
+  constructor() {
+    super('Invalid membership')
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, InvalidMembershipError)
+    }
+  }
+}
+
+createErrorFromCodeLookup.set(0x1772, () => new InvalidMembershipError())
+createErrorFromNameLookup.set(
+  'InvalidMembership',
+  () => new InvalidMembershipError(),
+)
+
+/**
  * NameTooLong: 'Name too long'
  *
  * @category Errors
  * @category generated
  */
 export class NameTooLongError extends Error {
-  readonly code: number = 0x1771
+  readonly code: number = 0x1773
   readonly name: string = 'NameTooLong'
   constructor() {
     super('Name too long')
@@ -48,7 +91,7 @@ export class NameTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1771, () => new NameTooLongError())
+createErrorFromCodeLookup.set(0x1773, () => new NameTooLongError())
 createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
 
 /**
@@ -58,7 +101,7 @@ createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
  * @category generated
  */
 export class MessageTooLongError extends Error {
-  readonly code: number = 0x1772
+  readonly code: number = 0x1774
   readonly name: string = 'MessageTooLong'
   constructor() {
     super('Message too long')
@@ -68,51 +111,8 @@ export class MessageTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1772, () => new MessageTooLongError())
+createErrorFromCodeLookup.set(0x1774, () => new MessageTooLongError())
 createErrorFromNameLookup.set('MessageTooLong', () => new MessageTooLongError())
-
-/**
- * AlreadyInUse: 'Already in use'
- *
- * @category Errors
- * @category generated
- */
-export class AlreadyInUseError extends Error {
-  readonly code: number = 0x1773
-  readonly name: string = 'AlreadyInUse'
-  constructor() {
-    super('Already in use')
-    if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, AlreadyInUseError)
-    }
-  }
-}
-
-createErrorFromCodeLookup.set(0x1773, () => new AlreadyInUseError())
-createErrorFromNameLookup.set('AlreadyInUse', () => new AlreadyInUseError())
-
-/**
- * UninitializedAccount: 'Uninitialized account'
- *
- * @category Errors
- * @category generated
- */
-export class UninitializedAccountError extends Error {
-  readonly code: number = 0x1774
-  readonly name: string = 'UninitializedAccount'
-  constructor() {
-    super('Uninitialized account')
-    if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, UninitializedAccountError)
-    }
-  }
-}
-
-createErrorFromCodeLookup.set(0x1774, () => new UninitializedAccountError())
-createErrorFromNameLookup.set(
-  'UninitializedAccount',
-  () => new UninitializedAccountError(),
-)
 
 /**
  * Attempts to resolve a custom program error from the provided error code.

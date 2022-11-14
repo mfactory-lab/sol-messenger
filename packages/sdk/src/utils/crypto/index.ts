@@ -26,7 +26,7 @@ export type PrivateKey = number[] | string | Buffer | Uint8Array
 export type CEK = Uint8Array
 
 /**
- * Create a Solana keypair object from an x25519 private key
+ * Create a Solana keypair object from a x25519 private key
  * @param privateKey
  */
 export const makeKeypair = (privateKey: PrivateKey): Keypair => {
@@ -38,11 +38,7 @@ export const makeKeypair = (privateKey: PrivateKey): Keypair => {
     return Keypair.fromSecretKey(base58ToBytes(privateKey))
   }
 
-  if (privateKey instanceof Buffer || privateKey instanceof Uint8Array) {
-    return Keypair.fromSecretKey(privateKey)
-  }
-
-  throw new Error('Incompatible private key format')
+  return Keypair.fromSecretKey(privateKey)
 }
 
 /**
