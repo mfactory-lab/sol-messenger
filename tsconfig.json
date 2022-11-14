@@ -18,8 +18,8 @@
     "moduleResolution": "node"
   },
   "include": [
-    "packages/**/*",
-    "tests/**/*"
+    "packages/**/*.ts",
+    "tests/**/*.ts"
   ],
   "exclude": ["packages/*/dist"]
 }

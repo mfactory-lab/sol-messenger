@@ -21,9 +21,13 @@ help: ## Show this help
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+.PHONY: sdk
+sdk: ## Generate sdk
+	pnpm --filter=sdk run generate && pnpm lint:fix
+
 .PHONY: build
 build: ## Build program
-	anchor build -p $(program) # -t $(cwd)/packages/sdk/src/idl
+	anchor build -p $(program)
 
 .PHONY: deploy
 deploy: build ## Deploy program
