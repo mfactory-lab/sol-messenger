@@ -1,6 +1,6 @@
 [package]
 name = "messenger"
-version = "0.0.6"
+version = "0.0.7"
 description = "On-chain messenger"
 edition = "2021"
 homepage = "https://jfactory.ch"
