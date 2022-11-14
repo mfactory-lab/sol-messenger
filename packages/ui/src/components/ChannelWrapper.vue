@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const props = defineProps({
+const channelProps = defineProps({
   channel: { type: Object },
   messages: { type: Array },
   postMessageState: { type: Object },
@@ -9,18 +9,27 @@ const props = defineProps({
   channelLoadingState: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['sendMessage'])
+const emits = defineEmits(['sendMessage'])
 
-const sendMessage = (message: any) => emit('sendMessage', message)
+const sendingMessage = (message: any) => emits('sendMessage', message)
+
+const chat = ref<HTMLElement>()
+const mes = ref<HTMLElement>()
+
+watch(mes, (c) => {
+  if (c) {
+    chat.value!.scrollTop = c.scrollHeight
+  }
+})
 </script>
 
 <template>
   <q-card class="messenger-card" square>
-    <div class="messenger-content">
+    <div ref="chat" class="messenger-content">
       <div v-if="channel" class="row justify-center channel-wrapper">
-        <div v-if="messages.length > 0" class="messenger-messages">
+        <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
-            v-for="msg in messages.concat(messages)"
+            v-for="msg in messages"
             :key="msg.id"
             :name="msg.senderFormatted"
             :text="msg.text"
@@ -40,7 +49,7 @@ const sendMessage = (message: any) => emit('sendMessage', message)
       :message="postMessageState.message"
       :sending="loading"
       :disabled="!allowSend"
-      @submit="sendMessage"
+      @submit="sendingMessage"
     />
     <q-inner-loading :showing="channelLoadingState" />
   </q-card>
@@ -63,9 +72,7 @@ const sendMessage = (message: any) => emit('sendMessage', message)
   .messenger-messages {
     width: 100%;
     max-width: 600px;
-    max-height: 400px;
-    padding: 20px 0 20px 30px;
-    overflow: hidden;
+    padding: 20px 10px 20px 15px;
     min-height: 200px;
   }
 
