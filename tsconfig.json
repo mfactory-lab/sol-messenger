@@ -9,9 +9,7 @@
     "typeRoots": [
       "./node_modules/@types"
     ],
-    "lib": [
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
