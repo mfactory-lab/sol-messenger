@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 import { Keypair } from '@solana/web3.js'
-import type { ConfirmOptions } from '@solana/web3.js'
+import type { ConfirmOptions, PublicKey } from '@solana/web3.js'
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor'
 import { MessengerClient } from '../packages/sdk'
 import adminKeypair from '../target/deploy/messenger-manager.json'
@@ -38,7 +38,38 @@ describe('messenger', () => {
   console.log(`Program ID: ${client.programId}`)
   console.log(`Sender: ${sender.publicKey}`)
 
-  it('can init channel', async () => {
+  describe('public', () => {
+    let publicChannel: PublicKey
+    it('can init a public channel', async () => {
+      const data = { name: 'General', public: true, maxMessages: 15 }
+      const { channel } = await client.initChannel(data)
+      const msgData = { channel: channel.publicKey, message: 'test123' }
+      await client.postMessage(msgData)
+
+      const channelInfo = await client.loadChannel(channel.publicKey)
+      assert.equal(channelInfo.name, data.name)
+      assert.ok(client.utils.channel.isPublic(channelInfo))
+
+      const msg = channelInfo.messages[0]
+      assert.equal(msg.content, msgData.message)
+      assert.ok(!client.utils.message.isEncrypted(msg))
+
+      publicChannel = channel.publicKey
+    })
+
+    it('can any user send a message', async () => {
+      const data = { channel: publicChannel, message: 'i am groot' }
+      await getClient(member2).postMessage(data)
+
+      const channelInfo = await client.loadChannel(publicChannel)
+      const msg = channelInfo.messages[1]
+
+      assert.equal(msg.content, data.message)
+      assert.ok(!client.utils.message.isEncrypted(msg))
+    })
+  })
+
+  it('can init private channel', async () => {
     const data = { name: 'test', memberName: 'creator', maxMessages: 10 }
     const { cekEncrypted, channel: _channel } = await client.initChannel(data)
     channel = _channel
@@ -73,15 +104,19 @@ describe('messenger', () => {
     }
   })
 
-  it('can post message', async () => {
+  it('can post encrypted message', async () => {
     const message = 'hello world'
-    await client.postMessage({ channel: channel.publicKey, message })
+    await client.postMessage({ channel: channel.publicKey, message, encrypt: true })
     const aca = await client.loadMembership((await client.getMembershipPDA(channel.publicKey))[0])
     const cek = await client.decryptCEK(aca.cek)
     const channelInfo = await client.loadChannel(channel.publicKey)
-    assert.equal(await client.decryptMessage(channelInfo.messages[0].content, cek), message)
+
+    const msg = channelInfo.messages[0]
+
+    assert.equal(await client.decryptMessage(msg.content, cek), message)
+    assert.equal(msg.flags, 1)
+    assert.equal(msg.id, 1)
     assert.equal(channelInfo.messageCount, 1)
-    assert.equal(channelInfo.messages[0].id, 1)
   })
 
   it('can add member to the channel', async () => {
@@ -98,8 +133,8 @@ describe('messenger', () => {
     assert.equal(membership.name, data.name)
   })
 
-  it('can post message from invitee', async () => {
-    const data = { channel: channel.publicKey, message: 'hello from invitee' }
+  it('can post encrypted message from invitee', async () => {
+    const data = { channel: channel.publicKey, message: 'hello from invitee', encrypt: true }
     await getClient(member1).postMessage(data)
     const channelInfo = await client.loadChannel(channel.publicKey)
     assert.equal(channelInfo.messageCount, 2)
@@ -130,7 +165,7 @@ describe('messenger', () => {
   })
 
   it('cannot post message if not authorized', async () => {
-    const data = { channel: channel.publicKey, message: 'test' }
+    const data = { channel: channel.publicKey, message: 'test', encrypt: true }
     try {
       await getClient(member2).postMessage(data)
     } catch (e: any) {
@@ -211,7 +246,9 @@ describe('messenger', () => {
 
   it('cannot member #1 delete a channel', async () => {
     try {
-      await getClient(member1).deleteChannel(channel.publicKey)
+      await getClient(member1).deleteChannel({
+        channel: channel.publicKey,
+      })
       assert.ok(false)
     } catch (e: any) {
       assert.equal(e.name, 'Unauthorized')
@@ -220,7 +257,9 @@ describe('messenger', () => {
 
   it('can creator delete a channel', async () => {
     try {
-      await client.deleteChannel(channel.publicKey)
+      await client.deleteChannel({
+        channel: channel.publicKey,
+      })
       await client.loadChannel(channel.publicKey)
     } catch (e: any) {
       assert.ok(e.message.startsWith('Unable to find Channel account'))
@@ -230,11 +269,12 @@ describe('messenger', () => {
   it('can admin delete a member', async () => {
     const channels = await client.loadAllChannels()
     const members = await client.loadChannelMembers(channels[0].pubkey)
-    await getClient(admin).deleteMember({ channel: members[0].data.channel, membership: members[0].pubkey })
+    const member = members[0]
+    await getClient(admin).deleteMember({ channel: member.data.channel, membership: member.pubkey })
   })
 
   it('can admin delete a channel', async () => {
     const channels = await client.loadAllChannels()
-    await getClient(admin).deleteChannel(channels[0].pubkey)
+    await getClient(admin).deleteChannel({ channel: channels[0].pubkey })
   })
 })
