@@ -50,7 +50,7 @@ importers:
       '@stablelib/xchacha20poly1305': ^1.0.1
       ed2curve-esm: 0.3.0-alpha-1
       tweetnacl: ^1.0.3
-      uint8arrays: ^3.0.0
+      uint8arrays: ^3.1.1
     dependencies:
       '@solana/web3.js': 1.66.1
       '@stablelib/random': 1.0.2
@@ -291,6 +291,9 @@ packages:
     peerDependencies:
       react: ^16 || ^17 || ^18
       react-dom: ^16 || ^17 || ^18
+    peerDependenciesMeta:
+      react:
+        optional: true
     dev: false
 
   /@fractalwagmi/solana-wallet-adapter/0.0.8_@solana+web3.js@1.66.1:
@@ -5299,6 +5302,9 @@ packages:
     resolution: {integrity: sha512-8d3Tackk8IRLXTo67Y+c1rpaiXjoz/Dd2HpcMdW//62/x8J1Nbho14Kh8x974t9prsLHN6XqVgcnRiBGFptQmg==}
     peerDependencies:
       react: ^15.5.3 || ^16.0.0 || ^17.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
     dependencies:
       loose-envify: 1.4.0
       prop-types: 15.8.1
@@ -5358,6 +5364,9 @@ packages:
     resolution: {integrity: sha512-81PIMmVLnCNLO/fFOQxdQkvEq/+Hfpv24XNJfpyZhTRfO0QcmQIF/PgCa1zCOj2w1hrn12MFLyaJ/G0+Mxtfag==}
     peerDependencies:
       react: ^16.13.1
+    peerDependenciesMeta:
+      react:
+        optional: true
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
@@ -5380,6 +5389,9 @@ packages:
     peerDependencies:
       react: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
       react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
+    peerDependenciesMeta:
+      react:
+        optional: true
     dependencies:
       exenv: 1.2.2
       prop-types: 15.8.1
@@ -5394,6 +5406,9 @@ packages:
     peerDependencies:
       react: ~16
       react-dom: ~16
+    peerDependenciesMeta:
+      react:
+        optional: true
     dependencies:
       jsqr: 1.4.0
       prop-types: 15.8.1
