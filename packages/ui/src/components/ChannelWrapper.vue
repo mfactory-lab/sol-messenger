@@ -9,6 +9,7 @@ const emit = defineEmits(['sendMessage'])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
+const { isChannelLoading, isSendMessage } = useChannelStore()
 
 function isSomeoneMessage(sender: any) {
   const pubkey = wallet.publicKey.value
@@ -38,6 +39,8 @@ const messages = computed(() => {
   }
   return data
 })
+
+const isAllowSend = computed(() => state.channelAddr)
 
 const sendMessage = (message: any) => emit('sendMessage', message)
 
@@ -75,11 +78,11 @@ watch(mes, (c) => {
 
     <channel-form
       :message="postMessageState.message"
-      :sending="loading"
-      :disabled="!allowSend"
+      :sending="isSendMessage"
+      :disabled="!isAllowSend"
       @submit="sendMessage"
     />
-    <q-inner-loading :showing="channelLoadingState" />
+    <q-inner-loading :showing="isChannelLoading" />
   </q-card>
 </template>
 

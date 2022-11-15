@@ -45,6 +45,8 @@ const onSearch = (val: string) => {
   searchWord.value = val
 }
 
+const isLoading = computed(() => state.loading)
+
 const showDeviceKeyDialog = ref<Boolean>(false)
 
 const filterChannels = computed(() =>
@@ -82,6 +84,7 @@ const filterChannels = computed(() =>
         </div>
         <channel-control
           :is-joining="joinChannel.state.loading"
+          :is-loading="isLoading"
           @create-channel="newChannel.state.dialog = true"
           @join-channel="joinChannel.state.dialog = true"
           @refresh-list="refreshList"

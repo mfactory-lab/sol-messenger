@@ -64,7 +64,7 @@ function getStatusColor(status: any) {
                 Authorize
               </q-btn>
               <q-btn
-                v-if="canDeleteMember(m.data)"
+                v-if="canDeleteMember"
                 color="negative" rounded size="xs" unelevated class="full-width"
                 :loading="deleteMemberState.loading"
                 :disabled="deleteMemberState.loading"

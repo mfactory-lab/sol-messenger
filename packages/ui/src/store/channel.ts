@@ -12,6 +12,8 @@ export const useChannelStore = defineStore('channel', () => {
   const isAuthorizedMember = computed(() => state.channelMembership?.status.__kind === 'Authorized')
   const isPendingMember = computed(() => state.channelMembership?.status.__kind === 'Pending')
   const isChannelCreator = computed(() => String(state.channel?.creator) === String(wallet.value?.publicKey ?? '-'))
+  const isChannelLoading = computed(() => state.channelLoading)
+  const isSendMessage = computed(() => state.sending)
   const canAddMember = computed(() => !!state.channelMembership && client.utils.member.canAddMember(state.channelMembership))
   const canAuthorizeMember = computed(() => !!state.channelMembership && client.utils.member.canAuthorizeMember(state.channelMembership))
   const canDeleteMember = computed(() => !!state.channelMembership && client.utils.member.canDeleteMember(state.channelMembership))
@@ -24,6 +26,8 @@ export const useChannelStore = defineStore('channel', () => {
   const canPostMessage = computed(() => !state.sending && (isPublicChannel.value || isAuthorizedMember.value))
 
   return {
+    isChannelLoading,
+    isSendMessage,
     isPublicChannel,
     isPermissionlessChannel,
     isAuthorizedMember,

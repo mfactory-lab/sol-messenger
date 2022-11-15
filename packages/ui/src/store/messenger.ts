@@ -64,13 +64,10 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   let listeners: number[] = []
 
-  watch(() => connectionStore.cluster, () => {
-    init().then()
-  }, { immediate: true })
-
   watch(wallet, (w) => {
     if (!w) {
       reset()
+    } else {
       init().then()
     }
   }, { immediate: true })
@@ -81,6 +78,7 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function getOwnChannels() {
     const memberships = await client.loadMemberships(userStore.keypair?.publicKey)
+    console.log(memberships)
     const channels: {
       pubkey: string
       status: 'Authorized' | 'Pending' | 'Unauthorized'
@@ -88,14 +86,14 @@ export const useMessengerStore = defineStore('messenger', () => {
       pubkey: v.data[0].channel.toBase58(),
       status: v.data[0].status.__kind,
     }))
-    DEFAULT_CHANNELS.forEach((pk) => {
+    /*     DEFAULT_CHANNELS.forEach((pk) => {
       if (!channels.find(ch => ch.pubkey === pk)) {
         channels.push({
           pubkey: pk,
           status: 'Unauthorized',
         })
       }
-    })
+    }) */
     state.ownChannels = channels
     console.log('myChannels ====== ', state.ownChannels)
   }
@@ -264,7 +262,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMessages = await Promise.all(
       state.channel.messages.map(async (m) => {
         const isEncrypted = client.utils.message.isEncrypted(m)
-        let content = isEncrypted ? ENCRYPTED_MOCK : m.content
+        let content = !isEncrypted ? ENCRYPTED_MOCK : m.content
         let senderDisplayName = shortenAddress(m.sender)
         // show sender name only for authorized users
         if (wallet.value?.publicKey) {
