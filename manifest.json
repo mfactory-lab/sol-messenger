@@ -27,6 +27,10 @@
     "file": "assets/join.627c8616.svg",
     "src": "src/assets/img/join.svg"
   },
+  "src/assets/img/telegram.svg": {
+    "file": "assets/telegram.360d0c59.svg",
+    "src": "src/assets/img/telegram.svg"
+  },
   "src/assets/img/twitter.svg": {
     "file": "assets/twitter.e4e729c2.svg",
     "src": "src/assets/img/twitter.svg"
@@ -34,10 +38,6 @@
   "src/assets/img/discord.svg": {
     "file": "assets/discord.4c88a6e4.svg",
     "src": "src/assets/img/discord.svg"
-  },
-  "src/assets/img/telegram.svg": {
-    "file": "assets/telegram.360d0c59.svg",
-    "src": "src/assets/img/telegram.svg"
   },
   "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
@@ -76,18 +76,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.52481e9a.js",
+    "file": "assets/index.57764d54.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.28daed3d.js"
+      "_vendor.4e722742.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.b913342b.css"
+      "assets/index.6dae3476.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -111,24 +111,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.28daed3d.js": {
-    "file": "assets/vendor.28daed3d.js"
+  "_vendor.4e722742.js": {
+    "file": "assets/vendor.4e722742.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.22fc915e.js",
+    "file": "assets/empty.5b810678.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.28daed3d.js"
+      "_vendor.4e722742.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.d16afdbf.js",
+    "file": "assets/_...all_.e50b9310.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.28daed3d.js",
+      "_vendor.4e722742.js",
       "index.html"
     ],
     "css": [
@@ -140,7 +140,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.b913342b.css",
+    "file": "assets/index.6dae3476.css",
     "src": "index.css"
   }
 }
