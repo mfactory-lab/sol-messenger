@@ -299,10 +299,14 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
     try {
       state.sending = true
+      let isPublic: any
+      if (state.channel) {
+        isPublic = client.utils.channel.isPublic(state.channel)
+      }
       await client.postMessage({
         channel: state.channelAddr,
         message,
-        encrypt: true,
+        encrypt: !isPublic,
       })
       await loadChannelMessages()
     } finally {
