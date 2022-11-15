@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 
-const props = defineProps({
+defineProps({
   channel: Object as PropType<{ data: any; pubkey: string }>,
   state: Object,
 })
-const emit = defineEmits(['selectChannel'])
 
+const emit = defineEmits(['selectChannel'])
 const selectChannel = () => emit('selectChannel')
 
 const getBadgeColor = (text: string) => {
