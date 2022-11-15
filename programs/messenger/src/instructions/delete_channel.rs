@@ -18,13 +18,13 @@ pub fn handler(ctx: Context<DeleteChannel>) -> Result<()> {
             &channel.key(),
             authority_key,
         )?;
+        if !auth_membership.is_owner() {
+            return Err(MessengerError::Unauthorized.into());
+        }
         close(
             auth_membership.to_account_info(),
             ctx.accounts.authority.to_account_info(),
         )?;
-        if !auth_membership.is_owner() {
-            return Err(MessengerError::Unauthorized.into());
-        }
     }
 
     emit!(DeleteChannelEvent {
