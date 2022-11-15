@@ -12,11 +12,15 @@ export const useUserStore = defineStore('user', () => {
     const pubkey = wallet.value?.publicKey
     if (pubkey) {
       const secretKey = useLocalStorage(pubkey.toString(), () => bs58.encode(Keypair.generate().secretKey))
-      keypair.value = Keypair.fromSecretKey(bs58.decode(secretKey.value))
+      fromEncoded(secretKey.value)
     } else {
       keypair.value = undefined
     }
   })
+
+  function fromEncoded(key: string) {
+    keypair.value = Keypair.fromSecretKey(bs58.decode(key))
+  }
 
   function generateKey() {
     const pubkey = wallet.value?.publicKey
@@ -24,12 +28,21 @@ export const useUserStore = defineStore('user', () => {
       return
     }
     const secretKey = useLocalStorage(pubkey.toString(), '')
-    secretKey.value = bs58.encode(Keypair.generate().secretKey)
-    keypair.value = Keypair.fromSecretKey(bs58.decode(secretKey.value))
+    fromEncoded(secretKey.value = bs58.encode(Keypair.generate().secretKey))
+  }
+
+  function importKey(key: string) {
+    const pubkey = wallet.value?.publicKey
+    if (!pubkey) {
+      return
+    }
+    const secretKey = useLocalStorage(pubkey.toString(), '')
+    fromEncoded(secretKey.value = key)
   }
 
   return {
     keypair,
     generateKey,
+    importKey,
   }
 })

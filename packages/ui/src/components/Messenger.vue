@@ -45,10 +45,6 @@ const onSearch = (val: string) => {
   searchWord.value = val
 }
 
-const showMembersDialog = () => {
-  authorizeMember.state.dialog = true
-}
-
 const showDeviceKeyDialog = ref<Boolean>(false)
 
 const filterChannels = computed(() =>
@@ -62,7 +58,7 @@ const filterChannels = computed(() =>
   <div class="messenger-wrapper">
     <messenger-toolbar
       @search="onSearch"
-      @show-members="showMembersDialog"
+      @show-members="authorizeMember.state.dialog = true"
       @delete-channel="deleteMember.submit(state.channelAddr)"
       @add-member="addMember.state.dialog = true"
       @show-device-key="showDeviceKeyDialog = true"
