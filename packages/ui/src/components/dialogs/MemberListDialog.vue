@@ -11,7 +11,7 @@ defineProps({
 const emit = defineEmits(['submit', 'deleteMember'])
 
 const { state } = useMessengerStore()
-const { isAuthorizedMember, canDeleteMember } = useChannelStore()
+const channel = useChannelStore()
 
 function formatMemberName(member: ChannelMembership) {
   if (member?.name && member.name !== '') {
@@ -54,7 +54,7 @@ function getStatusColor(status: any) {
             <q-item-section side class="q-gutter-sm">
               <q-btn
                 v-if="m.data.status.__kind === 'Pending'
-                  && isAuthorizedMember
+                  && channel.isAuthorizedMember
                   && (!m.data.status.authority || String(m.data.status.authority) === String(wallet.publicKey.value))"
                 color="teal" rounded size="xs" unelevated class="full-width"
                 :loading="authorizeMemberState.loading"
@@ -64,7 +64,7 @@ function getStatusColor(status: any) {
                 Authorize
               </q-btn>
               <q-btn
-                v-if="canDeleteMember"
+                v-if="channel.canDeleteMember"
                 color="negative" rounded size="xs" unelevated class="full-width"
                 :loading="deleteMemberState.loading"
                 :disabled="deleteMemberState.loading"

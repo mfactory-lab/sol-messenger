@@ -78,7 +78,6 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function getOwnChannels() {
     const memberships = await client.loadMemberships(userStore.keypair?.publicKey)
-    console.log(memberships)
     const channels: {
       pubkey: string
       status: 'Authorized' | 'Pending' | 'Unauthorized'
