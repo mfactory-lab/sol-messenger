@@ -261,7 +261,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMessages = await Promise.all(
       state.channel.messages.map(async (m) => {
         const isEncrypted = client.utils.message.isEncrypted(m)
-        let content = !isEncrypted ? ENCRYPTED_MOCK : m.content
+        let content = isEncrypted ? ENCRYPTED_MOCK : m.content
         let senderDisplayName = shortenAddress(m.sender)
         // show sender name only for authorized users
         if (wallet.value?.publicKey) {
@@ -302,6 +302,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       await client.postMessage({
         channel: state.channelAddr,
         message,
+        encrypt: true,
       })
       await loadChannelMessages()
     } finally {
