@@ -12,9 +12,9 @@ export interface InitChannelData {
   name: string
   maxMessages: number
   memberName: string
-  public: boolean
-  accessible: boolean
   cek: CEKData
+  public: boolean
+  permissionless: boolean
 }
 
 /**
@@ -27,9 +27,9 @@ export const initChannelDataBeet
       ['name', beet.utf8String],
       ['maxMessages', beet.u16],
       ['memberName', beet.utf8String],
-      ['public', beet.bool],
-      ['accessible', beet.bool],
       ['cek', cEKDataBeet],
+      ['public', beet.bool],
+      ['permissionless', beet.bool],
     ],
     'InitChannelData',
   )

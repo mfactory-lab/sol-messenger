@@ -1,5 +1,5 @@
 {
-  "version": "0.0.7",
+  "version": "0.0.8",
   "name": "messenger",
   "instructions": [
     {
@@ -45,6 +45,11 @@
       "accounts": [
         {
           "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authorityMembership",
           "isMut": true,
           "isSigner": false
         },
@@ -226,7 +231,7 @@
         },
         {
           "name": "authorityMembership",
-          "isMut": false,
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -546,18 +551,18 @@
             "type": "string"
           },
           {
-            "name": "public",
-            "type": "bool"
-          },
-          {
-            "name": "accessible",
-            "type": "bool"
-          },
-          {
             "name": "cek",
             "type": {
               "defined": "CEKData"
             }
+          },
+          {
+            "name": "public",
+            "type": "bool"
+          },
+          {
+            "name": "permissionless",
+            "type": "bool"
           }
         ]
       }
@@ -627,6 +632,13 @@
               "The unix timestamp at which the message was received"
             ],
             "type": "i64"
+          },
+          {
+            "name": "flags",
+            "docs": [
+              "Message flags"
+            ],
+            "type": "u8"
           },
           {
             "name": "content",
@@ -786,6 +798,11 @@
           "index": true
         },
         {
+          "name": "by",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "timestamp",
           "type": "i64",
           "index": false
@@ -831,6 +848,11 @@
           "index": true
         },
         {
+          "name": "by",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "timestamp",
           "type": "i64",
           "index": false
@@ -856,11 +878,16 @@
     },
     {
       "code": 6003,
+      "name": "InvalidMessage",
+      "msg": "Invalid message"
+    },
+    {
+      "code": 6004,
       "name": "NameTooLong",
       "msg": "Name too long"
     },
     {
-      "code": 6004,
+      "code": 6005,
       "name": "MessageTooLong",
       "msg": "Message too long"
     }

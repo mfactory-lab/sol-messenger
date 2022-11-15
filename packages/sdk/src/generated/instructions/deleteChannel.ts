@@ -23,6 +23,7 @@ export const deleteChannelStruct = new beet.BeetArgsStruct<{
  * Accounts required by the _deleteChannel_ instruction
  *
  * @property [_writable_] channel
+ * @property [_writable_] authorityMembership
  * @property [_writable_, **signer**] authority
  * @category Instructions
  * @category DeleteChannel
@@ -30,6 +31,7 @@ export const deleteChannelStruct = new beet.BeetArgsStruct<{
  */
 export interface DeleteChannelInstructionAccounts {
   channel: web3.PublicKey
+  authorityMembership: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
@@ -57,6 +59,11 @@ export function createDeleteChannelInstruction(
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.channel,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.authorityMembership,
       isWritable: true,
       isSigner: false,
     },

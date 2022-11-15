@@ -3,7 +3,7 @@ import type { AnchorProvider } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
-import type { CEKData } from './generated'
+import type { CEKData, Message } from './generated'
 
 import {
   Channel,
@@ -24,6 +24,25 @@ import {
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
+
+export enum ChannelFlags {
+  /// [Channel] messages is not encrypted and [ChannelMembership] is not required
+  IsPublic = 0b001,
+  /// Do not check channel permission when adding, deleting, authorizing a member
+  Permissionless = 0b010,
+}
+
+export enum ChannelMembershipFlags {
+  AddMember = 0b001,
+  DeleteMember = 0b010,
+  AuthorizeMember = 0b100,
+  Admin = AddMember | DeleteMember | AuthorizeMember,
+  Owner = 0xFF,
+}
+
+export enum MessageFlags {
+  isEncrypted = 0b001,
+}
 
 export class MessengerClient {
   programId = PROGRAM_ID
@@ -96,6 +115,7 @@ export class MessengerClient {
 
   /**
    * Load list of {@link Channel} participated by user
+   * TODO: implement
    */
   async loadMyChannels() {
     const accounts = await this.loadMemberships()
@@ -208,6 +228,7 @@ export class MessengerClient {
         data: {
           name: props.name,
           public: props.public ?? false,
+          permissionless: props.permissionless ?? false,
           memberName: props.memberName ?? '',
           maxMessages: props.maxMessages,
           cek: cekEncrypted,
@@ -231,11 +252,12 @@ export class MessengerClient {
    */
   async deleteChannel({ channel, opts }: DeleteChannelProps) {
     const authority = this.provider.publicKey
+    const [authorityMembership] = await this.getMembershipPDA(channel)
 
     const tx = new Transaction()
 
     tx.add(
-      createDeleteChannelInstruction({ channel, authority }),
+      createDeleteChannelInstruction({ channel, authority, authorityMembership }),
     )
 
     let signature: string
@@ -341,6 +363,7 @@ export class MessengerClient {
       }, {
         data: {
           name: props.name ?? '',
+          flags: props.flags ?? 0,
           cek,
           key,
         },
@@ -432,13 +455,15 @@ export class MessengerClient {
     const [membershipAddr] = await this.getMembershipPDA(props.channel)
 
     let message
-    if (props.encode) {
+    let flags = 0
+    if (props.encrypt) {
       const membership = await this.loadMembership(membershipAddr)
       if (!membership.cek.header) {
         throw errorFromName('Unauthorized')
       }
       const cek = await this.decryptCEK(membership.cek)
       message = await this.encryptMessage(props.message, cek)
+      flags |= 0b001
     } else {
       message = props.message
     }
@@ -450,7 +475,7 @@ export class MessengerClient {
         channel: props.channel,
         membership: membershipAddr,
         authority: this.provider.publicKey,
-      }, { message }),
+      }, { message: String.fromCharCode(flags) + message }),
     )
 
     let signature: string
@@ -463,6 +488,23 @@ export class MessengerClient {
 
     return { signature }
   }
+
+  utils = {
+    channel: {
+      isPublic: (c: Channel) => (c.flags & ChannelFlags.IsPublic) > 0,
+      isPermissionless: (c: Channel) => (c.flags & ChannelFlags.Permissionless) > 0,
+    },
+    member: {
+      isOwner: (m: ChannelMembership) => m.flags >= ChannelMembershipFlags.Owner,
+      isAdmin: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.Admin) === ChannelMembershipFlags.Admin,
+      canAddMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.AddMember) > 0,
+      canDeleteMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.DeleteMember) > 0,
+      canAuthorizeMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.AuthorizeMember) > 0,
+    },
+    message: {
+      isEncrypted: (m: Message) => (m.flags & MessageFlags.isEncrypted) > 0,
+    },
+  }
 }
 
 interface DeleteChannelProps {
@@ -473,6 +515,7 @@ interface DeleteChannelProps {
 interface InitChannelProps {
   name: string
   public?: boolean
+  permissionless?: boolean
   memberName?: string
   maxMessages: number
   channel?: Keypair
@@ -496,6 +539,7 @@ interface AddMemberProps {
   invitee: PublicKey
   key?: PublicKey
   name?: string
+  flags?: number
   opts?: ConfirmOptions
 }
 
@@ -514,6 +558,6 @@ interface DeleteMemberProps {
 interface PostMessageProps {
   channel: PublicKey
   message: string
-  encode: boolean
+  encrypt?: boolean
   opts?: ConfirmOptions
 }

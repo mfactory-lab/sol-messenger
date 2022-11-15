@@ -75,13 +75,33 @@ createErrorFromNameLookup.set(
 )
 
 /**
+ * InvalidMessage: 'Invalid message'
+ *
+ * @category Errors
+ * @category generated
+ */
+export class InvalidMessageError extends Error {
+  readonly code: number = 0x1773
+  readonly name: string = 'InvalidMessage'
+  constructor() {
+    super('Invalid message')
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, InvalidMessageError)
+    }
+  }
+}
+
+createErrorFromCodeLookup.set(0x1773, () => new InvalidMessageError())
+createErrorFromNameLookup.set('InvalidMessage', () => new InvalidMessageError())
+
+/**
  * NameTooLong: 'Name too long'
  *
  * @category Errors
  * @category generated
  */
 export class NameTooLongError extends Error {
-  readonly code: number = 0x1773
+  readonly code: number = 0x1774
   readonly name: string = 'NameTooLong'
   constructor() {
     super('Name too long')
@@ -91,7 +111,7 @@ export class NameTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1773, () => new NameTooLongError())
+createErrorFromCodeLookup.set(0x1774, () => new NameTooLongError())
 createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
 
 /**
@@ -101,7 +121,7 @@ createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
  * @category generated
  */
 export class MessageTooLongError extends Error {
-  readonly code: number = 0x1774
+  readonly code: number = 0x1775
   readonly name: string = 'MessageTooLong'
   constructor() {
     super('Message too long')
@@ -111,7 +131,7 @@ export class MessageTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1774, () => new MessageTooLongError())
+createErrorFromCodeLookup.set(0x1775, () => new MessageTooLongError())
 createErrorFromNameLookup.set('MessageTooLong', () => new MessageTooLongError())
 
 /**

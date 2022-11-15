@@ -42,7 +42,7 @@ export const authorizeMemberStruct = new beet.FixableBeetArgsStruct<
  * @property [] channel
  * @property [_writable_] membership
  * @property [**signer**] authority
- * @property [] authorityMembership
+ * @property [_writable_] authorityMembership
  * @category Instructions
  * @category AuthorizeMember
  * @category generated
@@ -97,7 +97,7 @@ export function createAuthorizeMemberInstruction(
     },
     {
       pubkey: accounts.authorityMembership,
-      isWritable: false,
+      isWritable: true,
       isSigner: false,
     },
     {

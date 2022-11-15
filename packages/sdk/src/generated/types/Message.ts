@@ -12,6 +12,7 @@ export interface Message {
   id: number
   sender: web3.PublicKey
   createdAt: beet.bignum
+  flags: number
   content: string
 }
 
@@ -24,6 +25,7 @@ export const messageBeet = new beet.FixableBeetArgsStruct<Message>(
     ['id', beet.u32],
     ['sender', beetSolana.publicKey],
     ['createdAt', beet.i64],
+    ['flags', beet.u8],
     ['content', beet.utf8String],
   ],
   'Message',
