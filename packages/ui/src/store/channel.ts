@@ -21,6 +21,7 @@ export const useChannelStore = defineStore('channel', () => {
     && !state.loading && !isAuthorizedMember.value)
   const canCreateChannel = computed(() => isWalletConnected.value)
   const canDeleteChannel = computed(() => isOwner.value)
+  const canGrantAccess = computed(() => isOwner.value)
   const canPostMessage = computed(() => !state.sending && (isPublicChannel.value || isAuthorizedMember.value))
 
   return {
@@ -37,6 +38,7 @@ export const useChannelStore = defineStore('channel', () => {
     canDeleteMember,
     canCreateChannel,
     canDeleteChannel,
+    canGrantAccess,
     canPostMessage,
   }
 })
