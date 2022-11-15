@@ -126,7 +126,7 @@ impl ChannelMembership {
         + 32 + 32 + 32 // channel + authority + cek_key
         + CEKData::SIZE + ChannelMembershipStatus::SIZE
         + (4 + MAX_MEMBER_NAME_LENGTH) // name
-        + (1 + 32) + 1 + 8 + 1 // invited_by + created_at + flags + bump
+        + (1 + 32) + 8 + 1 + 1 // invited_by + created_at + flags + bump
     }
 
     pub fn is_authorized(&self) -> bool {
