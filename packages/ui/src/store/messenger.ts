@@ -19,7 +19,7 @@ interface MessengerStoreState {
   channelMembershipAddr?: PublicKey
   channelMembership?: ChannelMembership
   channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
-  channelMessages: Array<Message & { senderFormatted: string }>
+  channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
   loading: boolean
   creating: boolean
@@ -76,15 +76,15 @@ export const useMessengerStore = defineStore('messenger', () => {
   }, { immediate: true })
 
   watch([deviceKey, () => state.allChannels], () => {
-    getOwnChannels()
+    getOwnChannels().then()
   }, { immediate: true })
 
   async function getOwnChannels() {
-    const membership = await client.loadMemberships(userStore.keypair?.publicKey)
+    const memberships = await client.loadMemberships(userStore.keypair?.publicKey)
     const channels: {
       pubkey: string
       status: 'Authorized' | 'Pending' | 'Unauthorized'
-    }[] = membership.map(v => ({
+    }[] = memberships.map(v => ({
       pubkey: v.data[0].channel.toBase58(),
       status: v.data[0].status.__kind,
     }))
@@ -110,10 +110,15 @@ export const useMessengerStore = defineStore('messenger', () => {
       if (`${e.channel}` !== `${state.channelAddr}`) {
         return
       }
-      let content = ENCRYPTED_MOCK
-      const cek = await getCEK()
-      if (cek) {
-        content = await client.decryptMessage(e.message.content, cek)
+      let content = e.message.content
+      const isEncrypted = client.utils.message.isEncrypted(e.message)
+      if (isEncrypted) {
+        const cek = await getCEK()
+        if (cek) {
+          content = await client.decryptMessage(e.message.content, cek)
+        } else {
+          content = ENCRYPTED_MOCK
+        }
       }
       state.channelMessages.push({
         ...e.message,
@@ -133,6 +138,12 @@ export const useMessengerStore = defineStore('messenger', () => {
     }))
     listeners.push(client.addEventListener('JoinChannelEvent', async (e) => {
       console.log('[Event] JoinChannelEvent', e)
+      if (`${e.channel}` === `${state.channelAddr}`) {
+        loadChannelMembers().then()
+      }
+    }))
+    listeners.push(client.addEventListener('LeaveChannelEvent', async (e) => {
+      console.log('[Event] LeaveChannelEvent', e)
       if (`${e.channel}` === `${state.channelAddr}`) {
         loadChannelMembers().then()
       }
@@ -244,19 +255,22 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
     state.channel = await client.loadChannel(state.channelAddr)
 
-    const cek = await getCEK()
+    const isPublic = client.utils.channel.isPublic(state.channel)
+
+    const cek = !isPublic ? await getCEK() : null
 
     state.channelMessages = await Promise.all(
       state.channel.messages.map(async (m) => {
-        let content = ENCRYPTED_MOCK
-        let senderFormatted = shortenAddress(m.sender)
+        const isEncrypted = client.utils.message.isEncrypted(m)
+        let content = isEncrypted ? ENCRYPTED_MOCK : m.content
+        let senderDisplayName = shortenAddress(m.sender)
         // show sender name only for authorized users
         if (wallet.value?.publicKey) {
           const membership = state.channelMembers.find(({ data }) =>
             data.name !== '' && (`${data.authority}` === `${m.sender}` || `${data.key}` === `${m.sender}`),
           )
           if (membership && membership.data.name !== '') {
-            senderFormatted = membership.data.name
+            senderDisplayName = membership.data.name
           }
         }
         if (cek) {
@@ -266,7 +280,7 @@ export const useMessengerStore = defineStore('messenger', () => {
             console.log(`Failed to decrypt message #${m.id}`)
           }
         }
-        return { ...m, senderFormatted, content }
+        return { ...m, senderDisplayName, content }
       }),
     )
   }
@@ -296,7 +310,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
   }
 
-  async function addMember(invitee: Address, key?: Address, name?: string) {
+  async function addMember(invitee: Address, key?: Address, name?: string, flags?: number) {
     if (!state.channelAddr) {
       console.log('Invalid channel')
       return
@@ -306,6 +320,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       invitee: new PublicKey(invitee),
       key: key ? new PublicKey(key) : undefined,
       name,
+      flags,
     })
   }
 

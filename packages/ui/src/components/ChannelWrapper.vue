@@ -31,7 +31,7 @@ watch(mes, (c) => {
           <q-chat-message
             v-for="msg in messages"
             :key="msg.id"
-            :name="msg.senderFormatted"
+            :name="msg.senderDisplayName"
             :text="msg.text"
             :sent="isSomeoneMessage(msg.sender)"
           />

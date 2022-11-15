@@ -37,7 +37,7 @@ export function useChannel() {
         data.push({
           id: msg.id,
           sender: msg.sender,
-          senderFormatted: msg.senderFormatted,
+          senderDisplayName: msg.senderDisplayName,
           text: [msg.content],
           date: msg.createdAt,
         })
