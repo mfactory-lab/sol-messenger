@@ -44,7 +44,7 @@ export async function deleteChannel(key: string, _opts: any) {
   }
 
   log.info('Deleting channel...')
-  const { signature } = await client.deleteChannel(channelKey)
+  const { signature } = await client.deleteChannel({ channel: channelKey })
   log.info(`Sig: ${signature}`)
   log.info('Done')
 }
@@ -67,7 +67,9 @@ export async function deleteAllChannels(_opts: any) {
       log.info(`Sig: ${signature}`)
     }
     log.info(`Deleting channel ${channel.pubkey}`)
-    const { signature } = await client.deleteChannel(channel.pubkey)
+    const { signature } = await client.deleteChannel({
+      channel: channel.pubkey,
+    })
     log.info(`Sig: ${signature}`)
   }
 
