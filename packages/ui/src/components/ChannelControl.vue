@@ -1,24 +1,23 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 defineProps({
-  isPendingMember: { type: Boolean, default: false },
-  canJoinChannel: { type: Boolean, default: false },
   isJoining: { type: Boolean, default: false },
 })
 defineEmits(['createChannel', 'joinChannel', 'refreshList'])
+
+const channelStore = useChannelStore()
+const canJoinChannel = computed<boolean>(() => channelStore.canJoinChannel)
+const isPendingMember = computed<boolean>(() => channelStore.isPendingMember)
+const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
 </script>
 
 <template>
   <q-item>
     <q-item-section class="button-wrapper">
       <q-btn class="control-button" square @click="$emit('refreshList')">
-        <img
-          src="@/assets/img/refresh.svg"
-          alt="refresh"
-          title="create channel"
-        >
+        <img src="@/assets/img/refresh.svg" alt="refresh">
         <custom-tooltip text="Refresh list" />
       </q-btn>
-      <q-btn class="control-button" square @click="$emit('createChannel')">
+      <q-btn v-if="canCreateChannel" class="control-button" square @click="$emit('createChannel')">
         <img src="@/assets/img/add.svg" alt="create">
         <custom-tooltip text="Create a channel" />
       </q-btn>

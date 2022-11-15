@@ -1,37 +1,26 @@
 <script lang="ts" setup>
-import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import type { AllChannels } from '../store/messenger'
+import DebugBtn from '@/components/DebugBtn.vue'
+import type { AllChannels } from '@/store/messenger'
 
-const { notify } = useQuasar()
 const wallet = useWallet()
 
-const { state, postMessage, loadChannel } = useMessengerStore()
-const {
-  isWalletConnected,
-  isAuthorizedMember,
-  isPendingMember,
-  messages,
-  allowSend,
-  canJoinChannel,
-  isChannelCreator,
-  loading,
-  refreshList,
-  ownChannels,
-  allChannels,
-} = useChannel()
+const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
+
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
 const addMember = useChannelAddMember()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
 
-const postMessageState = reactive({
-  message: '',
-})
-
+const postMessageState = reactive({ message: '' })
+const allChannels = computed(() => state.allChannels)
 const searchChannels = ref<AllChannels[]>([])
 const searchWord = ref('')
+
+const ownChannels = computed(() =>
+  state.allChannels.filter(ch => !!state.ownChannels.find(myCh => myCh.pubkey === ch.pubkey.toBase58())),
+)
 
 async function sendMessage(message: any) {
   await postMessage(message.value)
@@ -40,14 +29,6 @@ async function sendMessage(message: any) {
 
 async function selectChannel(addr: any) {
   await loadChannel(addr)
-}
-
-function isSomeoneMessage(sender: any) {
-  const pubkey = wallet.publicKey.value
-  if (!pubkey) {
-    return true
-  }
-  return String(pubkey) !== String(sender)
 }
 
 const onSearch = (val: string) => {
@@ -69,8 +50,6 @@ const showMembersDialog = () => {
 }
 
 const showDeviceKeyDialog = ref<Boolean>(false)
-const showDebug = ref(false)
-const toggleDebug = useToggle(showDebug)
 
 const filterChannels = computed(() =>
   searchChannels.value.length > 0 || searchWord.value.length > 0
@@ -95,36 +74,28 @@ const filterChannels = computed(() =>
             <messenger-channel
               v-for="ch in filterChannels"
               :key="ch.name"
-              :channel="ch"
-              :state="state"
-              @select-channel="selectChannel(ch.pubkey)"
+              :pubkey="ch.pubkey"
+              :channel="ch.data"
+              :is-active="`${state.channelAddr}` === `${ch.pubkey}`"
+              @select="selectChannel(ch.pubkey)"
             />
           </q-list>
         </template>
         <div v-else class="messenger-channels-empty">
           No channels
         </div>
-        <q-inner-loading :showing="state.loading" color="primary" />
         <channel-control
-          :can-join-channel="canJoinChannel"
-          :is-authorized-member="isAuthorizedMember"
-          :is-pending-member="isPendingMember"
-          :is-wallet-connected="isWalletConnected"
+          :is-joining="joinChannel.state.loading"
           @create-channel="newChannel.state.dialog = true"
           @join-channel="joinChannel.state.dialog = true"
           @refresh-list="refreshList"
         />
       </q-card>
       <channel-wrapper
-        :channel="state.channel"
-        :allow-send="allowSend"
-        :channel-loading-state="state.channelLoading"
-        :is-someone-message="isSomeoneMessage"
-        :messages="messages"
         :post-message-state="postMessageState"
-        :sending-state="state.sending"
         @send-message="sendMessage"
       />
+      <q-inner-loading :showing="state.loading" color="primary" />
     </div>
   </div>
 
@@ -154,7 +125,6 @@ const filterChannels = computed(() =>
 
   <member-list-dialog
     v-model="authorizeMember.state.dialog"
-    :is-authorized-member="isAuthorizedMember"
     :wallet="wallet"
     :authorize-member-state="authorizeMember.state"
     :delete-member-state="deleteMember.state"
@@ -165,30 +135,7 @@ const filterChannels = computed(() =>
   <user-info-dialog v-model="showDeviceKeyDialog" />
 
   <div v-if="state.channel" class="q-my-md q-px-lg">
-    <q-btn flat class="text-blue-2" @click="toggleDebug()">
-      debug info
-    </q-btn>
-    <template v-if="showDebug">
-      <div
-        v-for="row in [
-          ['Authorized', isAuthorizedMember],
-          ['Pending Access', isPendingMember],
-          ['Channel Creator', isChannelCreator],
-          ['Channel', state.channel],
-          ['Membership', state.channelMembership],
-          ['Members', state.channelMembers],
-        ]"
-        :key="row[0]"
-        class="row q-mt-md"
-      >
-        <div class="col col-4">
-          {{ row[0] }}
-        </div>
-        <div class="col">
-          <pre class="no-margin">{{ row[1] }}</pre>
-        </div>
-      </div>
-    </template>
+    <debug-btn />
   </div>
 </template>
 
@@ -198,6 +145,7 @@ const filterChannels = computed(() =>
   margin: 0 auto;
 
   .messenger-main {
+    position: relative;
     display: flex;
     flex-direction: row;
     height: 400px;

@@ -2,9 +2,8 @@
 import type { ChannelMembership } from '@app/sdk'
 import { shortenAddress } from '@/utils'
 
-const props = defineProps({
+defineProps({
   membersDialog: { type: Boolean, default: false },
-  isAuthorizedMember: { type: Boolean, default: false },
   authorizeMemberState: { type: Object },
   deleteMemberState: { type: Object },
   wallet: { type: Object },
@@ -12,14 +11,7 @@ const props = defineProps({
 const emit = defineEmits(['submit', 'deleteMember'])
 
 const { state } = useMessengerStore()
-const userStore = useUserStore()
-
-// @todo use props or state params ??
-const isAuthorizedMember = computed(() => state.channelMembership?.status.__kind === 'Authorized')
-const isChannelCreator = computed(() => isAuthorizedMember.value)
-
-const canDeleteMember = (member: any) => computed(() => isChannelCreator.value
-  && String(member.key) !== String(userStore.keypair?.publicKey)).value
+const { isAuthorizedMember, canDeleteMember } = useChannelStore()
 
 function formatMemberName(member: ChannelMembership) {
   if (member?.name && member.name !== '') {

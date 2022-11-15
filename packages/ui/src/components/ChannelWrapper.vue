@@ -1,17 +1,45 @@
 <script lang="ts" setup>
-const channelProps = defineProps({
-  channel: { type: Object },
-  messages: { type: Array },
+import { useWallet } from 'solana-wallets-vue'
+
+defineProps({
   postMessageState: { type: Object },
-  isSomeoneMessage: { type: Function, default: () => false },
-  allowSend: { type: Boolean, default: false },
-  loading: { type: Boolean, default: false },
-  channelLoadingState: { type: Boolean, default: false },
 })
 
-const emits = defineEmits(['sendMessage'])
+const emit = defineEmits(['sendMessage'])
 
-const sendingMessage = (message: any) => emits('sendMessage', message)
+const wallet = useWallet()
+const { state } = useMessengerStore()
+
+function isSomeoneMessage(sender: any) {
+  const pubkey = wallet.publicKey.value
+  if (!pubkey) {
+    return true
+  }
+  return String(pubkey) !== String(sender)
+}
+
+const messages = computed(() => {
+  const data = []
+  let i = 0; let prev
+  for (const msg of state.channelMessages) {
+    if (prev && `${msg.sender}` === `${prev}`) {
+      data[i - 1].text.push(msg.content)
+    } else {
+      prev = msg.sender
+      data.push({
+        id: msg.id,
+        sender: msg.sender,
+        senderDisplayName: msg.senderDisplayName,
+        text: [msg.content],
+        date: msg.createdAt,
+      })
+      i++
+    }
+  }
+  return data
+})
+
+const sendMessage = (message: any) => emit('sendMessage', message)
 
 const chat = ref<HTMLElement>()
 const mes = ref<HTMLElement>()
@@ -26,7 +54,7 @@ watch(mes, (c) => {
 <template>
   <q-card class="messenger-card" square>
     <div ref="chat" class="messenger-content">
-      <div v-if="channel" class="row justify-center channel-wrapper">
+      <div v-if="state.channel" class="row justify-center channel-wrapper">
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
             v-for="msg in messages"
@@ -49,7 +77,7 @@ watch(mes, (c) => {
       :message="postMessageState.message"
       :sending="loading"
       :disabled="!allowSend"
-      @submit="sendingMessage"
+      @submit="sendMessage"
     />
     <q-inner-loading :showing="channelLoadingState" />
   </q-card>

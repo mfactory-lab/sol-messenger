@@ -12,7 +12,7 @@ const emit = defineEmits([
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
-const { canAddMember, isChannelCreator } = useChannel()
+const { canAddMember, isChannelCreator } = useChannelStore()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 

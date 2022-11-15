@@ -1,48 +1,36 @@
 <script setup lang="ts">
+import type { Channel } from '@app/sdk'
 import type { PropType } from 'vue'
+import { getBadgeColor } from '@/utils'
 
-defineProps({
-  channel: Object as PropType<{ data: any; pubkey: string }>,
-  state: Object,
+const props = defineProps({
+  pubkey: {
+    type: Object as PropType<string>,
+    required: true,
+  },
+  channel: {
+    type: Object as PropType<Channel>,
+    required: true,
+  },
+  isActive: Boolean,
 })
 
-const emit = defineEmits(['selectChannel'])
-const selectChannel = () => emit('selectChannel')
+defineEmits(['select'])
 
-const getBadgeColor = (text: string) => {
-  if (!text) {
-    return { background: '#000' }
-  }
-  let hash = 0
-  for (let i = 0; i < text.length; i++) {
-    hash = text.charCodeAt(i) + ((hash << 5) - hash)
-    hash = hash & hash
-  }
-  let color = '#'
-  for (let i = 0; i < 3; i++) {
-    const value = (hash >> (i * 8)) & 255
-    color += (`00${value.toString(16)}`).substr(-2)
-  }
-  return { background: color }
-}
+const initials = computed(() => props.channel.name.slice(0, 2))
 </script>
 
 <template>
-  <q-item
-    active-class="bg-blue-grey-1 text-grey-8"
-    :active="`${state.channelAddr}` === `${channel.pubkey}`"
-  >
-    <q-item-section class="chat-item cursor-pointer" @click="selectChannel">
-      <div class="chat-badge" :style="getBadgeColor(`${channel.pubkey}`)">
-        <span>{{ channel.data.name.slice(0, 2) }}</span>
+  <q-item active-class="bg-blue-grey-1 text-grey-8" :active="isActive">
+    <q-item-section class="chat-item cursor-pointer" @click="$emit('select')">
+      <div class="chat-badge" :style="getBadgeColor(`${pubkey}`)">
+        <span>{{ initials }}</span>
       </div>
-
       <div class="chat-name">
-        {{ channel.data.name }}
+        {{ channel.name }}
       </div>
-
-      <div v-if="!!channel.data.messageCount" class="message-count">
-        {{ channel.data.messageCount }}
+      <div v-if="+channel.messageCount > 0" class="message-count">
+        {{ channel.messageCount }}
       </div>
     </q-item-section>
   </q-item>

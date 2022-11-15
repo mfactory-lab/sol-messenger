@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { useChannelCreate } from '@/hooks/messenger'
+
+type State = Omit<ReturnType<typeof useChannelCreate>['state'], 'loading' | 'dialog'>
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
-  defaultState: Object as PropType<{ name: any; maxMessages: number }>,
+  defaultState: Object as PropType<State>,
 })
 
 defineEmits(['submit', 'reset'])
@@ -29,13 +32,22 @@ const state = ref(props.defaultState)
             lazy-rules
             :rules="[val => +val > 0 || 'Invalid value']"
           />
-          <q-btn
-            type="submit" class="dialog-submit-btn" text-color="white" :ripple="false" rounded
-          >
-            Create Channel
-          </q-btn>
+          <div class="row">
+            <div class="col">
+              <q-toggle v-model="state.public" label="Public" />
+            </div>
+            <div class="col">
+              <q-toggle v-if="!state.public" v-model="state.permissionless" label="Permissionless" />
+            </div>
+          </div>
         </q-form>
         <q-inner-loading :showing="loading" />
+      </q-card-section>
+      <q-separator />
+      <q-card-section>
+        <q-btn type="submit" class="dialog-submit-btn" text-color="white" :ripple="false" rounded>
+          Create Channel
+        </q-btn>
       </q-card-section>
     </q-card>
   </q-dialog>

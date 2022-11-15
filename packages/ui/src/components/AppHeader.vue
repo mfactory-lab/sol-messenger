@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { useQuasar } from 'quasar'
-
-const user = useUserStore()
-const { dialog } = useQuasar()
-
-function handleGenerateKey() {
-  dialog({
-    title: 'Confirm',
-    message: 'Are you sure?',
-    cancel: true,
-    persistent: true,
-  }).onOk(() => {
-    user.generateKey()
-  })
-}
-</script>
-
 <template>
   <q-header class="app-header">
     <div class="container">
@@ -33,17 +15,6 @@ function handleGenerateKey() {
         </div>
 
         <q-space />
-
-        <!--        <div v-if="user.keypair" class="user-device"> -->
-        <!--          <div> -->
-        <!--            <b>Device Key</b> -->
-        <!--            &nbsp; -->
-        <!--            <q-btn size="xs" rounded unelevated @click="handleGenerateKey"> -->
-        <!--              regenerate -->
-        <!--            </q-btn> -->
-        <!--          </div> -->
-        <!--          <q-badge>{{ user.keypair?.publicKey }}</q-badge> -->
-        <!--        </div> -->
 
         <div class="app-header__right">
           <div class="app-header__buttons">

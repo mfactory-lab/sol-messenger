@@ -6,7 +6,7 @@ const props = defineProps({
   defaultState: Object as PropType<{ name: any; authority: string }>,
 })
 
-const emit = defineEmits(['submit', 'reset'])
+defineEmits(['submit', 'reset'])
 const state = ref(props.defaultState)
 </script>
 

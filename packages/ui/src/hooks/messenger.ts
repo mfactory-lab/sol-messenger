@@ -1,73 +1,50 @@
-import { isChannelMembershipStatusPending } from '@app/sdk'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 
 const DEFAULT_MAX_MESSAGES = 15
 
-export function useChannel() {
-  const wallet = useWallet()
+export function useChannelCreate() {
+  const { createChannel } = useMessengerStore()
+  const { isWalletConnected, ok, error } = useHelper()
 
-  const { state, refreshList } = useMessengerStore()
-  const userStore = useUserStore()
-
-  const isWalletConnected = computed(() => !!wallet.publicKey.value)
-  const isAuthorizedMember = computed(() => state.channelMembership?.status.__kind === 'Authorized')
-  const isPendingMember = computed(() => state.channelMembership?.status.__kind === 'Pending')
-  const isChannelCreator = computed(() => isAuthorizedMember.value
-    && state.channel?.creator.toString() === String(wallet.publicKey.value ?? '-'))
-
-  const allowSend = computed(() => isAuthorizedMember.value && !state.sending)
-  const canAddMember = computed(() => isAuthorizedMember.value)
-  const canDeleteMember = (member: any) => computed(() => isChannelCreator.value
-    && String(member.key) !== String(userStore.keypair?.publicKey)).value
-  const canJoinChannel = computed(() => isWalletConnected.value && !state.loading && !isAuthorizedMember.value)
-
-  const pendingMemberCount = computed(() => {
-    return state.channelMembers.filter(acc => isChannelMembershipStatusPending(acc.data.status)).length
+  const state = reactive({
+    dialog: false,
+    name: '',
+    maxMessages: DEFAULT_MAX_MESSAGES,
+    public: false,
+    permissionless: false,
+    loading: false,
   })
 
-  const messages = computed(() => {
-    const data = []
-    let i = 0; let prev
-    for (const msg of state.channelMessages) {
-      if (prev && `${msg.sender}` === `${prev}`) {
-        data[i - 1].text.push(msg.content)
-      } else {
-        prev = msg.sender
-        data.push({
-          id: msg.id,
-          sender: msg.sender,
-          senderDisplayName: msg.senderDisplayName,
-          text: [msg.content],
-          date: msg.createdAt,
+  async function submit() {
+    if (isWalletConnected()) {
+      try {
+        await createChannel(state.name, {
+          maxMessages: state.maxMessages,
+          public: state.public,
+          permissionless: state.permissionless,
         })
-        i++
+        reset()
+        ok('Channel was created!')
+      } catch (e) {
+        error('Something went wrong')
+        console.log(e)
       }
     }
-    return data
-  })
+  }
 
-  const ownChannels = computed(() =>
-    state.allChannels.filter(ch => !!state.ownChannels.find(myCh => myCh.pubkey === ch.pubkey.toBase58())),
-  )
-
-  const allChannels = computed(() => state.allChannels)
+  function reset() {
+    state.dialog = false
+    state.public = false
+    state.loading = false
+    state.name = ''
+    state.maxMessages = 15
+  }
 
   return {
-    isWalletConnected,
-    isAuthorizedMember,
-    isPendingMember,
-    isChannelCreator,
-    canJoinChannel,
-    canDeleteMember,
-    canAddMember,
-    allowSend,
-    pendingMemberCount,
-    ownChannels,
-    allChannels,
-    messages,
-    refreshList,
-    loading: computed(() => state.loading),
+    state,
+    submit,
+    reset,
   }
 }
 
@@ -99,44 +76,6 @@ export function useChannelDelete() {
   }
 
   return { state, submit }
-}
-
-export function useChannelCreate() {
-  const { createChannel } = useMessengerStore()
-  const { isWalletConnected, ok, error } = useHelper()
-
-  const state = reactive({
-    dialog: false,
-    name: '',
-    maxMessages: DEFAULT_MAX_MESSAGES,
-    loading: false,
-  })
-
-  async function submit() {
-    if (isWalletConnected()) {
-      try {
-        await createChannel(state.name, state.maxMessages)
-        reset()
-        ok('Channel was created!')
-      } catch (e) {
-        error('Something went wrong')
-        console.log(e)
-      }
-    }
-  }
-
-  function reset() {
-    state.dialog = false
-    state.loading = false
-    state.name = ''
-    state.maxMessages = 15
-  }
-
-  return {
-    state,
-    submit,
-    reset,
-  }
 }
 
 export function useChannelAuthorizeMember() {

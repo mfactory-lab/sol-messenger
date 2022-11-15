@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useDarkTheme } from '@/hooks/theme'
-const { toggle, isActive } = useDarkTheme()
+const darkTheme = useDarkTheme()
 </script>
 
 <template>
@@ -26,8 +25,8 @@ const { toggle, isActive } = useDarkTheme()
             <div class="theme">
               Dark theme
               <q-toggle
-                :model-value="isActive"
-                @click="toggle"
+                :model-value="darkTheme.isActive.value"
+                @click="darkTheme.toggle"
               />
             </div>
             <div class="social-link social-link-text">
@@ -52,7 +51,7 @@ const { toggle, isActive } = useDarkTheme()
     margin-bottom: 30px;
 
     ul {
-      margin: 0;
+      margin: 0 0 0 -8px;
       padding: 0;
       list-style-type: none;
       display: flex;

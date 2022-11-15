@@ -9,15 +9,21 @@ const copy = () => {
 </script>
 
 <template>
-  <q-dialog class="dialog-wrapper">
+  <q-dialog
+    class="dialog-wrapper"
+    transition-duration="150"
+    transition-show="fade"
+    transition-hide="fade"
+  >
     <q-card>
-      <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6">
+      <q-card-section class="row items-center">
+        <div class="text-h6 text-center">
           Device Key
         </div>
         <q-space />
         <q-btn v-close-popup flat round dense :icon="evaClose" />
       </q-card-section>
+      <q-separator />
       <q-card-section>
         <q-btn flat round dense :icon="evaCopyOutline" @click="copy">
           <q-tooltip :delay="0" anchor="bottom middle" self="top middle" transition-duration="0">
@@ -26,10 +32,13 @@ const copy = () => {
         </q-btn>
         <span>{{ userStore.keypair?.publicKey }}</span>
       </q-card-section>
+      <q-separator />
       <q-card-actions align="right">
-        <q-btn class="dialog-submit-btn" text-color="white" rounded @click="userStore.generateKey">
-          Regenerate
-        </q-btn>
+        <div class="q-gutter-md row justify-between">
+          <q-btn class="dialog-submit-btn" text-color="white" rounded @click="userStore.generateKey">
+            Regenerate
+          </q-btn>
+        </div>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -37,7 +46,7 @@ const copy = () => {
 
 <style scoped lang="scss">
 .dialog-wrapper {
-  width: 700px;
+  width: 500px;
   max-width: 80vw;
 }
 .q-card__actions .q-btn.dialog-submit-btn {

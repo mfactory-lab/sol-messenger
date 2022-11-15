@@ -175,13 +175,15 @@ export const useMessengerStore = defineStore('messenger', () => {
     Object.assign(state, defaultState)
   }
 
-  async function createChannel(name: string, maxMessages = 15) {
+  async function createChannel(name: string, opts: any) {
     try {
       state.creating = true
       const { channel } = await client.initChannel({
         name,
-        maxMessages,
-        opts: { commitment: 'confirmed' },
+        maxMessages: opts.maxMessages ?? 15,
+        public: opts.public,
+        permissionless: opts.permissionless,
+        opts: { commitment: opts.commitment ?? 'confirmed' },
       })
       await loadChannel(channel.publicKey)
       if (state.channel) {
