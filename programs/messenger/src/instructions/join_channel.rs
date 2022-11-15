@@ -21,6 +21,7 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
     membership.name = data.name;
     membership.invited_by = None;
     membership.created_at = timestamp;
+    membership.flags = 0;
     membership.status = ChannelMembershipStatus::Pending {
         authority: data.authority,
     };

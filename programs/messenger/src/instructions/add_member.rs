@@ -4,6 +4,7 @@ use crate::{
     constants::MAX_CHANNEL_NAME_LENGTH,
     events::AddMemberEvent,
     state::{CEKData, Channel, ChannelMembership, ChannelMembershipStatus},
+    utils::validate_membership,
     MessengerError,
 };
 
@@ -11,17 +12,31 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     data.validate()?;
 
     let channel = &mut ctx.accounts.channel;
-
     if channel.to_account_info().data_is_empty() {
         return Err(MessengerError::InvalidChannel.into());
     }
 
-    let authority_membership = &ctx.accounts.authority_membership;
-    if !authority_membership.can_add_member(channel) {
-        return Err(MessengerError::Unauthorized.into());
+    let authority_key = ctx.accounts.authority.key;
+    let is_super_admin = channel.authorize(authority_key);
+    let mut flags = data.flags;
+
+    if !is_super_admin {
+        let auth_membership = validate_membership(
+            &ctx.accounts.authority_membership.to_account_info(),
+            &channel.key(),
+            authority_key,
+        )?;
+        if !auth_membership.is_authorized() || !auth_membership.can_add_member(channel) {
+            return Err(MessengerError::Unauthorized.into());
+        }
+        // only owner authority can set membership flags
+        if !auth_membership.is_owner() {
+            flags = 0;
+        }
     }
 
     let timestamp = Clock::get()?.unix_timestamp;
+    let authority_key = ctx.accounts.authority.key;
 
     let membership = &mut ctx.accounts.invitee_membership;
 
@@ -30,11 +45,11 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     membership.key = data.key.unwrap_or_else(|| ctx.accounts.invitee.key());
     membership.name = data.name;
     membership.cek = data.cek;
-    membership.flags = if authority_membership.is_admin() { data.flags } else { 0 };
+    membership.flags = flags;
     membership.invited_by = Some(ctx.accounts.authority.key());
     membership.created_at = timestamp;
     membership.status = ChannelMembershipStatus::Authorized {
-        by: Some(ctx.accounts.authority.key()),
+        by: Some(*authority_key),
     };
     membership.bump = ctx.bumps["invitee_membership"];
 
@@ -43,6 +58,7 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     emit!(AddMemberEvent {
         channel: channel.key(),
         membership: membership.key(),
+        by: *authority_key,
         timestamp,
     });
 
@@ -86,10 +102,11 @@ pub struct AddMember<'info> {
         payer = authority,
         space = ChannelMembership::space()
     )]
-    pub invitee_membership: Account<'info, ChannelMembership>,
+    pub invitee_membership: Box<Account<'info, ChannelMembership>>,
 
-    #[account(mut, has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ MessengerError::Unauthorized)]
-    pub authority_membership: Account<'info, ChannelMembership>,
+    /// CHECK:
+    #[account(mut)]
+    pub authority_membership: AccountInfo<'info>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

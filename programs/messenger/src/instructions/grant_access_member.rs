@@ -6,13 +6,16 @@ use crate::{
 };
 
 pub fn handler(ctx: Context<GrantAccessMember>, data: GrantAccessMemberData) -> Result<()> {
+    let channel = &ctx.accounts.channel;
+    let authority_key = ctx.accounts.authority.key;
     let authority_membership = &ctx.accounts.authority_membership;
-    if !authority_membership.is_owner() {
+
+    let is_super_admin = channel.authorize(authority_key);
+
+    if !is_super_admin && !authority_membership.is_owner() {
         msg!("Error: Only the channel owner can grant access");
         return Err(MessengerError::Unauthorized.into());
     }
-
-    let channel = &ctx.accounts.channel;
 
     if channel.to_account_info().data_is_empty() {
         return Err(MessengerError::InvalidChannel.into());
@@ -31,7 +34,6 @@ pub struct GrantAccessMemberData {
 
 #[derive(Accounts)]
 pub struct GrantAccessMember<'info> {
-    #[account(constraint = channel.authorize(authority.key))]
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(mut, has_one = channel, close = authority)]

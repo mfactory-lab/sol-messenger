@@ -50,6 +50,7 @@ pub struct AddMemberEvent {
     pub channel: Pubkey,
     #[index]
     pub membership: Pubkey,
+    pub by: Pubkey,
     pub timestamp: i64,
 }
 
@@ -69,5 +70,6 @@ pub struct DeleteMemberEvent {
     pub channel: Pubkey,
     #[index]
     pub membership: Pubkey,
+    pub by: Pubkey,
     pub timestamp: i64,
 }

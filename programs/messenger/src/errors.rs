@@ -11,6 +11,9 @@ pub enum MessengerError {
     #[msg("Invalid membership")]
     InvalidMembership,
 
+    #[msg("Invalid message")]
+    InvalidMessage,
+
     #[msg("Name too long")]
     NameTooLong,
 

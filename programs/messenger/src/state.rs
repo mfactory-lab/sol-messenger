@@ -49,22 +49,30 @@ impl Channel {
 
         self.message_count = self.message_count.saturating_add(1);
 
-        let message = Message {
-            id: self.message_count,
-            sender: *sender,
-            created_at: Clock::get()?.unix_timestamp,
-            content,
-        };
+        let bytes = content.as_bytes();
 
-        let mut deque = VecDeque::from(self.messages.to_owned());
-        deque.push_back(message.to_owned());
-        if deque.len() > self.max_messages as usize {
-            deque.pop_front();
+        // first byte is represent message flags
+        if let [first, bytes @ ..] = bytes {
+            let message = Message {
+                id: self.message_count,
+                sender: *sender,
+                created_at: Clock::get()?.unix_timestamp,
+                flags: *first,
+                content: std::str::from_utf8(bytes).unwrap().to_string(),
+            };
+
+            let mut deque = VecDeque::from(self.messages.to_owned());
+            deque.push_back(message.to_owned());
+            if deque.len() > self.max_messages as usize {
+                deque.pop_front();
+            }
+
+            self.messages = deque.into();
+
+            Ok(message)
+        } else {
+            Err(MessengerError::InvalidMessage.into())
         }
-
-        self.messages = deque.into();
-
-        Ok(message)
     }
 
     pub fn authorize(&self, key: &Pubkey) -> bool {
@@ -193,12 +201,23 @@ pub struct Message {
     pub sender: Pubkey,
     /// The unix timestamp at which the message was received
     pub created_at: i64,
+    /// Message flags
+    pub flags: u8,
     /// The (typically encrypted) message content
     pub content: String,
 }
 
 impl Message {
-    pub const SIZE: usize = 4 + 32 + 8 + (4 + MAX_MESSAGE_LENGTH);
+    pub const SIZE: usize = 4 + 32 + 8 + 1 + (4 + MAX_MESSAGE_LENGTH);
+
+    pub fn is_encrypted(&self) -> bool {
+        self.flags & MessageFlags::IsEncrypted > 0
+    }
+}
+
+#[allow(non_snake_case, non_upper_case_globals)]
+pub mod MessageFlags {
+    pub const IsEncrypted: u8 = 0b001;
 }
 
 #[cfg(test)]

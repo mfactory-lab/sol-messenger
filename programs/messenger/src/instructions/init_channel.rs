@@ -23,7 +23,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
         channel.flags |= ChannelFlags::IsPublic;
     }
 
-    if data.accessible {
+    if data.permissionless {
         channel.flags |= ChannelFlags::Permissionless;
     }
 
@@ -55,9 +55,10 @@ pub struct InitChannelData {
     pub name: String,
     pub max_messages: u16,
     pub member_name: String,
-    pub public: bool,
-    pub accessible: bool,
     pub cek: CEKData,
+    // flags
+    pub public: bool,
+    pub permissionless: bool,
 }
 
 impl InitChannelData {

@@ -1,25 +1,34 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::AuthorizeMemberEvent, state::*, MessengerError};
+use crate::{events::AuthorizeMemberEvent, state::*, utils::validate_membership, MessengerError};
 
 pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Result<()> {
     let channel = &ctx.accounts.channel;
-    let membership = &mut ctx.accounts.membership;
-    let auth = &ctx.accounts.authority;
 
     if channel.to_account_info().data_is_empty() {
         return Err(MessengerError::InvalidChannel.into());
     }
 
-    let authority_membership = &ctx.accounts.authority_membership;
-    if !authority_membership.can_authorize_member(channel) {
-        return Err(MessengerError::Unauthorized.into());
+    let authority_key = ctx.accounts.authority.key;
+    let is_super_admin = channel.authorize(authority_key);
+
+    if !is_super_admin {
+        let auth_membership = validate_membership(
+            &ctx.accounts.authority_membership.to_account_info(),
+            &channel.key(),
+            authority_key,
+        )?;
+        if !auth_membership.is_authorized() || !auth_membership.can_authorize_member(channel) {
+            return Err(MessengerError::Unauthorized.into());
+        }
     }
+
+    let membership = &mut ctx.accounts.membership;
 
     match membership.status {
         ChannelMembershipStatus::Pending { authority } => {
             if let Some(authority) = authority {
-                if authority.key() != auth.key() {
+                if authority.key() != *authority_key {
                     msg!("Error: Should be authorized by {}", authority.key());
                     return Err(MessengerError::Unauthorized.into());
                 }
@@ -34,14 +43,16 @@ pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Resu
     // TODO: validate membership.key == data.cek.pubkey
 
     membership.cek = data.cek;
-    membership.status = ChannelMembershipStatus::Authorized { by: Some(auth.key()) };
+    membership.status = ChannelMembershipStatus::Authorized {
+        by: Some(*authority_key),
+    };
 
     let timestamp = Clock::get()?.unix_timestamp;
 
     emit!(AuthorizeMemberEvent {
         channel: channel.key(),
         membership: membership.key(),
-        by: auth.key(),
+        by: *authority_key,
         timestamp,
     });
 
@@ -58,12 +69,13 @@ pub struct AuthorizeMember<'info> {
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(mut, has_one = channel)]
-    pub membership: Account<'info, ChannelMembership>,
+    pub membership: Box<Account<'info, ChannelMembership>>,
 
     pub authority: Signer<'info>,
 
-    #[account(has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ MessengerError::Unauthorized)]
-    pub authority_membership: Account<'info, ChannelMembership>,
+    /// CHECK:
+    #[account(mut)]
+    pub authority_membership: AccountInfo<'info>,
 
     pub system_program: Program<'info, System>,
 }
