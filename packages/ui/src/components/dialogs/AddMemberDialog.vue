@@ -6,15 +6,17 @@ const props = defineProps({
   defaultState: Object as PropType<{ name: any; key: string }>,
 })
 
-defineEmits(['submit', 'reset'])
+const emit = defineEmits(['submit', 'reset'])
 const state = ref(props.defaultState)
+
+const addMember = () => emit('submit', state.value)
 </script>
 
 <template>
   <q-dialog class="add-member-dialog" @hide="$emit('reset')">
     <q-card>
       <q-card-section>
-        <q-form class="add-member-form" @submit.prevent="$emit('submit', state)">
+        <q-form class="add-member-form" @submit.prevent="addMember">
           <q-input
             v-model="state.name"
             label="Member name *"

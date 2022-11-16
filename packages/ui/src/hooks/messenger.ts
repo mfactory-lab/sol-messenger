@@ -127,6 +127,7 @@ export function useChannelAddMember() {
       console.log(e)
     } finally {
       state.loading = false
+      state.dialog = false
     }
     return false
   }

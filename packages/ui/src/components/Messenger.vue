@@ -55,6 +55,11 @@ const filterChannels = computed(() =>
     ? searchChannels.value
     : ownChannels.value,
 )
+
+const handleAddMember = async (val: any) => {
+  val = { ...val, authority: state.channelMembership?.authority.toBase58() }
+  await addMember.submit(val)
+}
 </script>
 
 <template>
@@ -111,7 +116,7 @@ const filterChannels = computed(() =>
     v-model="addMember.state.dialog"
     :loading="addMember.state.loading"
     :default-state="addMember.state"
-    @submit="addMember.submit"
+    @submit="handleAddMember"
     @reset="addMember.reset"
   />
 
