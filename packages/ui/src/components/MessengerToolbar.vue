@@ -12,7 +12,7 @@ const emit = defineEmits([
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
-const ch = useChannelStore()
+const channelStore = useChannelStore()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
@@ -97,7 +97,7 @@ watch(searchText, (s) => {
               <q-item
                 v-close-popup
                 clickable
-                :disable="!ch.canAddMember"
+                :disable="!channelStore.canAddMember"
                 @click="onAddMember"
               >
                 <q-item-section>Add member</q-item-section>
@@ -105,7 +105,7 @@ watch(searchText, (s) => {
               <q-item
                 v-close-popup
                 clickable
-                :disable="!ch.isChannelCreator"
+                :disable="!channelStore.isChannelCreator"
                 @click="$emit('deleteChannel')"
               >
                 <q-item-section>Delete</q-item-section>

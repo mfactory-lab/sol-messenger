@@ -12,6 +12,7 @@ const joinChannel = useChannelJoin()
 const addMember = useChannelAddMember()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
+const deleteChannel = useChannelDelete()
 
 const postMessageState = reactive({ message: '' })
 const allChannels = computed(() => state.allChannels)
@@ -61,7 +62,7 @@ const filterChannels = computed(() =>
     <messenger-toolbar
       @search="onSearch"
       @show-members="authorizeMember.state.dialog = true"
-      @delete-channel="deleteMember.submit(state.channelAddr)"
+      @delete-channel="deleteChannel.submit(state.channelAddr)"
       @add-member="addMember.state.dialog = true"
       @show-device-key="showDeviceKeyDialog = true"
     />
