@@ -321,10 +321,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       console.log('Invalid channel')
       return
     }
-    console.log(`invitee: ${invitee}`)
-    console.log(`key: ${key}`)
-    console.log(`name: ${name}`)
-    console.log(`channelAddr: ${state.channelAddr}`)
     await client.addMember({
       channel: state.channelAddr,
       invitee: new PublicKey(invitee),

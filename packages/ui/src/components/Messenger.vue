@@ -20,7 +20,14 @@ const searchChannels = ref<AllChannels[]>([])
 const searchWord = ref('')
 
 const ownChannels = computed(() =>
-  state.allChannels.filter(ch => !!state.ownChannels.find(myCh => myCh.pubkey === ch.pubkey.toBase58())),
+  state.allChannels.filter(
+    ch =>
+      !!state.ownChannels.find(
+        myCh => myCh.pubkey === ch.pubkey.toBase58(),
+      )
+      || ch.data.flags === 1
+      || ch.data.creator.toBase58() === String(wallet.publicKey.value),
+  ),
 )
 
 async function sendMessage(message: any) {
