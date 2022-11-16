@@ -54,10 +54,6 @@ watch(mes, (c) => {
     chat.value!.scrollTop = c.scrollHeight
   }
 })
-
-watch(() => state.channelLoading, (ch) => {
-  console.log(state)
-})
 </script>
 
 <template>

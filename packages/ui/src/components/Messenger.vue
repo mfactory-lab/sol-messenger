@@ -56,10 +56,7 @@ const filterChannels = computed(() =>
     : ownChannels.value,
 )
 
-const handleAddMember = async (val: any) => {
-  val = { ...val, authority: state.channelMembership?.authority.toBase58() }
-  await addMember.submit(val)
-}
+const handleAddMember = (val: any) => addMember.submit(val)
 </script>
 
 <template>
