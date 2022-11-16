@@ -9,7 +9,6 @@ const emit = defineEmits(['sendMessage'])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
-const { isChannelLoading, isSendMessage } = useChannelStore()
 
 function isSomeoneMessage(sender: any) {
   const pubkey = wallet.publicKey.value
@@ -18,6 +17,9 @@ function isSomeoneMessage(sender: any) {
   }
   return String(pubkey) !== String(sender)
 }
+
+const isChannelLoading = computed(() => state.channelLoading)
+const isSendMessage = computed(() => state.sending)
 
 const messages = computed(() => {
   const data = []
@@ -52,12 +54,18 @@ watch(mes, (c) => {
     chat.value!.scrollTop = c.scrollHeight
   }
 })
+
+watch(() => state.channelLoading, (ch) => {
+  console.log(state)
+})
 </script>
 
 <template>
   <q-card class="messenger-card" square>
     <div ref="chat" class="messenger-content">
-      <div v-if="state.channel" class="row justify-center channel-wrapper">
+      <channel-wrapper-skeleton v-if="isChannelLoading" />
+
+      <div v-else-if="state.channel" class="row justify-center channel-wrapper">
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
             v-for="msg in messages"
@@ -71,6 +79,7 @@ watch(mes, (c) => {
           No messages
         </div>
       </div>
+
       <div v-else class="messenger-empty">
         Please select a channel
       </div>
@@ -82,7 +91,6 @@ watch(mes, (c) => {
       :disabled="!isAllowSend"
       @submit="sendMessage"
     />
-    <q-inner-loading :showing="isChannelLoading" />
   </q-card>
 </template>
 

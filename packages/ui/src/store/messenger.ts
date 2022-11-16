@@ -216,6 +216,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMembershipAddr = undefined
     state.channelMembership = undefined
     state.channelAddr = new PublicKey(addr)
+
     try {
       if (wallet.value?.publicKey) {
         try {
