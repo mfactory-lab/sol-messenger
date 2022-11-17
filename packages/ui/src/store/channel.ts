@@ -6,6 +6,8 @@ export const useChannelStore = defineStore('channel', () => {
   const wallet = useAnchorWallet()
   const { state, client } = useMessengerStore()
 
+  const isChannelLoading = computed(() => state.channelLoading)
+  const isSendMessage = computed(() => state.sending)
   const isWalletConnected = computed(() => !!wallet.value?.publicKey)
   const isPublicChannel = computed(() => !!state.channel && client.utils.channel.isPublic(state.channel))
   const isPermissionlessChannel = computed(() => !!state.channel && client.utils.channel.isPermissionless(state.channel))
@@ -24,6 +26,8 @@ export const useChannelStore = defineStore('channel', () => {
   const canPostMessage = computed(() => !state.sending && (isPublicChannel.value || isAuthorizedMember.value))
 
   return {
+    isChannelLoading,
+    isSendMessage,
     isPublicChannel,
     isPermissionlessChannel,
     isAuthorizedMember,

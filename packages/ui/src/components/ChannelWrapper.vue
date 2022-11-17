@@ -9,6 +9,7 @@ const emit = defineEmits(['sendMessage'])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
+const channel = useChannelStore()
 
 function isSomeoneMessage(sender: any) {
   const pubkey = wallet.publicKey.value
@@ -17,9 +18,6 @@ function isSomeoneMessage(sender: any) {
   }
   return String(pubkey) !== String(sender)
 }
-
-const isChannelLoading = computed(() => state.channelLoading)
-const isSendMessage = computed(() => state.sending)
 
 const messages = computed(() => {
   const data = []
@@ -42,7 +40,7 @@ const messages = computed(() => {
   return data
 })
 
-const isAllowSend = computed(() => state.channelAddr)
+const isAllowSend = computed(() => channel.canPostMessage)
 
 const sendMessage = (message: any) => emit('sendMessage', message)
 
@@ -59,7 +57,7 @@ watch(mes, (c) => {
 <template>
   <q-card class="messenger-card" square>
     <div ref="chat" class="messenger-content">
-      <channel-wrapper-skeleton v-if="isChannelLoading" />
+      <channel-wrapper-skeleton v-if="channel.isChannelLoading" />
 
       <div v-else-if="state.channel" class="row justify-center channel-wrapper">
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
@@ -83,7 +81,7 @@ watch(mes, (c) => {
 
     <channel-form
       :message="postMessageState.message"
-      :sending="isSendMessage"
+      :sending="channel.isSendMessage"
       :disabled="!isAllowSend"
       @submit="sendMessage"
     />

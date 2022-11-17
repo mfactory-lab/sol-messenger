@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { matMoreHoriz } from '@quasar/extras/material-icons'
 import { useWallet } from 'solana-wallets-vue'
+import { outlinedMoreHoriz } from '@quasar/extras/material-icons-outlined'
 
 const emit = defineEmits([
   'search',
@@ -80,7 +80,7 @@ watch(searchText, (s) => {
 
       <div>
         <q-btn class="chat-menu" flat unelevated :disable="!isWalletConnected">
-          <q-icon :name="matMoreHoriz" />
+          <q-icon :name="outlinedMoreHoriz" />
           <q-menu anchor="bottom left" self="top left">
             <q-list style="min-width: 150px" bordered>
               <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
@@ -170,7 +170,7 @@ $accent-color: #ffd140;
       line-height: 16px;
       text-transform: uppercase;
 
-      .chat-members {
+      .chat-members{
         padding-right: 10px;
         margin-right: 10px;
         border-right: 1px solid $main-color;

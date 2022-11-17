@@ -20,43 +20,56 @@ function formatMemberName(member: ChannelMembership) {
   return shortenAddress(member.authority)
 }
 
-function getStatusColor(status: any) {
-  if (status?.__kind === 'Authorized') {
-    return 'positive'
-  }
-  return 'grey'
+function getStatusClass(status: any) {
+  return String(status).toLowerCase()
 }
 </script>
 
 <template>
-  <q-dialog>
-    <q-card>
-      <q-card-section>
+  <q-dialog class="memberlist">
+    <q-card square flat horizontal>
+      <q-card-section class="q-px-lg">
+        MEMBERS
+      </q-card-section>
+      <q-card-section class="memberlist-card">
         <q-list separator>
           <q-item
             v-for="m in state.channelMembers"
             :key="m.pubkey.toString()"
             active-class="bg-teal-1"
             :active="`${m.pubkey}` === `${state.channelMembershipAddr}`"
+            class="row justify-between memberlist-item"
           >
-            <q-item-section>
-              <q-item-label>
-                {{ formatMemberName(m.data) }}
-                <q-badge :color="getStatusColor(m.data.status)">
+            <q-item-section class="memberlist-info">
+              <q-item-label class="row justify-between">
+                <span class="text-weight-medium">
+                  {{ formatMemberName(m.data) }}</span>
+                <q-badge
+                  :class="getStatusClass(m.data.status.__kind)"
+                  class="memberlist-status q-px-xs"
+                >
                   {{ m.data.status.__kind }}
                 </q-badge>
               </q-item-label>
               <q-item-label caption lines="2">
-                <div>Authority: {{ m.data.authority }}</div>
-                <div>Key: {{ m.data.key }}</div>
+                <div class="memberlist-info__details">
+                  <span>Authority:</span>
+                  <span>{{ m.data.authority }}</span>
+                </div>
+                <div class="memberlist-info__details">
+                  <span>Key:</span>
+                  <span>{{ m.data.key }}</span>
+                </div>
               </q-item-label>
             </q-item-section>
-            <q-item-section side class="q-gutter-sm">
+            <q-item-section side class="q-gutter-sm memberlist-btns">
               <q-btn
-                v-if="m.data.status.__kind === 'Pending'
-                  && channel.isAuthorizedMember
-                  && (!m.data.status.authority || String(m.data.status.authority) === String(wallet.publicKey.value))"
-                color="teal" rounded size="xs" unelevated class="full-width"
+                v-if="m.data.status.__kind === 'Pending'"
+                color="teal"
+                rounded
+                size="xs"
+                unelevated
+                class="full-width"
                 :loading="authorizeMemberState.loading"
                 :disabled="authorizeMemberState.loading"
                 @click="$emit('submit', m.data.key)"
@@ -65,7 +78,11 @@ function getStatusColor(status: any) {
               </q-btn>
               <q-btn
                 v-if="channel.canDeleteMember"
-                color="negative" rounded size="xs" unelevated class="full-width"
+                color="negative"
+                rounded
+                size="xs"
+                unelevated
+                class="full-width"
                 :loading="deleteMemberState.loading"
                 :disabled="deleteMemberState.loading"
                 @click="$emit('deleteMember', m.data.key)"
@@ -79,3 +96,4 @@ function getStatusColor(status: any) {
     </q-card>
   </q-dialog>
 </template>
+

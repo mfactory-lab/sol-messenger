@@ -76,7 +76,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
       @show-device-key="showDeviceKeyDialog = true"
     />
     <div class="messenger-main">
-      <q-card class="messenger-channels">
+      <q-card class="messenger-channels" square>
         <template v-if="filterChannels.length > 0">
           <q-list separator class="channels-list">
             <messenger-channel
@@ -148,7 +148,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .messenger-wrapper {
   max-width: 800px;
   margin: 0 auto;
@@ -236,5 +236,74 @@ const handleAddMember = (val: any) => addMember.submit(val)
   margin: 0 0 1.5rem;
   font-weight: 900;
   color: $primary;
+}
+
+.memberlist {
+  &-item {
+    padding: 16px;
+
+    @media (max-width: $breakpoint-xs) {
+      padding: 16px 0;
+    }
+  }
+
+  &-card {
+    @media (max-width: $breakpoint-xs) {
+      padding: 0;
+    }
+  }
+
+  &-status {
+    text-transform: uppercase;
+    width: 78px;
+    justify-content: center;
+  }
+
+  &-info {
+    @media (max-width: $breakpoint-xs) {
+      width: 75%;
+    }
+
+    &__details {
+      display: flex;
+      gap: 10px;
+
+      span {
+        &:first-child {
+          min-width: 65px;
+          width: 15%;
+          border-right: 1px solid $primary;
+        }
+
+        &:last-child {
+          width: 85%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          color: $gray-blue;
+        }
+      }
+    }
+  }
+
+  &-btns {
+    width: 75px !important;
+  }
+
+  .q-dialog__inner--minimized {
+    padding: 15px;
+  }
+
+  .authorized {
+    background: #00a57d;
+    color: #fff;
+    font-size: 8px;
+  }
+
+  .pending {
+    background: $gray-blue;
+    color: #000;
+    font-size: 8px;
+  }
 }
 </style>

@@ -32,7 +32,7 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
         <custom-tooltip text="Create a channel" />
       </q-btn>
       <q-btn
-        v-if="canJoinChannel"
+        v-if="canJoinChannel && !channelStore.isChannelLoading"
         class="control-button"
         square
         :loading="isJoining"

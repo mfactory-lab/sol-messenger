@@ -13,6 +13,8 @@ const sendMessage = () => {
   emit('submit', message)
   message.value = ''
 }
+
+console.log(props)
 </script>
 
 <template>
