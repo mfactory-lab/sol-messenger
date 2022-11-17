@@ -49,7 +49,7 @@ watch(searchText, (s) => {
 
 <template>
   <q-toolbar class="panel-toolbar">
-    <messenger-notigication />
+    <messenger-notification />
 
     <div class="panel-search">
       <div class="search-wrapper">
