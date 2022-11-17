@@ -49,6 +49,8 @@ watch(searchText, (s) => {
 
 <template>
   <q-toolbar class="panel-toolbar">
+    <messenger-notigication />
+
     <div class="panel-search">
       <div class="search-wrapper">
         <q-input
@@ -129,6 +131,7 @@ $accent-color: #ffd140;
   display: flex;
   flex-direction: row;
   padding: 0;
+  position: relative;
 
   .panel-search {
     max-width: 170px;
@@ -170,7 +173,7 @@ $accent-color: #ffd140;
       line-height: 16px;
       text-transform: uppercase;
 
-      .chat-members{
+      .chat-members {
         padding-right: 10px;
         margin-right: 10px;
         border-right: 1px solid $main-color;
@@ -199,6 +202,23 @@ $accent-color: #ffd140;
         background: rgb(210 230 240 / 20%);
       }
     }
+  }
+
+  .panel-notifications {
+    position: absolute;
+    top: -10px;
+    left: 100px;
+    background: #ffffff;
+    color: $gray-blue;
+    border: 1px solid #e2e6e9;
+    border-radius: 20px;
+    min-width: 51px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
   }
 
   @media (max-width: $breakpoint-xs) {
