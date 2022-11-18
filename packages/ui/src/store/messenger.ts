@@ -7,7 +7,6 @@ import { PublicKey } from '@solana/web3.js'
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
-import { DEFAULT_CHANNELS } from '@/config'
 
 const ENCRYPTED_MOCK = '***** *** *** *** *******'
 
@@ -64,22 +63,19 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   let listeners: number[] = []
 
-  watch(() => connectionStore.cluster, () => {
-    init().then()
-  }, { immediate: true })
-
   watch(wallet, (w) => {
     if (!w) {
       reset()
+    } else {
       init().then()
     }
   }, { immediate: true })
 
   watch([deviceKey, () => state.allChannels], () => {
-    getOwnChannels().then()
+    initOwnChannels().then()
   }, { immediate: true })
 
-  async function getOwnChannels() {
+  async function initOwnChannels() {
     const memberships = await client.loadMemberships(userStore.keypair?.publicKey)
     const channels: {
       pubkey: string
@@ -88,14 +84,14 @@ export const useMessengerStore = defineStore('messenger', () => {
       pubkey: v.data[0].channel.toBase58(),
       status: v.data[0].status.__kind,
     }))
-    DEFAULT_CHANNELS.forEach((pk) => {
+    /*     DEFAULT_CHANNELS.forEach((pk) => {
       if (!channels.find(ch => ch.pubkey === pk)) {
         channels.push({
           pubkey: pk,
           status: 'Unauthorized',
         })
       }
-    })
+    }) */
     state.ownChannels = channels
     console.log('myChannels ====== ', state.ownChannels)
   }
@@ -178,20 +174,21 @@ export const useMessengerStore = defineStore('messenger', () => {
   async function createChannel(name: string, opts: any) {
     try {
       state.creating = true
-      const { channel } = await client.initChannel({
+      await client.initChannel({
         name,
         maxMessages: opts.maxMessages ?? 15,
         public: opts.public,
         permissionless: opts.permissionless,
         opts: { commitment: opts.commitment ?? 'confirmed' },
       })
-      await loadChannel(channel.publicKey)
+      await init()
+      /*       await loadChannel(channel.publicKey)
       if (state.channel) {
         state.allChannels.push({
           pubkey: channel.publicKey,
           data: state.channel,
         })
-      }
+      } */
     } finally {
       state.creating = false
     }
@@ -218,6 +215,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMembershipAddr = undefined
     state.channelMembership = undefined
     state.channelAddr = new PublicKey(addr)
+
     try {
       if (wallet.value?.publicKey) {
         try {
@@ -292,7 +290,11 @@ export const useMessengerStore = defineStore('messenger', () => {
       console.error('Invalid channel')
       return
     }
-    state.channelMembers = await client.loadChannelMembers(state.channelAddr)
+    state.channelMembers = await loadMembers()
+  }
+
+  async function loadMembers(addr = state.channelAddr) {
+    return await client.loadChannelMembers(addr!)
   }
 
   async function postMessage(message: string) {
@@ -302,9 +304,14 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
     try {
       state.sending = true
+      let isPublic: any
+      if (state.channel) {
+        isPublic = client.utils.channel.isPublic(state.channel)
+      }
       await client.postMessage({
         channel: state.channelAddr,
         message,
+        encrypt: !isPublic,
       })
       await loadChannelMessages()
     } finally {
@@ -365,6 +372,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     deleteMember,
     authorizeMember,
     refreshList,
+    loadMembers,
   }
 })
 

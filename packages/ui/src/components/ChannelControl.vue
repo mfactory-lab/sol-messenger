@@ -1,11 +1,12 @@
 <script setup lang="ts">
 defineProps({
   isJoining: { type: Boolean, default: false },
+  isLoading: { type: Boolean, default: false },
 })
 defineEmits(['createChannel', 'joinChannel', 'refreshList'])
 
 const channelStore = useChannelStore()
-const canJoinChannel = computed<boolean>(() => channelStore.canJoinChannel)
+const canJoinChannel = computed<boolean>(() => channelStore.canJoinChannel && !channelStore.isPublicChannel)
 const isPendingMember = computed<boolean>(() => channelStore.isPendingMember)
 const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
 </script>
@@ -13,16 +14,25 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
 <template>
   <q-item>
     <q-item-section class="button-wrapper">
-      <q-btn class="control-button" square @click="$emit('refreshList')">
+      <q-btn
+        class="control-button"
+        :class="{ 'refresh-btn': isLoading }"
+        @click="$emit('refreshList')"
+      >
         <img src="@/assets/img/refresh.svg" alt="refresh">
         <custom-tooltip text="Refresh list" />
       </q-btn>
-      <q-btn v-if="canCreateChannel" class="control-button" square @click="$emit('createChannel')">
+      <q-btn
+        v-if="canCreateChannel"
+        class="control-button"
+        square
+        @click="$emit('createChannel')"
+      >
         <img src="@/assets/img/add.svg" alt="create">
         <custom-tooltip text="Create a channel" />
       </q-btn>
       <q-btn
-        v-if="canJoinChannel"
+        v-if="canJoinChannel && !channelStore.isChannelLoading"
         class="control-button"
         square
         :loading="isJoining"
@@ -61,6 +71,21 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
     &:hover {
       opacity: 0.8;
     }
+  }
+}
+
+.refresh-btn {
+  img {
+    animation: RotateArrow 1s linear infinite;
+  }
+}
+
+@keyframes RotateArrow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
   }
 }
 </style>

@@ -3,40 +3,50 @@ import type { PropType } from 'vue'
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
-  defaultState: Object as PropType<{ name: any; key: string }>,
+  defaultState: Object as PropType<{ name: any; wallet: string; key: string }>,
 })
 
-defineEmits(['submit', 'reset'])
+const emit = defineEmits(['submit', 'reset'])
 const state = ref(props.defaultState)
+
+const addMember = () => emit('submit', state.value)
 </script>
 
 <template>
   <q-dialog class="add-member-dialog" @hide="$emit('reset')">
     <q-card>
       <q-card-section>
-        <q-form class="add-member-form" @submit.prevent="$emit('submit', state)">
+        <q-form class="add-member-form" @submit.prevent="addMember">
           <q-input
             v-model="state.name"
             label="Member name *"
             hint="Min length 3 chars"
             lazy-rules
-            :rules="[val => val && val.length > 2 || 'Please type something']"
+            :rules="[
+              (val) => (val && val.length > 2) || 'Please type something',
+            ]"
           />
           <q-input
-            v-model="state.key"
+            v-model="state.wallet"
             label="Member Wallet *"
             lazy-rules
-            :rules="[val => val && val.length > 32 || 'Invalid public key']"
+            :rules="[(val) => (val && val.length > 32) || 'Invalid public key']"
           />
           <q-input
             v-model="state.key"
             label="Member Device Key"
             hint="Default: The same as member wallet"
             lazy-rules
-            :rules="[val => !val || (val.length > 32 || 'Invalid public key')]"
+            :rules="[(val) => !val || val.length > 32 || 'Invalid public key']"
           />
           <br>
-          <q-btn type="submit" class="dialog-submit-btn" text-color="white" :ripple="false" rounded>
+          <q-btn
+            type="submit"
+            class="dialog-submit-btn"
+            text-color="white"
+            :ripple="false"
+            rounded
+          >
             Add Member
           </q-btn>
         </q-form>

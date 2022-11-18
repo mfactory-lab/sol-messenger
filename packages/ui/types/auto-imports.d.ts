@@ -128,7 +128,6 @@ declare global {
   const useBroadcastChannel: typeof import('@vueuse/core')['useBroadcastChannel']
   const useBrowserLocation: typeof import('@vueuse/core')['useBrowserLocation']
   const useCached: typeof import('@vueuse/core')['useCached']
-  const useChannel: typeof import('../src/hooks/messenger')['useChannel']
   const useChannelAddMember: typeof import('../src/hooks/messenger')['useChannelAddMember']
   const useChannelAuthorizeMember: typeof import('../src/hooks/messenger')['useChannelAuthorizeMember']
   const useChannelCreate: typeof import('../src/hooks/messenger')['useChannelCreate']
@@ -422,7 +421,6 @@ declare module 'vue' {
     readonly useBroadcastChannel: UnwrapRef<typeof import('@vueuse/core')['useBroadcastChannel']>
     readonly useBrowserLocation: UnwrapRef<typeof import('@vueuse/core')['useBrowserLocation']>
     readonly useCached: UnwrapRef<typeof import('@vueuse/core')['useCached']>
-    readonly useChannel: UnwrapRef<typeof import('../src/hooks/messenger')['useChannel']>
     readonly useChannelAddMember: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelAddMember']>
     readonly useChannelAuthorizeMember: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelAuthorizeMember']>
     readonly useChannelCreate: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelCreate']>

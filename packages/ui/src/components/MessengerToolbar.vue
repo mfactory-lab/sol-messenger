@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { matMoreHoriz } from '@quasar/extras/material-icons'
 import { useWallet } from 'solana-wallets-vue'
+import { outlinedMoreHoriz } from '@quasar/extras/material-icons-outlined'
 
 const emit = defineEmits([
   'search',
@@ -12,7 +12,7 @@ const emit = defineEmits([
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
-const { canAddMember, isChannelCreator } = useChannelStore()
+const channelStore = useChannelStore()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
@@ -49,6 +49,8 @@ watch(searchText, (s) => {
 
 <template>
   <q-toolbar class="panel-toolbar">
+    <messenger-notification />
+
     <div class="panel-search">
       <div class="search-wrapper">
         <q-input
@@ -80,7 +82,7 @@ watch(searchText, (s) => {
 
       <div>
         <q-btn class="chat-menu" flat unelevated :disable="!isWalletConnected">
-          <q-icon :name="matMoreHoriz" />
+          <q-icon :name="outlinedMoreHoriz" />
           <q-menu anchor="bottom left" self="top left">
             <q-list style="min-width: 150px" bordered>
               <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
@@ -97,7 +99,7 @@ watch(searchText, (s) => {
               <q-item
                 v-close-popup
                 clickable
-                :disable="!canAddMember"
+                :disable="!channelStore.canAddMember"
                 @click="onAddMember"
               >
                 <q-item-section>Add member</q-item-section>
@@ -105,7 +107,7 @@ watch(searchText, (s) => {
               <q-item
                 v-close-popup
                 clickable
-                :disable="!isChannelCreator"
+                :disable="!channelStore.isChannelCreator"
                 @click="$emit('deleteChannel')"
               >
                 <q-item-section>Delete</q-item-section>
@@ -118,7 +120,7 @@ watch(searchText, (s) => {
   </q-toolbar>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $main-color: #fff;
 $accent-color: #ffd140;
 
@@ -129,6 +131,7 @@ $accent-color: #ffd140;
   display: flex;
   flex-direction: row;
   padding: 0;
+  position: relative;
 
   .panel-search {
     max-width: 170px;
@@ -198,6 +201,50 @@ $accent-color: #ffd140;
       &:hover {
         background: rgb(210 230 240 / 20%);
       }
+    }
+  }
+
+  .panel-notifications {
+    position: absolute;
+    height: 24px;
+    top: -10px;
+    left: 100px;
+    width: auto;
+    display: inline-flex;
+    align-items: center;
+
+    &__info {
+      cursor: pointer;
+      color: $gray-blue;
+      background: #ffffff;
+      border-radius: 20px;
+      height: 100%;
+      padding: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      gap: 3px;
+      z-index: 2;
+    }
+
+    &__details {
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      width: 0;
+      overflow: hidden;
+      transition: 0.3s all ease;
+      background: #ffffff;
+      color: $primary;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-left: 20px;
+      padding-left: 25px;
+      cursor: pointer;
     }
   }
 

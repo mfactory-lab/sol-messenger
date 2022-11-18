@@ -21,7 +21,7 @@ const initials = computed(() => props.channel.name.slice(0, 2))
 </script>
 
 <template>
-  <q-item active-class="bg-blue-grey-1 text-grey-8" :active="isActive">
+  <q-item active-class="bg-blue-grey-8 text-white" :active="isActive">
     <q-item-section class="chat-item cursor-pointer" @click="$emit('select')">
       <div class="chat-badge" :style="getBadgeColor(`${pubkey}`)">
         <span>{{ initials }}</span>

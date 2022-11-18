@@ -6,21 +6,19 @@ import type { AllChannels } from '@/store/messenger'
 const wallet = useWallet()
 
 const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
+const channel = useChannelStore()
 
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
 const addMember = useChannelAddMember()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
+const deleteChannel = useChannelDelete()
 
 const postMessageState = reactive({ message: '' })
 const allChannels = computed(() => state.allChannels)
 const searchChannels = ref<AllChannels[]>([])
 const searchWord = ref('')
-
-const ownChannels = computed(() =>
-  state.allChannels.filter(ch => !!state.ownChannels.find(myCh => myCh.pubkey === ch.pubkey.toBase58())),
-)
 
 async function sendMessage(message: any) {
   await postMessage(message.value)
@@ -45,13 +43,17 @@ const onSearch = (val: string) => {
   searchWord.value = val
 }
 
+const isLoading = computed(() => state.loading)
+
 const showDeviceKeyDialog = ref<Boolean>(false)
 
 const filterChannels = computed(() =>
   searchChannels.value.length > 0 || searchWord.value.length > 0
     ? searchChannels.value
-    : ownChannels.value,
+    : channel.ownChannels,
 )
+
+const handleAddMember = (val: any) => addMember.submit(val)
 </script>
 
 <template>
@@ -59,12 +61,12 @@ const filterChannels = computed(() =>
     <messenger-toolbar
       @search="onSearch"
       @show-members="authorizeMember.state.dialog = true"
-      @delete-channel="deleteMember.submit(state.channelAddr)"
+      @delete-channel="deleteChannel.submit(state.channelAddr)"
       @add-member="addMember.state.dialog = true"
       @show-device-key="showDeviceKeyDialog = true"
     />
     <div class="messenger-main">
-      <q-card class="messenger-channels">
+      <q-card class="messenger-channels" square>
         <template v-if="filterChannels.length > 0">
           <q-list separator class="channels-list">
             <messenger-channel
@@ -82,6 +84,7 @@ const filterChannels = computed(() =>
         </div>
         <channel-control
           :is-joining="joinChannel.state.loading"
+          :is-loading="isLoading"
           @create-channel="newChannel.state.dialog = true"
           @join-channel="joinChannel.state.dialog = true"
           @refresh-list="refreshList"
@@ -107,7 +110,7 @@ const filterChannels = computed(() =>
     v-model="addMember.state.dialog"
     :loading="addMember.state.loading"
     :default-state="addMember.state"
-    @submit="addMember.submit"
+    @submit="handleAddMember"
     @reset="addMember.reset"
   />
 
@@ -135,7 +138,7 @@ const filterChannels = computed(() =>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .messenger-wrapper {
   max-width: 800px;
   margin: 0 auto;
@@ -166,7 +169,7 @@ const filterChannels = computed(() =>
 .messenger-messages {
   width: 100%;
   max-width: 600px;
-  max-height: 400px;
+  max-height: 342px;
   padding: 20px 30px;
   overflow-y: auto;
   min-height: 200px;
@@ -223,5 +226,74 @@ const filterChannels = computed(() =>
   margin: 0 0 1.5rem;
   font-weight: 900;
   color: $primary;
+}
+
+.memberlist {
+  &-item {
+    padding: 16px;
+
+    @media (max-width: $breakpoint-xs) {
+      padding: 16px 0;
+    }
+  }
+
+  &-card {
+    @media (max-width: $breakpoint-xs) {
+      padding: 0;
+    }
+  }
+
+  &-status {
+    text-transform: uppercase;
+    width: 78px;
+    justify-content: center;
+  }
+
+  &-info {
+    @media (max-width: $breakpoint-xs) {
+      width: 75%;
+    }
+
+    &__details {
+      display: flex;
+      gap: 10px;
+
+      span {
+        &:first-child {
+          min-width: 65px;
+          width: 15%;
+          border-right: 1px solid $primary;
+        }
+
+        &:last-child {
+          width: 85%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          color: $gray-blue;
+        }
+      }
+    }
+  }
+
+  &-btns {
+    width: 75px !important;
+  }
+
+  .q-dialog__inner--minimized {
+    padding: 15px;
+  }
+
+  .authorized {
+    background: #00a57d;
+    color: #fff;
+    font-size: 8px;
+  }
+
+  .pending {
+    background: $gray-blue;
+    color: #000;
+    font-size: 8px;
+  }
 }
 </style>

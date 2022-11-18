@@ -9,6 +9,7 @@ const emit = defineEmits(['sendMessage'])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
+const channel = useChannelStore()
 
 function isSomeoneMessage(sender: any) {
   const pubkey = wallet.publicKey.value
@@ -39,6 +40,8 @@ const messages = computed(() => {
   return data
 })
 
+const isAllowSend = computed(() => channel.canPostMessage)
+
 const sendMessage = (message: any) => emit('sendMessage', message)
 
 const chat = ref<HTMLElement>()
@@ -54,7 +57,9 @@ watch(mes, (c) => {
 <template>
   <q-card class="messenger-card" square>
     <div ref="chat" class="messenger-content">
-      <div v-if="state.channel" class="row justify-center channel-wrapper">
+      <channel-wrapper-skeleton v-if="channel.isChannelLoading" />
+
+      <div v-else-if="state.channel" class="row justify-center channel-wrapper">
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
             v-for="msg in messages"
@@ -68,6 +73,7 @@ watch(mes, (c) => {
           No messages
         </div>
       </div>
+
       <div v-else class="messenger-empty">
         Please select a channel
       </div>
@@ -75,11 +81,10 @@ watch(mes, (c) => {
 
     <channel-form
       :message="postMessageState.message"
-      :sending="loading"
-      :disabled="!allowSend"
+      :sending="channel.isSendMessage"
+      :disabled="!isAllowSend"
       @submit="sendMessage"
     />
-    <q-inner-loading :showing="channelLoadingState" />
   </q-card>
 </template>
 
