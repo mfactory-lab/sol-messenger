@@ -1,9 +1,55 @@
 <script lang="ts" setup>
-const notifications = ref(22)
+import type { PropType } from '@vue/runtime-core'
+import { useAnchorWallet } from 'solana-wallets-vue'
+import type { AllChannels } from '../store/messenger'
 
-const isNotifications = computed(() => notifications.value > 0)
-const tooltipText = computed(
-  () => `users in ${notifications.value} chats are waiting for confirmation`,
+const { loadMembers } = useMessengerStore()
+const channel = useChannelStore()
+
+const wallet = useAnchorWallet()
+
+const pendingChannels = ref<AllChannels[] | undefined>()
+
+const notifications = $computed(() => pendingChannels.value?.length ?? 0)
+const isNotifications = computed(() => notifications > 0)
+
+const showInfo = ref(false)
+const infoWidth = computed(() => {
+  return showInfo.value ? 'width: 100%; padding-right: 14px' : 'width: 0; padding-right: 0;'
+})
+watch(
+  () => channel.ownChannels,
+  async (p, n) => {
+    if (n.length > 0) {
+      try {
+        const res = await Promise.all(
+          n.map(async (ch: any) => {
+            const { pubkey, data } = ch
+            if (
+              data.creator.toBase58() === wallet.value?.publicKey.toBase58()
+            ) {
+              const members = await loadMembers(pubkey)
+
+              if (members.length === 0) {
+                return
+              }
+              return members.find(m => m.data.status.__kind === 'Pending')
+                ? ch
+                : undefined
+            }
+          }),
+        )
+        pendingChannels.value = res.filter(c => c) as AllChannels[]
+
+        if (pendingChannels.value.length > 0) {
+          setTimeout(() => showInfo.value = true, 2000)
+          setTimeout(() => showInfo.value = false, 7000)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  },
 )
 </script>
 
@@ -12,9 +58,18 @@ const tooltipText = computed(
     class="panel-notifications"
     :class="{ 'has-notifications': isNotifications }"
   >
-    <custom-tooltip :text="tooltipText" />
-    <icon-bell class="ring" :color="isNotifications ? 'FF5C5C' : 'AABEC8'" />
-    <span>{{ notifications }}</span>
+    <div class="panel-notifications__info">
+      <icon-bell class="ring" :color="isNotifications ? 'FF5C5C' : 'AABEC8'" />
+      <span>{{ notifications }}</span>
+    </div>
+
+    <div
+      ref="notificationsInfo"
+      class="panel-notifications__details"
+      :style="infoWidth"
+    >
+      channels are awaiting user confirmation
+    </div>
   </div>
 </template>
 
@@ -25,10 +80,9 @@ const tooltipText = computed(
   }
 
   .ring {
-  animation: ring 4s .7s ease-in-out ;
-  transform-origin: 50% 4px;
-}
-
+    animation: ring 4s 0.7s ease-in-out;
+    transform-origin: 50% 4px;
+  }
 }
 
 @keyframes ring {

@@ -6,6 +6,7 @@ import type { AllChannels } from '@/store/messenger'
 const wallet = useWallet()
 
 const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
+const channel = useChannelStore()
 
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
@@ -18,17 +19,6 @@ const postMessageState = reactive({ message: '' })
 const allChannels = computed(() => state.allChannels)
 const searchChannels = ref<AllChannels[]>([])
 const searchWord = ref('')
-
-const ownChannels = computed(() =>
-  state.allChannels.filter(
-    ch =>
-      !!state.ownChannels.find(
-        myCh => myCh.pubkey === ch.pubkey.toBase58(),
-      )
-      || ch.data.flags === 1
-      || ch.data.creator.toBase58() === String(wallet.publicKey.value),
-  ),
-)
 
 async function sendMessage(message: any) {
   await postMessage(message.value)
@@ -60,7 +50,7 @@ const showDeviceKeyDialog = ref<Boolean>(false)
 const filterChannels = computed(() =>
   searchChannels.value.length > 0 || searchWord.value.length > 0
     ? searchChannels.value
-    : ownChannels.value,
+    : channel.ownChannels,
 )
 
 const handleAddMember = (val: any) => addMember.submit(val)
@@ -179,7 +169,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
 .messenger-messages {
   width: 100%;
   max-width: 600px;
-  max-height: 400px;
+  max-height: 342px;
   padding: 20px 30px;
   overflow-y: auto;
   min-height: 200px;

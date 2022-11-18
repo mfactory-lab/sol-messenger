@@ -120,7 +120,7 @@ watch(searchText, (s) => {
   </q-toolbar>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $main-color: #fff;
 $accent-color: #ffd140;
 
@@ -206,19 +206,46 @@ $accent-color: #ffd140;
 
   .panel-notifications {
     position: absolute;
+    height: 24px;
     top: -10px;
     left: 100px;
-    background: #ffffff;
-    color: $gray-blue;
-    border: 1px solid #e2e6e9;
-    border-radius: 20px;
-    min-width: 51px;
-    height: 24px;
-    display: flex;
-    justify-content: center;
+    width: auto;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
-    cursor: pointer;
+
+    &__info {
+      cursor: pointer;
+      color: $gray-blue;
+      background: #ffffff;
+      border-radius: 20px;
+      height: 100%;
+      padding: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      gap: 3px;
+      z-index: 2;
+    }
+
+    &__details {
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      width: 0;
+      overflow: hidden;
+      transition: 0.3s all ease;
+      background: #ffffff;
+      color: $primary;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-left: 20px;
+      padding-left: 25px;
+      cursor: pointer;
+    }
   }
 
   @media (max-width: $breakpoint-xs) {
