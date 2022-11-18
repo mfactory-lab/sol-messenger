@@ -51,6 +51,10 @@
     "file": "assets/KFOlCnqEu92Fr1MmSU5fBBc-.bf14c7d7.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmSU5fBBc-.woff"
   },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff": {
+    "file": "assets/KFOmCnqEu92Fr1Mu4mxM.f2abf7fb.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff"
+  },
   "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff": {
     "file": "assets/KFOlCnqEu92Fr1MmEU9fBBc-.9ce7f3ac.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff"
@@ -58,10 +62,6 @@
   "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff": {
     "file": "assets/KFOlCnqEu92Fr1MmWUlfBBc-.e0fd57c0.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff"
-  },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff": {
-    "file": "assets/KFOmCnqEu92Fr1Mu4mxM.f2abf7fb.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff"
   },
   "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff": {
     "file": "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff",
@@ -76,18 +76,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.d7b96e1b.js",
+    "file": "assets/index.fcb3477c.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.31612765.js"
+      "_vendor.50fd2400.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.af3e6eb9.css"
+      "assets/index.66d6b7f0.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -111,24 +111,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.31612765.js": {
-    "file": "assets/vendor.31612765.js"
+  "_vendor.50fd2400.js": {
+    "file": "assets/vendor.50fd2400.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.be4d22cf.js",
+    "file": "assets/empty.f28ce111.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.31612765.js"
+      "_vendor.50fd2400.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.bcb117f8.js",
+    "file": "assets/_...all_.ca0aca44.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.31612765.js",
+      "_vendor.50fd2400.js",
       "index.html"
     ],
     "css": [
@@ -140,7 +140,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.af3e6eb9.css",
+    "file": "assets/index.66d6b7f0.css",
     "src": "index.css"
   }
 }
