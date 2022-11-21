@@ -17,13 +17,13 @@ const state = ref(props.defaultState)
         <q-form class="join-channel-form" @submit.prevent="$emit('submit', state)">
           <q-input
             v-model="state.name"
-            placeholder="Member name *"
+            label="Member name *"
             lazy-rules
             :rules="[val => val && val.length > 2 || 'Please type something']"
           />
           <q-input
             v-model="state.authority"
-            placeholder="Authorize By"
+            label="Authorize By"
             lazy-rules
             :rules="[val => !val || (val && val.length > 32 || 'Invalid public key')]"
           />
