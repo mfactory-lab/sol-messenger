@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import type { ChannelMembership } from '@app/sdk'
-import { shortenAddress } from '@/utils'
+import { formatMemberName } from '@/utils'
 
 defineProps({
   membersDialog: { type: Boolean, default: false },
@@ -12,13 +11,6 @@ const emit = defineEmits(['submit', 'deleteMember'])
 
 const { state } = useMessengerStore()
 const channel = useChannelStore()
-
-function formatMemberName(member: ChannelMembership) {
-  if (member?.name && member.name !== '') {
-    return member.name
-  }
-  return shortenAddress(member.authority)
-}
 
 function getStatusClass(status: any) {
   return String(status).toLowerCase()
@@ -38,7 +30,7 @@ function getStatusClass(status: any) {
             :key="m.pubkey.toString()"
             active-class="bg-teal-1"
             :active="`${m.pubkey}` === `${state.channelMembershipAddr}`"
-            class="row justify-between memberlist-item"
+            class="memberlist-item"
           >
             <q-item-section class="memberlist-info">
               <q-item-label class="row justify-between">
@@ -62,11 +54,10 @@ function getStatusClass(status: any) {
                 </div>
               </q-item-label>
             </q-item-section>
-            <q-item-section side class="q-gutter-sm memberlist-btns">
+            <div class="memberlist-btns">
               <q-btn
                 v-if="m.data.status.__kind === 'Pending'"
                 color="teal"
-                rounded
                 size="xs"
                 unelevated
                 class="full-width"
@@ -79,7 +70,6 @@ function getStatusClass(status: any) {
               <q-btn
                 v-if="channel.canDeleteMember"
                 color="negative"
-                rounded
                 size="xs"
                 unelevated
                 class="full-width"
@@ -89,7 +79,7 @@ function getStatusClass(status: any) {
               >
                 Delete
               </q-btn>
-            </q-item-section>
+            </div>
           </q-item>
         </q-list>
       </q-card-section>

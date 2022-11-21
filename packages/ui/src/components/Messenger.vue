@@ -247,12 +247,11 @@ const handleAddMember = (val: any) => addMember.submit(val)
     text-transform: uppercase;
     width: 78px;
     justify-content: center;
+    margin-right: 15px;
   }
 
   &-info {
-    @media (max-width: $breakpoint-xs) {
-      width: 75%;
-    }
+    max-width: 85%;
 
     &__details {
       display: flex;
@@ -262,7 +261,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
         &:first-child {
           min-width: 65px;
           width: 15%;
-          border-right: 1px solid $primary;
+          border-right: 1px solid rgb(69 90 100 / 30%);
         }
 
         &:last-child {
@@ -271,13 +270,23 @@ const handleAddMember = (val: any) => addMember.submit(val)
           overflow: hidden;
           text-overflow: ellipsis;
           color: $gray-blue;
+          border-right: 1px solid rgb(69 90 100 / 30%);
         }
       }
     }
   }
 
   &-btns {
-    width: 75px !important;
+    width: 75px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    gap: 5px;
+    padding-left: 15px;
+
+    button {
+      border-radius: 0;
+    }
   }
 
   .q-dialog__inner--minimized {

@@ -1,62 +1,29 @@
 <script lang="ts" setup>
-import type { PropType } from '@vue/runtime-core'
-import { useAnchorWallet } from 'solana-wallets-vue'
-import type { AllChannels } from '../store/messenger'
-
-const { loadMembers } = useMessengerStore()
-const channel = useChannelStore()
-
-const wallet = useAnchorWallet()
-
-const pendingChannels = ref<AllChannels[] | undefined>()
+const { pendingChannels, showDialog, showInfo } = useNotifications()
+const { state } = useNotificationsStore()
 
 const notifications = $computed(() => pendingChannels.value?.length ?? 0)
 const isNotifications = computed(() => notifications > 0)
 
-const showInfo = ref(false)
 const infoWidth = computed(() => {
-  return showInfo.value ? 'width: 100%; padding-right: 14px' : 'width: 0; padding-right: 0;'
+  return showInfo.value
+    ? 'width: 100%; padding-right: 14px'
+    : 'width: 0; padding-right: 0;'
 })
-watch(
-  () => channel.ownChannels,
-  async (p, n) => {
-    if (n.length > 0) {
-      try {
-        const res = await Promise.all(
-          n.map(async (ch: any) => {
-            const { pubkey, data } = ch
-            if (
-              data.creator.toBase58() === wallet.value?.publicKey.toBase58()
-            ) {
-              const members = await loadMembers(pubkey)
 
-              if (members.length === 0) {
-                return
-              }
-              return members.find(m => m.data.status.__kind === 'Pending')
-                ? ch
-                : undefined
-            }
-          }),
-        )
-        pendingChannels.value = res.filter(c => c) as AllChannels[]
-
-        if (pendingChannels.value.length > 0) {
-          setTimeout(() => showInfo.value = true, 2000)
-          setTimeout(() => showInfo.value = false, 7000)
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  },
-)
+const showPendingDialog = () => {
+  if (!isNotifications.value) {
+    return
+  }
+  state.showDialog = !state.showDialog
+}
 </script>
 
 <template>
   <div
     class="panel-notifications"
     :class="{ 'has-notifications': isNotifications }"
+    @click="showPendingDialog"
   >
     <div class="panel-notifications__info">
       <icon-bell class="ring" :color="isNotifications ? 'FF5C5C' : 'AABEC8'" />
@@ -70,6 +37,12 @@ watch(
     >
       channels are awaiting user confirmation
     </div>
+
+    <pending-users-dialog
+      :show-dialog="showDialog"
+      :pending-channels="pendingChannels"
+      @close-dialog="isShow.value = false"
+    />
   </div>
 </template>
 
@@ -80,7 +53,7 @@ watch(
   }
 
   .ring {
-    animation: ring 4s 0.7s ease-in-out;
+    animation: ring 90s 0.7s ease-in-out infinite;
     transform-origin: 50% 4px;
   }
 }
@@ -89,71 +62,71 @@ watch(
   0% {
     transform: rotate(0);
   }
-  1% {
+  0.02% {
     transform: rotate(30deg);
   }
-  3% {
+  0.09% {
     transform: rotate(-28deg);
   }
-  5% {
+  0.16% {
     transform: rotate(34deg);
   }
-  7% {
+  0.23% {
     transform: rotate(-32deg);
   }
-  9% {
+  0.30% {
     transform: rotate(30deg);
   }
-  11% {
+  0.37% {
     transform: rotate(-28deg);
   }
-  13% {
+  0.44% {
     transform: rotate(26deg);
   }
-  15% {
+  0.51% {
     transform: rotate(-24deg);
   }
-  17% {
+  0.58% {
     transform: rotate(22deg);
   }
-  19% {
+  0.65% {
     transform: rotate(-20deg);
   }
-  21% {
+  0.72% {
     transform: rotate(18deg);
   }
-  23% {
+  0.79% {
     transform: rotate(-16deg);
   }
-  25% {
+  0.86% {
     transform: rotate(14deg);
   }
-  27% {
+  0.93% {
     transform: rotate(-12deg);
   }
-  29% {
+  1% {
     transform: rotate(10deg);
   }
-  31% {
+  1.07% {
     transform: rotate(-8deg);
   }
-  33% {
+  1.14% {
     transform: rotate(6deg);
   }
-  35% {
+  1.21% {
     transform: rotate(-4deg);
   }
-  37% {
+  1.28% {
     transform: rotate(2deg);
   }
-  39% {
+  1.35% {
     transform: rotate(-1deg);
   }
-  41% {
+  1.42% {
     transform: rotate(1deg);
   }
 
-  43% {
+  1.49% {
     transform: rotate(0);
   }
   100% {

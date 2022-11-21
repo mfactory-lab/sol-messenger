@@ -30,6 +30,7 @@ declare module '@vue/runtime-core' {
     MessengerNotigication: typeof import('./../src/components/MessengerNotigication.vue')['default']
     MessengerToolbar: typeof import('./../src/components/MessengerToolbar.vue')['default']
     NewChannelDialog: typeof import('./../src/components/dialogs/NewChannelDialog.vue')['default']
+    PendingUsersDialog: typeof import('./../src/components/dialogs/PendingUsersDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     UserInfoDialog: typeof import('./../src/components/dialogs/UserInfoDialog.vue')['default']
