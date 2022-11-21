@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { pendingChannels, showDialog, showInfo } = useNotifications()
+const { pendingChannels, showInfo, showDialog } = useNotifications()
 const { state } = useNotificationsStore()
 
 const notifications = $computed(() => pendingChannels.value?.length ?? 0)
@@ -39,7 +39,7 @@ const showPendingDialog = () => {
     </div>
 
     <pending-users-dialog
-      :show-dialog="showDialog"
+      v-model="state.showDialog"
       :pending-channels="pendingChannels"
       @close-dialog="isShow.value = false"
     />
