@@ -4,10 +4,9 @@ import { formatMemberName } from '@/utils'
 
 const dialogProps = defineProps({
   pendingChannels: Object,
-  showDialog: Boolean,
 })
 
-const emit = defineEmits(['closeDialog'])
+const showDialog = ref(false)
 
 const { state, refreshList } = useMessengerStore()
 const authorizeMember = useChannelAuthorizeMember()
@@ -29,7 +28,7 @@ const isDelete = computed(() => deleteMember.state.loading)
 </script>
 
 <template>
-  <q-dialog v-model="showDialog">
+  <q-dialog>
     <q-card class="pending-channels" square flat horizontal>
       <q-card-section>
         <div class="text-h5">
