@@ -29,13 +29,14 @@ async function selectChannel(addr: any) {
   await loadChannel(addr)
 }
 
+console.log(channel.ownChannels)
 const onSearch = (val: string) => {
   if (val === '') {
     searchChannels.value = []
     searchWord.value = ''
     return
   }
-  searchChannels.value = allChannels.value.filter(
+  searchChannels.value = channel.ownChannels.filter(
     ch =>
       ch.data.name.toLocaleLowerCase().includes(val.toLocaleLowerCase())
       || ch.pubkey.toBase58().toLocaleLowerCase().includes(val.toLocaleLowerCase()),
