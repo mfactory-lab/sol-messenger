@@ -6,7 +6,9 @@ defineProps({
 defineEmits(['createChannel', 'joinChannel', 'refreshList'])
 
 const channelStore = useChannelStore()
-const canJoinChannel = computed<boolean>(() => channelStore.canJoinChannel && !channelStore.isPublicChannel)
+const canJoinChannel = computed<boolean>(
+  () => channelStore.canJoinChannel && !channelStore.isPublicChannel,
+)
 const isPendingMember = computed<boolean>(() => channelStore.isPendingMember)
 const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
 </script>
@@ -17,6 +19,8 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
       <q-btn
         class="control-button"
         :class="{ 'refresh-btn': isLoading }"
+        square
+        flat
         @click="$emit('refreshList')"
       >
         <img src="@/assets/img/refresh.svg" alt="refresh">
@@ -26,6 +30,7 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
         v-if="canCreateChannel"
         class="control-button"
         square
+        flat
         @click="$emit('createChannel')"
       >
         <img src="@/assets/img/add.svg" alt="create">
@@ -35,6 +40,7 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
         v-if="canJoinChannel && !channelStore.isChannelLoading"
         class="control-button"
         square
+        flat
         :loading="isJoining"
         :disable="isPendingMember"
         @click="$emit('joinChannel')"

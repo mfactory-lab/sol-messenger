@@ -15,7 +15,7 @@ const copy = () => {
     transition-show="fade"
     transition-hide="fade"
   >
-    <q-card>
+    <q-card square flat>
       <q-card-section class="row items-center">
         <div class="text-h6 text-center">
           Device Key

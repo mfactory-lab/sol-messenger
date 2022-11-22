@@ -66,7 +66,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
       @show-device-key="showDeviceKeyDialog = true"
     />
     <div class="messenger-main">
-      <q-card class="messenger-channels" square>
+      <q-card class="messenger-channels" square flat>
         <template v-if="filterChannels.length > 0">
           <q-list separator class="channels-list">
             <messenger-channel
@@ -198,11 +198,11 @@ const handleAddMember = (val: any) => addMember.submit(val)
   position: relative;
   padding: 0;
   border-radius: 0;
-  max-width: 170px;
-  width: 100%;
+  width: 170px;
   display: flex;
   flex-direction: column;
-  background: #fdfcfc;
+  background: #fdfcfc  !important;
+  border-right: 0.5px solid #cecece;
 
   .channels-list {
     flex: 1;

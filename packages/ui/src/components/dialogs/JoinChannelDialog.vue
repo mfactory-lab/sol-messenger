@@ -12,7 +12,7 @@ const state = ref(props.defaultState)
 
 <template>
   <q-dialog class="join-channel-dialog" @hide="$emit('reset')">
-    <q-card>
+    <q-card square flat>
       <q-card-section>
         <q-form class="join-channel-form" @submit.prevent="$emit('submit', state)">
           <q-input

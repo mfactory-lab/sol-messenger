@@ -134,9 +134,8 @@ $accent-color: #ffd140;
   position: relative;
 
   .panel-search {
-    max-width: 170px;
+    width: 169px;
     padding: 0 15px;
-    width: 100%;
     display: flex;
     border-right: 1px solid #fff;
     align-items: center;
