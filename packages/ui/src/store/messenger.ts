@@ -369,6 +369,10 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMembers = await loadMembers()
   }
 
+  async function selectChannel(addr: any) {
+    state.channelAddr = addr
+  }
+
   return {
     state,
     client,
@@ -382,6 +386,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     authorizeMember,
     refreshList,
     loadMembers,
+    selectChannel,
   }
 })
 

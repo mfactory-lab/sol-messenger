@@ -25,10 +25,6 @@ async function sendMessage(message: any) {
   postMessageState.message = ''
 }
 
-async function selectChannel(addr: any) {
-  await loadChannel(addr)
-}
-
 const onSearch = (val: string) => {
   if (val === '') {
     searchChannels.value = []
@@ -54,6 +50,11 @@ const filterChannels = computed(() =>
 )
 
 const handleAddMember = (val: any) => addMember.submit(val)
+
+const handleJoinToChannel = (name: string) => {
+  joinChannel.state.name = name
+  joinChannel.submit()
+}
 </script>
 
 <template>
@@ -75,7 +76,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
               :pubkey="ch.pubkey"
               :channel="ch.data"
               :is-active="`${state.channelAddr}` === `${ch.pubkey}`"
-              @select="selectChannel(ch.pubkey)"
+              @select="loadChannel(ch.pubkey)"
             />
           </q-list>
         </template>
@@ -118,7 +119,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
     v-model="joinChannel.state.dialog"
     :loading="joinChannel.state.loading"
     :default-state="joinChannel.state"
-    @submit="joinChannel.submit"
+    @submit="handleJoinToChannel"
     @reset="joinChannel.reset"
   />
 
@@ -201,7 +202,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
   width: 170px;
   display: flex;
   flex-direction: column;
-  background: #fdfcfc  !important;
+  background: #fdfcfc !important;
   border-right: 0.5px solid #cecece;
 
   .channels-list {

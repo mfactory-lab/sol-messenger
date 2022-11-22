@@ -32,6 +32,14 @@ const isPublicChannel = computed(() => props.channel.flags > 0)
         {{ channel.name }}
       </div>
       <div v-if="isPublicChannel" class="message-public">
+        <q-tooltip
+          class="bg-white text-black shadow-1"
+          style="border-radius: 0;"
+          anchor="top middle"
+          self="bottom middle"
+        >
+          Public channel
+        </q-tooltip>
         P
       </div>
     </q-item-section>
@@ -39,6 +47,9 @@ const isPublicChannel = computed(() => props.channel.flags > 0)
 </template>
 
 <style scoped lang="scss">
+.public-tooltip {
+  border-radius: 0 !important;
+}
 .chat-item {
   display: flex;
   justify-content: space-between;
@@ -69,7 +80,7 @@ const isPublicChannel = computed(() => props.channel.flags > 0)
   margin: 0 10px;
 }
 .message-public {
-  background: #00A57D;
+  background: #00a57d;
   color: #fff;
   font-size: 10px;
   line-height: 11px;

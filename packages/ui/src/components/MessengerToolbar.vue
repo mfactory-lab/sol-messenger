@@ -81,12 +81,16 @@ watch(searchText, (s) => {
       </div>
 
       <div>
-        <q-btn class="chat-menu" flat unelevated :disable="!isWalletConnected">
+        <q-btn class="chat-menu" flat square :disable="!isWalletConnected">
           <q-icon :name="outlinedMoreHoriz" />
-          <q-menu anchor="bottom left" self="top left">
+          <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 150px" bordered>
               <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
-                <q-item-section>Device key</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-blue-grey-7 text-white">
+                    Device key
+                  </q-btn>
+                </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
@@ -94,7 +98,11 @@ watch(searchText, (s) => {
                 :disable="!channel"
                 @click="showMembers"
               >
-                <q-item-section>Members</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-cyan-9 text-white">
+                    Members
+                  </q-btn>
+                </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
@@ -102,7 +110,11 @@ watch(searchText, (s) => {
                 :disable="!channelStore.canAddMember"
                 @click="onAddMember"
               >
-                <q-item-section>Add member</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-amber-7 text-white">
+                    Add member
+                  </q-btn>
+                </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
@@ -110,7 +122,11 @@ watch(searchText, (s) => {
                 :disable="!channelStore.isChannelCreator"
                 @click="$emit('deleteChannel')"
               >
-                <q-item-section>Delete</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-negative text-white">
+                    Delete
+                  </q-btn>
+                </q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -196,6 +212,7 @@ $accent-color: #ffd140;
     .chat-menu {
       border: 1px solid rgb(210 230 240 / 20%);
       cursor: pointer;
+      position: relative;
 
       &:hover {
         background: rgb(210 230 240 / 20%);

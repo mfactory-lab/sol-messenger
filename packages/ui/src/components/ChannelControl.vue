@@ -1,7 +1,6 @@
 <script setup lang="ts">
 defineProps({
-  isJoining: { type: Boolean, default: false },
-  isLoading: { type: Boolean, default: false },
+  isLoading: { type: Boolean },
 })
 const channelEmit = defineEmits(['createChannel', 'joinChannel', 'refreshList'])
 
@@ -19,7 +18,6 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
     isWalletConnected()
     return
   }
-  console.log(emit)
   channelEmit(emit)
 }
 </script>
@@ -51,8 +49,6 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         class="control-button"
         square
         flat
-        :loading="isJoining"
-        :disable="isPendingMember"
         @click="handleEmit('joinChannel')"
       >
         <img src="@/assets/img/join.svg" alt="join">
