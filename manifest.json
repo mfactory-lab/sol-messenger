@@ -31,13 +31,13 @@
     "file": "assets/telegram.360d0c59.svg",
     "src": "src/assets/img/telegram.svg"
   },
-  "src/assets/img/discord.svg": {
-    "file": "assets/discord.4c88a6e4.svg",
-    "src": "src/assets/img/discord.svg"
-  },
   "src/assets/img/twitter.svg": {
     "file": "assets/twitter.e4e729c2.svg",
     "src": "src/assets/img/twitter.svg"
+  },
+  "src/assets/img/discord.svg": {
+    "file": "assets/discord.4c88a6e4.svg",
+    "src": "src/assets/img/discord.svg"
   },
   "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
@@ -76,18 +76,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.4cf6b0c3.js",
+    "file": "assets/index.40c89509.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.130d1de7.js"
+      "_vendor.198b2486.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.11d7e8f0.css"
+      "assets/index.b896ccac.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -111,24 +111,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.130d1de7.js": {
-    "file": "assets/vendor.130d1de7.js"
+  "_vendor.198b2486.js": {
+    "file": "assets/vendor.198b2486.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.085cd03a.js",
+    "file": "assets/empty.5ee38f1a.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.130d1de7.js"
+      "_vendor.198b2486.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.53b8a975.js",
+    "file": "assets/_...all_.aea0d0cc.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.130d1de7.js",
+      "_vendor.198b2486.js",
       "index.html"
     ],
     "css": [
@@ -140,7 +140,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.11d7e8f0.css",
+    "file": "assets/index.b896ccac.css",
     "src": "index.css"
   }
 }
