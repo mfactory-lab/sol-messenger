@@ -21,7 +21,7 @@ const createNewChannel = () => emit('submit', state)
 
 <template>
   <q-dialog class="new-channel-dialog" @hide="$emit('reset')">
-    <q-card>
+    <q-card square flat>
       <q-card-section>
         <q-form class="messenger-new-channel-form">
           <q-input

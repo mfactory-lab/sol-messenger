@@ -23,6 +23,7 @@ declare module '@vue/runtime-core' {
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']
     IconBell: typeof import('./../src/components/iconBell.vue')['default']
     JoinChannelDialog: typeof import('./../src/components/dialogs/JoinChannelDialog.vue')['default']
+    JoinChennalModal: typeof import('./../src/components/dialogs/JoinChennalModal.vue')['default']
     MemberListDialog: typeof import('./../src/components/dialogs/MemberListDialog.vue')['default']
     Messenger: typeof import('./../src/components/Messenger.vue')['default']
     MessengerChannel: typeof import('./../src/components/MessengerChannel.vue')['default']

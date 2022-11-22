@@ -41,6 +41,7 @@ export const useChannelStore = defineStore('channel', () => {
     isChannelLoading,
     isSendMessage,
     isPublicChannel,
+    isWalletConnected,
     isPermissionlessChannel,
     isAuthorizedMember,
     isPendingMember,

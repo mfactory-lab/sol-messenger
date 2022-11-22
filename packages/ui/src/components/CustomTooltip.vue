@@ -11,7 +11,9 @@ export default defineComponent({
 
 <template>
   <q-tooltip
-    anchor="top middle" self="center middle" class="bg-grey-9 text-body2"
+    anchor="top middle"
+    self="bottom middle"
+    class="bg-grey-9 text-body2"
   >
     {{ text }}
   </q-tooltip>

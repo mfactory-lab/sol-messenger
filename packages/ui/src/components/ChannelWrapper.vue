@@ -55,7 +55,7 @@ watch(mes, (c) => {
 </script>
 
 <template>
-  <q-card class="messenger-card" square>
+  <q-card class="messenger-card" square flat>
     <div ref="chat" class="messenger-content">
       <channel-wrapper-skeleton v-if="channel.isChannelLoading" />
 
@@ -75,7 +75,7 @@ watch(mes, (c) => {
       </div>
 
       <div v-else class="messenger-empty">
-        Please select a channel
+        Please connect a wallet
       </div>
     </div>
 

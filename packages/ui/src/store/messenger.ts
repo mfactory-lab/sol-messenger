@@ -181,6 +181,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         permissionless: opts.permissionless,
         opts: { commitment: opts.commitment ?? 'confirmed' },
       })
+
       await init()
       /*       await loadChannel(channel.publicKey)
       if (state.channel) {
@@ -206,6 +207,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     const channel = new PublicKey(addr)
     await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
     await loadChannel(addr)
+    await refreshList()
   }
 
   async function loadChannel(addr: Address) {
@@ -330,6 +332,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       key: key ? new PublicKey(key) : undefined,
       name,
       flags,
+      opts: { commitment: 'confirmed' },
     })
   }
 
@@ -341,7 +344,9 @@ export const useMessengerStore = defineStore('messenger', () => {
     await client.deleteMember({
       channel: state.channelAddr,
       key: new PublicKey(addr),
+      opts: { commitment: 'finalized' },
     })
+    await refreshMembers()
   }
 
   async function authorizeMember(key: Address) {
@@ -353,11 +358,19 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key: new PublicKey(key),
     })
-    await loadChannelMessages()
+    await refreshMembers()
   }
 
   async function refreshList() {
     await init()
+  }
+
+  async function refreshMembers() {
+    state.channelMembers = await loadMembers()
+  }
+
+  async function selectChannel(addr: any) {
+    state.channelAddr = addr
   }
 
   return {
@@ -373,6 +386,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     authorizeMember,
     refreshList,
     loadMembers,
+    selectChannel,
   }
 })
 

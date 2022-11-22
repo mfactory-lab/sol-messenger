@@ -25,18 +25,14 @@ async function sendMessage(message: any) {
   postMessageState.message = ''
 }
 
-async function selectChannel(addr: any) {
-  await loadChannel(addr)
-}
-
 const onSearch = (val: string) => {
   if (val === '') {
     searchChannels.value = []
     searchWord.value = ''
     return
   }
-  searchChannels.value = allChannels.value.filter(
-    ch =>
+  searchChannels.value = channel.ownChannels.filter(
+    (ch: any) =>
       ch.data.name.toLocaleLowerCase().includes(val.toLocaleLowerCase())
       || ch.pubkey.toBase58().toLocaleLowerCase().includes(val.toLocaleLowerCase()),
   )
@@ -54,6 +50,11 @@ const filterChannels = computed(() =>
 )
 
 const handleAddMember = (val: any) => addMember.submit(val)
+
+const handleJoinToChannel = (name: string) => {
+  joinChannel.state.name = name
+  joinChannel.submit()
+}
 </script>
 
 <template>
@@ -66,7 +67,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
       @show-device-key="showDeviceKeyDialog = true"
     />
     <div class="messenger-main">
-      <q-card class="messenger-channels" square>
+      <q-card class="messenger-channels" square flat>
         <template v-if="filterChannels.length > 0">
           <q-list separator class="channels-list">
             <messenger-channel
@@ -75,7 +76,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
               :pubkey="ch.pubkey"
               :channel="ch.data"
               :is-active="`${state.channelAddr}` === `${ch.pubkey}`"
-              @select="selectChannel(ch.pubkey)"
+              @select="loadChannel(ch.pubkey)"
             />
           </q-list>
         </template>
@@ -118,7 +119,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
     v-model="joinChannel.state.dialog"
     :loading="joinChannel.state.loading"
     :default-state="joinChannel.state"
-    @submit="joinChannel.submit"
+    @submit="handleJoinToChannel"
     @reset="joinChannel.reset"
   />
 
@@ -198,11 +199,11 @@ const handleAddMember = (val: any) => addMember.submit(val)
   position: relative;
   padding: 0;
   border-radius: 0;
-  max-width: 170px;
-  width: 100%;
+  width: 170px;
   display: flex;
   flex-direction: column;
-  background: #fdfcfc;
+  background: #fdfcfc !important;
+  border-right: 0.5px solid #cecece;
 
   .channels-list {
     flex: 1;

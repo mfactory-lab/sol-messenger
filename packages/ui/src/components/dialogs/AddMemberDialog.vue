@@ -14,7 +14,7 @@ const addMember = () => emit('submit', state.value)
 
 <template>
   <q-dialog class="add-member-dialog" @hide="$emit('reset')">
-    <q-card>
+    <q-card square flat>
       <q-card-section>
         <q-form class="add-member-form" @submit.prevent="addMember">
           <q-input

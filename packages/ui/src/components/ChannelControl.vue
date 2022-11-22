@@ -1,14 +1,25 @@
 <script setup lang="ts">
 defineProps({
-  isJoining: { type: Boolean, default: false },
-  isLoading: { type: Boolean, default: false },
+  isLoading: { type: Boolean },
 })
-defineEmits(['createChannel', 'joinChannel', 'refreshList'])
+const channelEmit = defineEmits(['createChannel', 'joinChannel', 'refreshList'])
 
 const channelStore = useChannelStore()
-const canJoinChannel = computed<boolean>(() => channelStore.canJoinChannel && !channelStore.isPublicChannel)
+const { isWalletConnected } = useHelper()
+
+/* const canJoinChannel = computed<boolean>(
+  () => channelStore.canJoinChannel && !channelStore.isPublicChannel,
+) */
 const isPendingMember = computed<boolean>(() => channelStore.isPendingMember)
 const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
+
+const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
+  if (!channelStore.isWalletConnected) {
+    isWalletConnected()
+    return
+  }
+  channelEmit(emit)
+}
 </script>
 
 <template>
@@ -17,27 +28,28 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
       <q-btn
         class="control-button"
         :class="{ 'refresh-btn': isLoading }"
-        @click="$emit('refreshList')"
+        square
+        flat
+        @click="handleEmit('refreshList')"
       >
         <img src="@/assets/img/refresh.svg" alt="refresh">
         <custom-tooltip text="Refresh list" />
       </q-btn>
       <q-btn
-        v-if="canCreateChannel"
         class="control-button"
         square
-        @click="$emit('createChannel')"
+        flat
+        @click="handleEmit('createChannel')"
       >
         <img src="@/assets/img/add.svg" alt="create">
         <custom-tooltip text="Create a channel" />
       </q-btn>
+      <!-- v-if="canJoinChannel && !channelStore.isChannelLoading" -->
       <q-btn
-        v-if="canJoinChannel && !channelStore.isChannelLoading"
         class="control-button"
         square
-        :loading="isJoining"
-        :disable="isPendingMember"
-        @click="$emit('joinChannel')"
+        flat
+        @click="handleEmit('joinChannel')"
       >
         <img src="@/assets/img/join.svg" alt="join">
         <custom-tooltip text="Join the channel" />
