@@ -245,7 +245,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
 
   &-status {
     text-transform: uppercase;
-    width: 78px;
+    width: 66px;
     justify-content: center;
     margin-right: 15px;
   }
@@ -256,6 +256,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
     &__details {
       display: flex;
       gap: 10px;
+      padding-right: 10px;
 
       span {
         &:first-child {
@@ -270,22 +271,41 @@ const handleAddMember = (val: any) => addMember.submit(val)
           overflow: hidden;
           text-overflow: ellipsis;
           color: $gray-blue;
-          border-right: 1px solid rgb(69 90 100 / 30%);
+          /* border-right: 1px solid rgb(69 90 100 / 30%); */
         }
       }
     }
   }
 
   &-btns {
-    width: 75px;
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    gap: 5px;
-    padding-left: 15px;
+    display: none;
+    position: relative;
+
+    &::before {
+      content: "";
+      height: 29px;
+      width: 1px;
+      background: rgb(69 90 100 / 30%);
+      position: absolute;
+      left: 0px;
+    }
+
+    &:has(button) {
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      gap: 5px;
+      padding-left: 15px;
+    }
 
     button {
       border-radius: 0;
+      width: 75px !important;
+      text-transform: capitalize;
+
+      span {
+        font-size: 11px;
+      }
     }
   }
 
@@ -295,14 +315,15 @@ const handleAddMember = (val: any) => addMember.submit(val)
 
   .authorized {
     background: #00a57d;
-    color: #fff;
-    font-size: 8px;
+    font-size: 11px;
+    text-transform: capitalize;
   }
 
   .pending {
-    background: $gray-blue;
-    color: #000;
-    font-size: 8px;
+    background: $secondary;
+    color: #fff;
+    font-size: 11px;
+    text-transform: capitalize;
   }
 }
 </style>

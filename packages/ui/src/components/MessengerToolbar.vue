@@ -48,7 +48,7 @@ watch(searchText, (s) => {
 </script>
 
 <template>
-  <q-toolbar class="panel-toolbar">
+  <div class="panel-toolbar">
     <messenger-notification />
 
     <div class="panel-search">
@@ -117,7 +117,7 @@ watch(searchText, (s) => {
         </q-btn>
       </div>
     </div>
-  </q-toolbar>
+  </div>
 </template>
 
 <style lang="scss">
@@ -127,7 +127,7 @@ $accent-color: #ffd140;
 .panel-toolbar {
   color: $main-color;
   border: 1px solid $main-color;
-  height: 37px;
+  height: 48px;
   display: flex;
   flex-direction: row;
   padding: 0;
@@ -207,7 +207,7 @@ $accent-color: #ffd140;
   .panel-notifications {
     position: absolute;
     height: 24px;
-    top: -10px;
+    top: -15px;
     left: 100px;
     width: auto;
     display: inline-flex;
