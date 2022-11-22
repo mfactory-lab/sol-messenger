@@ -213,7 +213,7 @@ export function useChannelJoin() {
 /**
  * Private helper hook
  */
-function useHelper() {
+export function useHelper() {
   const wallet = useWallet()
 
   const { notify } = useQuasar()

@@ -29,7 +29,6 @@ async function selectChannel(addr: any) {
   await loadChannel(addr)
 }
 
-console.log(channel.ownChannels)
 const onSearch = (val: string) => {
   if (val === '') {
     searchChannels.value = []
