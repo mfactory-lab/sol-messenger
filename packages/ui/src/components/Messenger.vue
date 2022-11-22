@@ -37,7 +37,7 @@ const onSearch = (val: string) => {
     return
   }
   searchChannels.value = channel.ownChannels.filter(
-    ch =>
+    (ch: any) =>
       ch.data.name.toLocaleLowerCase().includes(val.toLocaleLowerCase())
       || ch.pubkey.toBase58().toLocaleLowerCase().includes(val.toLocaleLowerCase()),
   )
