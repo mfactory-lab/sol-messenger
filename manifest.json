@@ -15,6 +15,10 @@
     "file": "assets/mathwallet.1d763e81.svg",
     "src": "src/assets/img/wallets/mathwallet.svg"
   },
+  "src/assets/img/join.svg": {
+    "file": "assets/join.627c8616.svg",
+    "src": "src/assets/img/join.svg"
+  },
   "src/assets/img/refresh.svg": {
     "file": "assets/refresh.e0cf4262.svg",
     "src": "src/assets/img/refresh.svg"
@@ -22,10 +26,6 @@
   "src/assets/img/add.svg": {
     "file": "assets/add.1481b8ed.svg",
     "src": "src/assets/img/add.svg"
-  },
-  "src/assets/img/join.svg": {
-    "file": "assets/join.627c8616.svg",
-    "src": "src/assets/img/join.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -76,27 +76,27 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.40c89509.js",
+    "file": "assets/index.71f81dbb.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.198b2486.js"
+      "_vendor.b972ce90.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.b896ccac.css"
+      "assets/index.e10a1cdb.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
       "assets/ledger.40cf6861.svg",
       "assets/mathwallet.1d763e81.svg",
       "assets/solana-logo.3caace62.svg",
+      "assets/join.627c8616.svg",
       "assets/refresh.e0cf4262.svg",
       "assets/add.1481b8ed.svg",
-      "assets/join.627c8616.svg",
       "assets/telegram.360d0c59.svg",
       "assets/twitter.e4e729c2.svg",
       "assets/discord.4c88a6e4.svg",
@@ -111,24 +111,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.198b2486.js": {
-    "file": "assets/vendor.198b2486.js"
+  "_vendor.b972ce90.js": {
+    "file": "assets/vendor.b972ce90.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.5ee38f1a.js",
+    "file": "assets/empty.8c331c2e.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.198b2486.js"
+      "_vendor.b972ce90.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.aea0d0cc.js",
+    "file": "assets/_...all_.c6ac36b3.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.198b2486.js",
+      "_vendor.b972ce90.js",
       "index.html"
     ],
     "css": [
@@ -140,7 +140,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.b896ccac.css",
+    "file": "assets/index.e10a1cdb.css",
     "src": "index.css"
   }
 }
