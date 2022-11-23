@@ -6,6 +6,7 @@ import type { AllChannels } from '@/store/messenger'
 const wallet = useWallet()
 
 const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
+const channel = useChannelStore()
 
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
@@ -19,24 +20,9 @@ const allChannels = computed(() => state.allChannels)
 const searchChannels = ref<AllChannels[]>([])
 const searchWord = ref('')
 
-const ownChannels = computed(() =>
-  state.allChannels.filter(
-    ch =>
-      !!state.ownChannels.find(
-        myCh => myCh.pubkey === ch.pubkey.toBase58(),
-      )
-      || ch.data.flags === 1
-      || ch.data.creator.toBase58() === String(wallet.publicKey.value),
-  ),
-)
-
 async function sendMessage(message: any) {
   await postMessage(message.value)
   postMessageState.message = ''
-}
-
-async function selectChannel(addr: any) {
-  await loadChannel(addr)
 }
 
 const onSearch = (val: string) => {
@@ -45,8 +31,8 @@ const onSearch = (val: string) => {
     searchWord.value = ''
     return
   }
-  searchChannels.value = allChannels.value.filter(
-    ch =>
+  searchChannels.value = channel.ownChannels.filter(
+    (ch: any) =>
       ch.data.name.toLocaleLowerCase().includes(val.toLocaleLowerCase())
       || ch.pubkey.toBase58().toLocaleLowerCase().includes(val.toLocaleLowerCase()),
   )
@@ -60,10 +46,15 @@ const showDeviceKeyDialog = ref<Boolean>(false)
 const filterChannels = computed(() =>
   searchChannels.value.length > 0 || searchWord.value.length > 0
     ? searchChannels.value
-    : ownChannels.value,
+    : channel.ownChannels,
 )
 
 const handleAddMember = (val: any) => addMember.submit(val)
+
+const handleJoinToChannel = (name: string) => {
+  joinChannel.state.name = name
+  joinChannel.submit()
+}
 </script>
 
 <template>
@@ -76,7 +67,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
       @show-device-key="showDeviceKeyDialog = true"
     />
     <div class="messenger-main">
-      <q-card class="messenger-channels" square>
+      <q-card class="messenger-channels" square flat>
         <template v-if="filterChannels.length > 0">
           <q-list separator class="channels-list">
             <messenger-channel
@@ -85,7 +76,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
               :pubkey="ch.pubkey"
               :channel="ch.data"
               :is-active="`${state.channelAddr}` === `${ch.pubkey}`"
-              @select="selectChannel(ch.pubkey)"
+              @select="loadChannel(ch.pubkey)"
             />
           </q-list>
         </template>
@@ -128,7 +119,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
     v-model="joinChannel.state.dialog"
     :loading="joinChannel.state.loading"
     :default-state="joinChannel.state"
-    @submit="joinChannel.submit"
+    @submit="handleJoinToChannel"
     @reset="joinChannel.reset"
   />
 
@@ -179,7 +170,7 @@ const handleAddMember = (val: any) => addMember.submit(val)
 .messenger-messages {
   width: 100%;
   max-width: 600px;
-  max-height: 400px;
+  max-height: 342px;
   padding: 20px 30px;
   overflow-y: auto;
   min-height: 200px;
@@ -208,11 +199,11 @@ const handleAddMember = (val: any) => addMember.submit(val)
   position: relative;
   padding: 0;
   border-radius: 0;
-  max-width: 170px;
-  width: 100%;
+  width: 170px;
   display: flex;
   flex-direction: column;
-  background: #fdfcfc;
+  background: #fdfcfc !important;
+  border-right: 0.5px solid #cecece;
 
   .channels-list {
     flex: 1;
@@ -255,24 +246,24 @@ const handleAddMember = (val: any) => addMember.submit(val)
 
   &-status {
     text-transform: uppercase;
-    width: 78px;
+    width: 66px;
     justify-content: center;
+    margin-right: 15px;
   }
 
   &-info {
-    @media (max-width: $breakpoint-xs) {
-      width: 75%;
-    }
+    max-width: 85%;
 
     &__details {
       display: flex;
       gap: 10px;
+      padding-right: 10px;
 
       span {
         &:first-child {
           min-width: 65px;
           width: 15%;
-          border-right: 1px solid $primary;
+          border-right: 1px solid rgb(69 90 100 / 30%);
         }
 
         &:last-child {
@@ -281,13 +272,42 @@ const handleAddMember = (val: any) => addMember.submit(val)
           overflow: hidden;
           text-overflow: ellipsis;
           color: $gray-blue;
+          /* border-right: 1px solid rgb(69 90 100 / 30%); */
         }
       }
     }
   }
 
   &-btns {
-    width: 75px !important;
+    display: none;
+    position: relative;
+
+    &::before {
+      content: "";
+      height: 29px;
+      width: 1px;
+      background: rgb(69 90 100 / 30%);
+      position: absolute;
+      left: 0px;
+    }
+
+    &:has(button) {
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      gap: 5px;
+      padding-left: 15px;
+    }
+
+    button {
+      border-radius: 0;
+      width: 75px !important;
+      text-transform: capitalize;
+
+      span {
+        font-size: 11px;
+      }
+    }
   }
 
   .q-dialog__inner--minimized {
@@ -296,14 +316,15 @@ const handleAddMember = (val: any) => addMember.submit(val)
 
   .authorized {
     background: #00a57d;
-    color: #fff;
-    font-size: 8px;
+    font-size: 11px;
+    text-transform: capitalize;
   }
 
   .pending {
-    background: $gray-blue;
-    color: #000;
-    font-size: 8px;
+    background: $secondary;
+    color: #fff;
+    font-size: 11px;
+    text-transform: capitalize;
   }
 }
 </style>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import type { ChannelMembership } from '@app/sdk'
-import { shortenAddress } from '@/utils'
+import { formatMemberName } from '@/utils'
 
 defineProps({
   membersDialog: { type: Boolean, default: false },
@@ -13,11 +12,8 @@ const emit = defineEmits(['submit', 'deleteMember'])
 const { state } = useMessengerStore()
 const channel = useChannelStore()
 
-function formatMemberName(member: ChannelMembership) {
-  if (member?.name && member.name !== '') {
-    return member.name
-  }
-  return shortenAddress(member.authority)
+const isCanAuthorizedMember = (status: string) => {
+  return status === 'Pending' && channel.canAuthorizeMember
 }
 
 function getStatusClass(status: any) {
@@ -38,7 +34,7 @@ function getStatusClass(status: any) {
             :key="m.pubkey.toString()"
             active-class="bg-teal-1"
             :active="`${m.pubkey}` === `${state.channelMembershipAddr}`"
-            class="row justify-between memberlist-item"
+            class="memberlist-item"
           >
             <q-item-section class="memberlist-info">
               <q-item-label class="row justify-between">
@@ -46,7 +42,7 @@ function getStatusClass(status: any) {
                   {{ formatMemberName(m.data) }}</span>
                 <q-badge
                   :class="getStatusClass(m.data.status.__kind)"
-                  class="memberlist-status q-px-xs"
+                  class="memberlist-status q-pa-xs"
                 >
                   {{ m.data.status.__kind }}
                 </q-badge>
@@ -62,12 +58,11 @@ function getStatusClass(status: any) {
                 </div>
               </q-item-label>
             </q-item-section>
-            <q-item-section side class="q-gutter-sm memberlist-btns">
+            <div class="memberlist-btns">
               <q-btn
-                v-if="m.data.status.__kind === 'Pending'"
-                color="teal"
-                rounded
-                size="xs"
+                v-if="isCanAuthorizedMember(m.data.status.__kind)"
+                color="positive"
+                size="sm"
                 unelevated
                 class="full-width"
                 :loading="authorizeMemberState.loading"
@@ -79,8 +74,7 @@ function getStatusClass(status: any) {
               <q-btn
                 v-if="channel.canDeleteMember"
                 color="negative"
-                rounded
-                size="xs"
+                size="sm"
                 unelevated
                 class="full-width"
                 :loading="deleteMemberState.loading"
@@ -89,7 +83,7 @@ function getStatusClass(status: any) {
               >
                 Delete
               </q-btn>
-            </q-item-section>
+            </div>
           </q-item>
         </q-list>
       </q-card-section>

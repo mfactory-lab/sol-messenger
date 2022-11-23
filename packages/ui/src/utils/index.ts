@@ -1,4 +1,5 @@
 export * from './web3'
+export * from './format'
 
 export const getBadgeColor = (text: string) => {
   if (!text) {

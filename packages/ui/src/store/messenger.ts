@@ -7,7 +7,6 @@ import { PublicKey } from '@solana/web3.js'
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
-import { DEFAULT_CHANNELS } from '@/config'
 
 const ENCRYPTED_MOCK = '***** *** *** *** *******'
 
@@ -73,10 +72,10 @@ export const useMessengerStore = defineStore('messenger', () => {
   }, { immediate: true })
 
   watch([deviceKey, () => state.allChannels], () => {
-    getOwnChannels().then()
+    initOwnChannels().then()
   }, { immediate: true })
 
-  async function getOwnChannels() {
+  async function initOwnChannels() {
     const memberships = await client.loadMemberships(userStore.keypair?.publicKey)
     const channels: {
       pubkey: string
@@ -182,6 +181,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         permissionless: opts.permissionless,
         opts: { commitment: opts.commitment ?? 'confirmed' },
       })
+
       await init()
       /*       await loadChannel(channel.publicKey)
       if (state.channel) {
@@ -207,6 +207,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     const channel = new PublicKey(addr)
     await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
     await loadChannel(addr)
+    await refreshList()
   }
 
   async function loadChannel(addr: Address) {
@@ -291,7 +292,11 @@ export const useMessengerStore = defineStore('messenger', () => {
       console.error('Invalid channel')
       return
     }
-    state.channelMembers = await client.loadChannelMembers(state.channelAddr)
+    state.channelMembers = await loadMembers()
+  }
+
+  async function loadMembers(addr = state.channelAddr) {
+    return await client.loadChannelMembers(addr!)
   }
 
   async function postMessage(message: string) {
@@ -327,6 +332,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       key: key ? new PublicKey(key) : undefined,
       name,
       flags,
+      opts: { commitment: 'confirmed' },
     })
   }
 
@@ -338,7 +344,9 @@ export const useMessengerStore = defineStore('messenger', () => {
     await client.deleteMember({
       channel: state.channelAddr,
       key: new PublicKey(addr),
+      opts: { commitment: 'finalized' },
     })
+    await refreshMembers()
   }
 
   async function authorizeMember(key: Address) {
@@ -350,11 +358,19 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key: new PublicKey(key),
     })
-    await loadChannelMessages()
+    await refreshMembers()
   }
 
   async function refreshList() {
     await init()
+  }
+
+  async function refreshMembers() {
+    state.channelMembers = await loadMembers()
+  }
+
+  async function selectChannel(addr: any) {
+    state.channelAddr = addr
   }
 
   return {
@@ -369,6 +385,8 @@ export const useMessengerStore = defineStore('messenger', () => {
     deleteMember,
     authorizeMember,
     refreshList,
+    loadMembers,
+    selectChannel,
   }
 })
 

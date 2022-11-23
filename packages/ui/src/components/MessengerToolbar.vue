@@ -48,8 +48,8 @@ watch(searchText, (s) => {
 </script>
 
 <template>
-  <q-toolbar class="panel-toolbar">
-    <messenger-notigication />
+  <div class="panel-toolbar">
+    <messenger-notification />
 
     <div class="panel-search">
       <div class="search-wrapper">
@@ -81,12 +81,16 @@ watch(searchText, (s) => {
       </div>
 
       <div>
-        <q-btn class="chat-menu" flat unelevated :disable="!isWalletConnected">
+        <q-btn class="chat-menu" flat square :disable="!isWalletConnected">
           <q-icon :name="outlinedMoreHoriz" />
-          <q-menu anchor="bottom left" self="top left">
+          <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 150px" bordered>
               <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
-                <q-item-section>Device key</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-blue-grey-7 text-white">
+                    Device key
+                  </q-btn>
+                </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
@@ -94,7 +98,11 @@ watch(searchText, (s) => {
                 :disable="!channel"
                 @click="showMembers"
               >
-                <q-item-section>Members</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-cyan-9 text-white">
+                    Members
+                  </q-btn>
+                </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
@@ -102,7 +110,11 @@ watch(searchText, (s) => {
                 :disable="!channelStore.canAddMember"
                 @click="onAddMember"
               >
-                <q-item-section>Add member</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-amber-7 text-white">
+                    Add member
+                  </q-btn>
+                </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
@@ -110,33 +122,36 @@ watch(searchText, (s) => {
                 :disable="!channelStore.isChannelCreator"
                 @click="$emit('deleteChannel')"
               >
-                <q-item-section>Delete</q-item-section>
+                <q-item-section>
+                  <q-btn flat square class="bg-negative text-white">
+                    Delete
+                  </q-btn>
+                </q-item-section>
               </q-item>
             </q-list>
           </q-menu>
         </q-btn>
       </div>
     </div>
-  </q-toolbar>
+  </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $main-color: #fff;
 $accent-color: #ffd140;
 
 .panel-toolbar {
   color: $main-color;
   border: 1px solid $main-color;
-  height: 37px;
+  height: 48px;
   display: flex;
   flex-direction: row;
   padding: 0;
   position: relative;
 
   .panel-search {
-    max-width: 170px;
+    width: 169px;
     padding: 0 15px;
-    width: 100%;
     display: flex;
     border-right: 1px solid #fff;
     align-items: center;
@@ -197,6 +212,7 @@ $accent-color: #ffd140;
     .chat-menu {
       border: 1px solid rgb(210 230 240 / 20%);
       cursor: pointer;
+      position: relative;
 
       &:hover {
         background: rgb(210 230 240 / 20%);
@@ -206,19 +222,46 @@ $accent-color: #ffd140;
 
   .panel-notifications {
     position: absolute;
-    top: -10px;
-    left: 100px;
-    background: #ffffff;
-    color: $gray-blue;
-    border: 1px solid #e2e6e9;
-    border-radius: 20px;
-    min-width: 51px;
     height: 24px;
-    display: flex;
-    justify-content: center;
+    top: -15px;
+    left: 100px;
+    width: auto;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
-    cursor: pointer;
+
+    &__info {
+      cursor: pointer;
+      color: $gray-blue;
+      background: #ffffff;
+      border-radius: 20px;
+      height: 100%;
+      padding: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      gap: 3px;
+      z-index: 2;
+    }
+
+    &__details {
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      width: 0;
+      overflow: hidden;
+      transition: 0.3s all ease;
+      background: #ffffff;
+      color: $primary;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-left: 20px;
+      padding-left: 25px;
+      cursor: pointer;
+    }
   }
 
   @media (max-width: $breakpoint-xs) {

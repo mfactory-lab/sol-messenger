@@ -18,6 +18,8 @@ const props = defineProps({
 defineEmits(['select'])
 
 const initials = computed(() => props.channel.name.slice(0, 2))
+
+const isPublicChannel = computed(() => props.channel.flags === 1)
 </script>
 
 <template>
@@ -29,14 +31,18 @@ const initials = computed(() => props.channel.name.slice(0, 2))
       <div class="chat-name">
         {{ channel.name }}
       </div>
-      <div v-if="+channel.messageCount > 0" class="message-count">
-        {{ channel.messageCount }}
+      <div v-if="isPublicChannel" class="message-public">
+        <custom-tooltip text="Public channel" />
+        P
       </div>
     </q-item-section>
   </q-item>
 </template>
 
 <style scoped lang="scss">
+.public-tooltip {
+  border-radius: 0 !important;
+}
 .chat-item {
   display: flex;
   justify-content: space-between;
@@ -66,9 +72,8 @@ const initials = computed(() => props.channel.name.slice(0, 2))
   flex: 1;
   margin: 0 10px;
 }
-.message-count {
-  border-radius: 50%;
-  background: #00A57D;
+.message-public {
+  background: #00a57d;
   color: #fff;
   font-size: 10px;
   line-height: 11px;

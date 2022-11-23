@@ -4,6 +4,7 @@ defineProps({ color: { type: String, default: 'AABEC8' } })
 
 <template>
   <svg
+    class="bell"
     xmlns="http://www.w3.org/2000/svg"
     width="14"
     height="16"

@@ -24,11 +24,23 @@ export const useChannelStore = defineStore('channel', () => {
   const canCreateChannel = computed(() => isWalletConnected.value)
   const canDeleteChannel = computed(() => isOwner.value)
   const canPostMessage = computed(() => !state.sending && (isPublicChannel.value || isAuthorizedMember.value))
+  const ownChannels = computed(() =>
+    state.allChannels.filter(
+      ch =>
+        !!state.ownChannels.find(
+          myCh => myCh.pubkey === ch.pubkey.toBase58(),
+        )
+      || ch.data.flags === 1
+      || ch.data.creator.toBase58() === String(wallet.value?.publicKey),
+    ),
+  )
 
   return {
+    ownChannels,
     isChannelLoading,
     isSendMessage,
     isPublicChannel,
+    isWalletConnected,
     isPermissionlessChannel,
     isAuthorizedMember,
     isPendingMember,
