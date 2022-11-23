@@ -1,9 +1,19 @@
 .dialog-submit-btn {
   font-size: 14px;
+  height: 46px;
+  min-height: auto;
+  font-weight: 500;
+  min-width: 120px;
+  width: 100%;
+  background-color: $yellow;
+}
+
+.disconnect-btn {
+  font-size: 14px;
   height: 32px;
   min-height: auto;
   font-weight: 400;
   padding-top: 5px;
   min-width: 120px;
-  background-color: $primary;
+  background-color: #455a64;
 }

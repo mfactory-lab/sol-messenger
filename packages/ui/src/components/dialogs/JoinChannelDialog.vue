@@ -21,7 +21,7 @@ const searchWord = ref('')
 const searchChannels = ref<AllChannels[]>([])
 
 const privateChannels = computed(() =>
-  channelState.allChannels.filter(ch => ch.data.flags < 1),
+  channelState.allChannels.filter(ch => ch.data.flags === 0 || ch.data.flags === 2),
 )
 
 const initials = (channel: Channel) => channel.name.slice(0, 2)
