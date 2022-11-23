@@ -19,7 +19,7 @@ defineEmits(['select'])
 
 const initials = computed(() => props.channel.name.slice(0, 2))
 
-const isPublicChannel = computed(() => props.channel.flags > 0)
+const isPublicChannel = computed(() => props.channel.flags === 1)
 </script>
 
 <template>
@@ -32,14 +32,7 @@ const isPublicChannel = computed(() => props.channel.flags > 0)
         {{ channel.name }}
       </div>
       <div v-if="isPublicChannel" class="message-public">
-        <q-tooltip
-          class="bg-white text-black shadow-1"
-          style="border-radius: 0;"
-          anchor="top middle"
-          self="bottom middle"
-        >
-          Public channel
-        </q-tooltip>
+        <custom-tooltip text="Public channel" />
         P
       </div>
     </q-item-section>

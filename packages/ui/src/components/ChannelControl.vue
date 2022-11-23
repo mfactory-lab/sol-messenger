@@ -51,8 +51,8 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         flat
         @click="handleEmit('joinChannel')"
       >
-        <img src="@/assets/img/join.svg" alt="join">
-        <custom-tooltip text="Join the channel" />
+        <img src="@/assets/img/search.svg" alt="join">
+        <custom-tooltip text="Browse channels" />
       </q-btn>
     </q-item-section>
   </q-item>
