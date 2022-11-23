@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { PlusIcon, RefreshIcon, SearchIcon } from 'vue-tabler-icons'
+
 defineProps({
   isLoading: { type: Boolean },
 })
@@ -32,8 +34,8 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         flat
         @click="handleEmit('refreshList')"
       >
-        <img src="@/assets/img/refresh.svg" alt="refresh">
-        <custom-tooltip text="Refresh list" />
+        <refresh-icon style="color: #fff" />
+        <custom-tooltip text="Refresh channels" />
       </q-btn>
       <q-btn
         class="control-button"
@@ -41,7 +43,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         flat
         @click="handleEmit('createChannel')"
       >
-        <img src="@/assets/img/add.svg" alt="create">
+        <plus-icon style="color: #fff" />
         <custom-tooltip text="Create a channel" />
       </q-btn>
       <!-- v-if="canJoinChannel && !channelStore.isChannelLoading" -->
@@ -51,7 +53,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         flat
         @click="handleEmit('joinChannel')"
       >
-        <img src="@/assets/img/search.svg" alt="join">
+        <search-icon style="color: #fff" />
         <custom-tooltip text="Browse channels" />
       </q-btn>
     </q-item-section>
@@ -83,21 +85,6 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
     &:hover {
       opacity: 0.8;
     }
-  }
-}
-
-.refresh-btn {
-  img {
-    animation: RotateArrow 1s linear infinite;
-  }
-}
-
-@keyframes RotateArrow {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(-360deg);
   }
 }
 </style>

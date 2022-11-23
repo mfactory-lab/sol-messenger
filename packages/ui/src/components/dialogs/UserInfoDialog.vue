@@ -35,7 +35,7 @@ const copy = () => {
       <q-separator />
       <q-card-actions align="right">
         <div class="q-gutter-md row justify-between">
-          <q-btn class="dialog-submit-btn" text-color="white" rounded @click="userStore.generateKey">
+          <q-btn class="disconnect-btn" text-color="white" rounded @click="userStore.generateKey">
             Regenerate
           </q-btn>
         </div>

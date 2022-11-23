@@ -42,7 +42,7 @@ const createNewChannel = () => emit('submit', state)
           />
           <div class="row q-mt-md relative-position" style="height: 42px">
             <div class="toggle-info">
-              <custom-tooltip :text="CHANNEL_INFO[0]" />
+              <custom-tooltip :text="CHANNEL_INFO[0]" padding="8px" />
               <img src="@/assets/img/info.svg" alt="info">
             </div>
             <div
@@ -55,7 +55,7 @@ const createNewChannel = () => emit('submit', state)
               <q-toggle v-model="state.permissionless" />
               <span>
                 <div class="toggle-info">
-                  <custom-tooltip :text="CHANNEL_INFO[1]" />
+                  <custom-tooltip :text="CHANNEL_INFO[1]" padding="8px" />
                   <img src="@/assets/img/info.svg" alt="info">
                 </div>
                 Members can approve</span>

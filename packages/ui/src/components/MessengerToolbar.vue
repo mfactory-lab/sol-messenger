@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useWallet } from 'solana-wallets-vue'
-import { outlinedMoreHoriz } from '@quasar/extras/material-icons-outlined'
+import { DotsIcon } from 'vue-tabler-icons'
 
 const emit = defineEmits([
   'search',
@@ -82,7 +82,7 @@ watch(searchText, (s) => {
 
       <div>
         <q-btn class="chat-menu" flat square :disable="!isWalletConnected">
-          <q-icon :name="outlinedMoreHoriz" />
+          <dots-icon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 150px" bordered>
               <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
@@ -143,7 +143,7 @@ $accent-color: #ffd140;
 .panel-toolbar {
   color: $main-color;
   border: 1px solid $main-color;
-  height: 48px;
+  height: 38px;
   display: flex;
   flex-direction: row;
   padding: 0;
@@ -211,11 +211,17 @@ $accent-color: #ffd140;
 
     .chat-menu {
       border: 1px solid rgb(210 230 240 / 20%);
+      background: rgb(146 167 177 / 20%);
       cursor: pointer;
       position: relative;
+      height: 22px;
+      min-height: 0;
+      width: 31px;
+      padding: 0;
+      transform: translateX(3px);
 
       &:hover {
-        background: rgb(210 230 240 / 20%);
+        background: rgb(146 167 177 / 50%);
       }
     }
   }

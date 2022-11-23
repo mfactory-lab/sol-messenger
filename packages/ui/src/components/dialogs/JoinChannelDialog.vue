@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 import type { Channel } from '@app/sdk'
+import { RefreshIcon, TransferInIcon } from 'vue-tabler-icons'
 import type { AllChannels } from '../../store/messenger'
 import { getBadgeColor } from '@/utils'
 
@@ -13,7 +14,7 @@ const joinEmit = defineEmits(['submit', 'reset'])
 
 const state = ref(props.defaultState)
 
-const { state: channelState, selectChannel } = useMessengerStore()
+const { state: channelState, selectChannel, refreshList } = useMessengerStore()
 
 const isModal = ref(false)
 
@@ -21,8 +22,12 @@ const searchWord = ref('')
 const searchChannels = ref<AllChannels[]>([])
 
 const privateChannels = computed(() =>
-  channelState.allChannels.filter(ch => ch.data.flags === 0 || ch.data.flags === 2),
+  channelState.allChannels.filter(
+    ch => ch.data.flags === 0 || ch.data.flags === 2,
+  ),
 )
+
+const isLoading = computed(() => channelState.loading)
 
 const initials = (channel: Channel) => channel.name.slice(0, 2)
 
@@ -56,11 +61,14 @@ watch(searchWord, () => {
   search()
 })
 
-watch(() => props.loading, (l) => {
-  if (l) {
-    isModal.value = false
-  }
-})
+watch(
+  () => props.loading,
+  (l) => {
+    if (l) {
+      isModal.value = false
+    }
+  },
+)
 </script>
 
 <template>
@@ -69,8 +77,8 @@ watch(() => props.loading, (l) => {
       <q-card-section class="text-body1 text-blue-grey-8">
         Join channel
       </q-card-section>
-      <q-card-section>
-        <span class="text-blue-grey-8 q-pb-sm">Search by name or address</span>
+      <q-card-section class="q-py-none">
+        <span class="text-blue-grey-8 q-pb-xs">Search by name or address</span>
         <div class="search-block">
           <q-input
             v-model="searchWord"
@@ -120,7 +128,7 @@ watch(() => props.loading, (l) => {
         </q-item>
       </q-card-section>
 
-      <q-item>
+      <div class="control-btns">
         <!--        :loading="isJoining"
           :disable="isPendingMember" -->
         <q-btn
@@ -128,14 +136,25 @@ watch(() => props.loading, (l) => {
           square
           flat
           :disable="!channelState.channelAddr"
+          :class="{ 'refresh-btn': isLoading }"
+          @click="refreshList"
+        >
+          <refresh-icon style="color: #fff" />
+          <custom-tooltip text="Request to join" />
+        </q-btn>
+        <q-btn
+          class="control-button"
+          square
+          flat
+          :disable="!channelState.channelAddr"
           @click="isModal = true"
         >
-          <img src="@/assets/img/join.svg" alt="join">
-          <custom-tooltip text="Join the channel" />
+          <transfer-in-icon style="color: #fff" />
+          <custom-tooltip text="Request to join" />
         </q-btn>
 
         <join-chennal-modal v-model="isModal" @join="joinToChannel" />
-      </q-item>
+      </div>
       <q-inner-loading :showing="loading" />
     </q-card>
   </q-dialog>
@@ -150,7 +169,7 @@ watch(() => props.loading, (l) => {
   justify-content: center;
   width: 100%;
   height: 34px;
-  margin-top: 10px;
+  margin-top: 5px;
 
   .input {
     width: 100%;
@@ -199,11 +218,17 @@ watch(() => props.loading, (l) => {
   justify-content: center;
   align-items: center;
   padding: 8px;
-  margin-left: auto;
   cursor: pointer;
 
   &:hover {
     opacity: 0.8;
   }
+}
+
+.control-btns {
+  padding: 0 16px 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 </style>
