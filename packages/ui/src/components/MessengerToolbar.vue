@@ -16,7 +16,7 @@ const channelStore = useChannelStore()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
-const searchText = ref<String>('')
+const searchText = ref<string>('')
 const channel = computed(() => state.channel)
 const memberCount = computed(() => {
   if (

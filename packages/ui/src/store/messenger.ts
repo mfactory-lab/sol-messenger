@@ -8,8 +8,6 @@ import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
 
-const ENCRYPTED_MOCK = '***** *** *** *** *******'
-
 interface MessengerStoreState {
   allChannels: AllChannels[]
   ownChannels: { pubkey: string; status: string }[]
@@ -24,6 +22,8 @@ interface MessengerStoreState {
   creating: boolean
   sending: boolean
 }
+
+const mockEncrypted = (_msg: string) => '***** *** *** *** *******'
 
 export const useMessengerStore = defineStore('messenger', () => {
   const connectionStore = useConnectionStore()
@@ -113,7 +113,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         if (cek) {
           content = await client.decryptMessage(e.message.content, cek)
         } else {
-          content = ENCRYPTED_MOCK
+          content = mockEncrypted(e.message.content)
         }
       }
       state.channelMessages.push({
@@ -264,7 +264,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMessages = await Promise.all(
       state.channel.messages.map(async (m) => {
         const isEncrypted = client.utils.message.isEncrypted(m)
-        let content = isEncrypted ? ENCRYPTED_MOCK : m.content
+        let content = isEncrypted ? mockEncrypted(m.content) : m.content
         let senderDisplayName = shortenAddress(m.sender)
         // show sender name only for authorized users
         if (wallet.value?.publicKey) {

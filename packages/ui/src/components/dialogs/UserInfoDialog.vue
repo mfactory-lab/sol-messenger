@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { copyToClipboard } from 'quasar'
 import { evaClose, evaCopyOutline } from '@quasar/extras/eva-icons'
+import { copyToClipboard } from 'quasar'
+
 defineEmits(['regenerate'])
+
 const userStore = useUserStore()
-const copy = () => {
-  copyToClipboard((userStore.keypair?.publicKey ?? '').toString())
-}
+
+const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
 </script>
 
 <template>
