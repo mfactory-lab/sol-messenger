@@ -27,6 +27,14 @@
     "file": "assets/add.1481b8ed.svg",
     "src": "src/assets/img/add.svg"
   },
+  "src/assets/img/search.svg": {
+    "file": "assets/search.6c5d7d6e.svg",
+    "src": "src/assets/img/search.svg"
+  },
+  "src/assets/img/info.svg": {
+    "file": "assets/info.bfade5eb.svg",
+    "src": "src/assets/img/info.svg"
+  },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
     "src": "src/assets/img/telegram.svg"
@@ -76,18 +84,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.71f81dbb.js",
+    "file": "assets/index.434d6cac.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.b972ce90.js"
+      "_vendor.a23ef5e2.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.e10a1cdb.css"
+      "assets/index.4cf73465.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -95,8 +103,10 @@
       "assets/mathwallet.1d763e81.svg",
       "assets/solana-logo.3caace62.svg",
       "assets/join.627c8616.svg",
+      "assets/info.bfade5eb.svg",
       "assets/refresh.e0cf4262.svg",
       "assets/add.1481b8ed.svg",
+      "assets/search.6c5d7d6e.svg",
       "assets/telegram.360d0c59.svg",
       "assets/twitter.e4e729c2.svg",
       "assets/discord.4c88a6e4.svg",
@@ -111,24 +121,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.b972ce90.js": {
-    "file": "assets/vendor.b972ce90.js"
+  "_vendor.a23ef5e2.js": {
+    "file": "assets/vendor.a23ef5e2.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.8c331c2e.js",
+    "file": "assets/empty.b640d38d.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.b972ce90.js"
+      "_vendor.a23ef5e2.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.c6ac36b3.js",
+    "file": "assets/_...all_.83a1db46.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.b972ce90.js",
+      "_vendor.a23ef5e2.js",
       "index.html"
     ],
     "css": [
@@ -140,7 +150,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.e10a1cdb.css",
+    "file": "assets/index.4cf73465.css",
     "src": "index.css"
   }
 }
