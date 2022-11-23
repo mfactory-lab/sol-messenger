@@ -8,9 +8,8 @@ on:
       - packages/ui/public/**
       - packages/ui/src/**
 
-#env:
-#  URL: som.svt.one
-#  && echo ${{ env.URL }} > dist/CNAME
+env:
+  URL: cgram.one
 
 jobs:
 
@@ -30,7 +29,7 @@ jobs:
       - name: Build
         run: |
           pnpm run ui:build:staging
-          cd packages/ui && cp dist/index.html dist/404.html && touch dist/.nojekyll
+          cd packages/ui && cp dist/index.html dist/404.html && touch dist/.nojekyll && echo ${{ env.URL }} > dist/CNAME
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
