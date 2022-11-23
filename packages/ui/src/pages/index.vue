@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="container">
-      <app-service-info />
+      <how-it-works />
     </div>
   </q-page>
 </template>

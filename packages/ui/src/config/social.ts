@@ -1,0 +1,7 @@
+export const TWITTER_URL = 'https://twitter.com/JPoolSolana'
+export const TELEGRAM_URL = 'https://t.me/jpool_solana'
+export const TELEGRAM_ANNOUNCEMENT_URL = 'https://t.me/jpoolsolana'
+export const DISCORD_URL = 'https://discord.gg/qR4BA9QXVR'
+export const JFACTORY_URL = 'https://jfactory.ch'
+export const JPOOL_URL = 'https://jpool.one'
+export const SVT_URL = 'https://svt.one'

@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import {
+  DISCORD_URL,
+  JFACTORY_URL,
+  JPOOL_URL,
+  SVT_URL,
+  TELEGRAM_ANNOUNCEMENT_URL,
+  TELEGRAM_URL,
+  TWITTER_URL,
+} from '@/config'
 const darkTheme = useDarkTheme()
 </script>
 
@@ -9,14 +18,19 @@ const darkTheme = useDarkTheme()
         <div class="col-12 col-md-6">
           <div class="footer-links">
             <ul>
-              <li><a target="_blank" href="https://jpool.one">JPOOL</a></li>
-              <li><a target="_blank" href="https://heartandsol.one">GAME</a></li>
-              <li><a href="https://magiceden.io/marketplace/heartandsol">NFT Marketplace</a></li>
+              <li><a target="_blank" :href="JFACTORY_URL">JFACTORY</a></li>
+              <li>
+                <a target="_blank" :href="JPOOL_URL">JPOOL</a>
+              </li>
+              <li>
+                <a target="_blank" :href="SVT_URL">SOLANA VALIDATOR TOOLKIT</a>
+              </li>
             </ul>
           </div>
 
           <div class="copyright">
-            <span>© Copyright 2022 jpool.one. All rights reserved. Powered by mFactory GmbH</span>
+            <span>© Copyright 2022 cgram.one. All rights reserved.<br>Powered by
+              jFactory</span>
           </div>
         </div>
 
@@ -29,12 +43,12 @@ const darkTheme = useDarkTheme()
                 @click="darkTheme.toggle"
               />
             </div>
-            <div class="social-link social-link-text">
+            <a :href="TELEGRAM_URL" target="_blank" class="social-link social-link-text">
               <span>official<br>channel</span>
-            </div>
-            <div class="social-link telegram" />
-            <div class="social-link twitter" />
-            <div class="social-link discord" />
+            </a>
+            <a :href="TELEGRAM_ANNOUNCEMENT_URL" target="_blank" class="social-link telegram" />
+            <a :href="TWITTER_URL" target="_blank" class="social-link twitter" />
+            <a :href="DISCORD_URL" target="_blank" class="social-link discord" />
           </div>
         </div>
       </div>
@@ -44,7 +58,7 @@ const darkTheme = useDarkTheme()
 
 <style lang="scss">
 .q-footer {
-  background: #455A64;
+  background: #455a64;
   padding: 40px 0;
 
   .footer-links {
@@ -58,16 +72,15 @@ const darkTheme = useDarkTheme()
       flex-direction: row;
 
       li {
-
         a {
           display: flex;
           padding: 0 8px;
           color: #fff;
-          text-decoration: none;
+          text-decoration: underline;
           border-right: 1px solid #fff;
           line-height: 1;
           margin-right: 4px;
-          font-weight: 500;
+          font-weight: 400;
           opacity: 0.8;
           white-space: nowrap;
 
@@ -132,17 +145,18 @@ const darkTheme = useDarkTheme()
       background-repeat: no-repeat;
       background-position: 50% 50%;
       margin-left: 8px;
+      text-decoration: none;
 
       &.telegram {
-        background-image: url('@/assets/img/telegram.svg');
+        background-image: url("@/assets/img/telegram.svg");
       }
 
       &.twitter {
-        background-image: url('@/assets/img/twitter.svg');
+        background-image: url("@/assets/img/twitter.svg");
       }
 
       &.discord {
-        background-image: url('@/assets/img/discord.svg');
+        background-image: url("@/assets/img/discord.svg");
       }
     }
 
@@ -152,18 +166,18 @@ const darkTheme = useDarkTheme()
       padding: 11px 14px;
       height: 47px;
       background-color: #fff;
-      background-image: url('@/assets/img/telegram.svg');
+      background-image: url("@/assets/img/telegram.svg");
       background-repeat: no-repeat;
       background-position: 80% 50%;
       border-radius: 50px;
-      font-family: "Montserrat",sans-serif;
+      font-family: "Montserrat", sans-serif;
       width: 110px;
 
       span {
         font-size: 9px;
         font-weight: 700;
         text-transform: uppercase;
-        color: #455A64;
+        color: #455a64;
       }
     }
   }
