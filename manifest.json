@@ -19,6 +19,10 @@
     "file": "assets/join.627c8616.svg",
     "src": "src/assets/img/join.svg"
   },
+  "src/assets/img/info.svg": {
+    "file": "assets/info.bfade5eb.svg",
+    "src": "src/assets/img/info.svg"
+  },
   "src/assets/img/refresh.svg": {
     "file": "assets/refresh.e0cf4262.svg",
     "src": "src/assets/img/refresh.svg"
@@ -30,10 +34,6 @@
   "src/assets/img/search.svg": {
     "file": "assets/search.6c5d7d6e.svg",
     "src": "src/assets/img/search.svg"
-  },
-  "src/assets/img/info.svg": {
-    "file": "assets/info.bfade5eb.svg",
-    "src": "src/assets/img/info.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -84,18 +84,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.434d6cac.js",
+    "file": "assets/index.e0d9b59d.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.a23ef5e2.js"
+      "_vendor.776eeadf.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.4cf73465.css"
+      "assets/index.1cfcad74.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -121,24 +121,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.a23ef5e2.js": {
-    "file": "assets/vendor.a23ef5e2.js"
+  "_vendor.776eeadf.js": {
+    "file": "assets/vendor.776eeadf.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.b640d38d.js",
+    "file": "assets/empty.bc62ee29.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.a23ef5e2.js"
+      "_vendor.776eeadf.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.83a1db46.js",
+    "file": "assets/_...all_.e85eab00.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.a23ef5e2.js",
+      "_vendor.776eeadf.js",
       "index.html"
     ],
     "css": [
@@ -150,7 +150,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.4cf73465.css",
+    "file": "assets/index.1cfcad74.css",
     "src": "index.css"
   }
 }
