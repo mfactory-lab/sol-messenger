@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PlusIcon, RefreshIcon, SearchIcon } from 'vue-tabler-icons'
+import { useQuasar } from 'quasar'
 
 defineProps({
   isLoading: { type: Boolean },
@@ -9,6 +10,8 @@ const channelEmit = defineEmits(['createChannel', 'joinChannel', 'refreshList'])
 const channelStore = useChannelStore()
 const { isWalletConnected } = useHelper()
 
+const { notify } = useQuasar()
+
 /* const canJoinChannel = computed<boolean>(
   () => channelStore.canJoinChannel && !channelStore.isPublicChannel,
 ) */
@@ -17,7 +20,11 @@ const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
 
 const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
   if (!channelStore.isWalletConnected) {
-    isWalletConnected()
+    notify({
+      message: 'Please connect wallet',
+      color: 'negative',
+      position: 'top',
+    })
     return
   }
   channelEmit(emit)

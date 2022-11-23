@@ -1,2 +1,3 @@
 export * from './connection'
-export * from './info'
+export * from './channel-tooltip'
+export * from './social'
