@@ -15,25 +15,9 @@
     "file": "assets/mathwallet.1d763e81.svg",
     "src": "src/assets/img/wallets/mathwallet.svg"
   },
-  "src/assets/img/join.svg": {
-    "file": "assets/join.627c8616.svg",
-    "src": "src/assets/img/join.svg"
-  },
   "src/assets/img/info.svg": {
     "file": "assets/info.bfade5eb.svg",
     "src": "src/assets/img/info.svg"
-  },
-  "src/assets/img/refresh.svg": {
-    "file": "assets/refresh.e0cf4262.svg",
-    "src": "src/assets/img/refresh.svg"
-  },
-  "src/assets/img/add.svg": {
-    "file": "assets/add.1481b8ed.svg",
-    "src": "src/assets/img/add.svg"
-  },
-  "src/assets/img/search.svg": {
-    "file": "assets/search.6c5d7d6e.svg",
-    "src": "src/assets/img/search.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -84,29 +68,25 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.e0d9b59d.js",
+    "file": "assets/index.bd8524c8.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.776eeadf.js"
+      "_vendor.22ee75d6.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.1cfcad74.css"
+      "assets/index.38a53024.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
       "assets/ledger.40cf6861.svg",
       "assets/mathwallet.1d763e81.svg",
       "assets/solana-logo.3caace62.svg",
-      "assets/join.627c8616.svg",
       "assets/info.bfade5eb.svg",
-      "assets/refresh.e0cf4262.svg",
-      "assets/add.1481b8ed.svg",
-      "assets/search.6c5d7d6e.svg",
       "assets/telegram.360d0c59.svg",
       "assets/twitter.e4e729c2.svg",
       "assets/discord.4c88a6e4.svg",
@@ -121,24 +101,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.776eeadf.js": {
-    "file": "assets/vendor.776eeadf.js"
+  "_vendor.22ee75d6.js": {
+    "file": "assets/vendor.22ee75d6.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.bc62ee29.js",
+    "file": "assets/empty.bbbfd337.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.776eeadf.js"
+      "_vendor.22ee75d6.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.e85eab00.js",
+    "file": "assets/_...all_.059d93a4.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.776eeadf.js",
+      "_vendor.22ee75d6.js",
       "index.html"
     ],
     "css": [
@@ -150,7 +130,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.1cfcad74.css",
+    "file": "assets/index.38a53024.css",
     "src": "index.css"
   }
 }
