@@ -23,7 +23,7 @@ const isPublicChannel = computed(() => props.channel.flags === 1)
 </script>
 
 <template>
-  <q-item active-class="bg-blue-grey-8 text-white" :active="isActive">
+  <q-item active-class="bg-blue-grey-8 text-white" style="min-height: 42px;" :active="isActive">
     <q-item-section class="chat-item cursor-pointer" @click="$emit('select')">
       <div class="chat-badge" :style="getBadgeColor(`${pubkey}`)">
         <span>{{ initials }}</span>

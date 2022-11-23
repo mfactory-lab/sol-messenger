@@ -18,10 +18,18 @@ const name = ref('')
             v-model="name"
             label="Member name *"
             lazy-rules
-            :rules="[val => val && val.length > 2 || 'Please type something']"
+            :rules="[
+              (val) => (val && val.length > 2) || 'Please type something',
+            ]"
           />
           <br>
-          <q-btn type="submit" class="dialog-submit-btn" text-color="white" :ripple="false" rounded>
+          <q-btn
+            type="submit"
+            class="dialog-submit-btn"
+            text-color="black"
+            :ripple="false"
+            square
+          >
             Join Channel
           </q-btn>
         </q-form>
@@ -30,9 +38,24 @@ const name = ref('')
   </q-dialog>
 </template>
 
-<style scoped>
+<style lang='scss'>
 .join-channel-form {
-    text-align: center;
-    width: 240px;
+  text-align: center;
+  width: 240px;
+}
+
+.refresh-btn {
+  svg {
+    animation: RotateArrow 1s linear infinite;
+  }
+}
+
+@keyframes RotateArrow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
 }
 </style>

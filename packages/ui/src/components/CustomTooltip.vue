@@ -5,6 +5,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    padding: {
+      type: String,
+      default: '0',
+    },
   },
 })
 </script>
@@ -16,16 +20,14 @@ export default defineComponent({
     anchor="top middle"
     self="bottom middle"
   >
-    <div v-html="text" />
+    <div :style="{ fontSize: '11px', padding: `${padding}` }" v-html="text" />
   </q-tooltip>
 </template>
 
 <style lang='scss'>
 .custom-tooltip {
   font-family: $font-primary;
-  font-size: 10px;
-  line-height: 12px;
-  max-width: 240px;
+  max-width: 285px;
 
   span {
     font-weight: 600;

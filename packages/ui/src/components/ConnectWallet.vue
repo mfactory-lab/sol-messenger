@@ -128,7 +128,7 @@ function ok() {
     :ripple="false"
     color="primary-gray"
     text-color="white"
-    rounded
+    square
     unelevated
     @click="show"
   >
@@ -140,8 +140,7 @@ function ok() {
     v-bind="$attrs"
     color="primary-gray"
     text-color="white"
-    rounded
-    unelevated
+    square
     :ripple="false"
     :loading="connecting"
     @click="show"

@@ -89,6 +89,7 @@ importers:
       vite-plugin-vue-layouts: ^0.7.0
       vue: ^3.2.41
       vue-router: ^4.1.6
+      vue-tabler-icons: ^2.16.0
     dependencies:
       '@app/sdk': link:../sdk
       '@project-serum/anchor': 0.25.0
@@ -104,6 +105,7 @@ importers:
       solana-wallets-vue: 0.5.2_oca2an3dovc2z2wdo2kqjhtm6m
       vue: 3.2.41
       vue-router: 4.1.6_vue@3.2.41
+      vue-tabler-icons: 2.16.0
     devDependencies:
       '@quasar/vite-plugin': 1.2.3_rlq5355s77laqzhytxmsxuuaau
       '@rollup/plugin-inject': 5.0.2
@@ -293,6 +295,8 @@ packages:
       react-dom: ^16 || ^17 || ^18
     peerDependenciesMeta:
       react:
+        optional: true
+      react-dom:
         optional: true
     dev: false
 
@@ -1480,6 +1484,9 @@ packages:
     resolution: {integrity: sha512-spN4ltQv9ulzgxZIskfME4i1qSaW+eywpEJuOjRJ3vw07WPydXNzO4xAMHoE4Q5Wf/Y34rZUwJcLYjqieM+rgQ==}
     peerDependencies:
       '@babel/runtime': 7.x
+    peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
     dependencies:
       '@toruslabs/broadcast-channel': 6.1.0
       '@toruslabs/http-helpers': 3.2.0
@@ -1537,6 +1544,8 @@ packages:
       '@babel/runtime': ^7.x
       '@sentry/types': ^7.x
     peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
       '@sentry/types':
         optional: true
     dependencies:
@@ -1551,6 +1560,8 @@ packages:
       '@babel/runtime': ^7.x
       '@sentry/types': ^7.x
     peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
       '@sentry/types':
         optional: true
     dependencies:
@@ -1564,6 +1575,9 @@ packages:
     engines: {node: '>=14.17.0', npm: '>=6.x'}
     peerDependencies:
       '@babel/runtime': 7.x
+    peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
     dependencies:
       '@babel/runtime': 7.19.4
       '@toruslabs/eccrypto': 1.1.8
@@ -1579,6 +1593,9 @@ packages:
     resolution: {integrity: sha512-hX2b1HSBvC6jSVlXuhgdH8qyE83cj6SEiHjQ5VsHfRUv15wBgzj+x2Yjw5pjvbrnYXzUlFvFySs10EU7na1cuA==}
     peerDependencies:
       '@babel/runtime': 7.x
+    peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
     dependencies:
       '@toruslabs/openlogin-utils': 2.1.0
       end-of-stream: 1.4.4
@@ -1594,6 +1611,9 @@ packages:
     resolution: {integrity: sha512-UVgjco4winOn4Gj0VRTvjSZgBA84h2OIkKuxrBFjS+yWhgxQBF4hXGp83uicSgx1MujtjyUOdhJrpV2joRHt9w==}
     peerDependencies:
       '@babel/runtime': 7.x
+    peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
     dependencies:
       base64url: 3.0.1
       keccak: 3.0.2
@@ -1605,6 +1625,9 @@ packages:
     engines: {node: '>=14.17.0', npm: '>=6.x'}
     peerDependencies:
       '@babel/runtime': 7.x
+    peerDependenciesMeta:
+      '@babel/runtime':
+        optional: true
     dependencies:
       '@solana/web3.js': 1.66.1
       '@toruslabs/base-controllers': 2.2.6
@@ -4491,13 +4514,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9
@@ -5392,6 +5415,8 @@ packages:
     peerDependenciesMeta:
       react:
         optional: true
+      react-dom:
+        optional: true
     dependencies:
       exenv: 1.2.2
       prop-types: 15.8.1
@@ -5408,6 +5433,8 @@ packages:
       react-dom: ~16
     peerDependenciesMeta:
       react:
+        optional: true
+      react-dom:
         optional: true
     dependencies:
       jsqr: 1.4.0
@@ -6322,6 +6349,10 @@ packages:
     dependencies:
       '@vue/devtools-api': 6.4.5
       vue: 3.2.41
+
+  /vue-tabler-icons/2.16.0:
+    resolution: {integrity: sha512-jLGUO+g2OvpxPiJX0z4/DJHwB77bLBR96Vt4lTtedEEXMhjYD7n5JlJ9vjXBVgW1zK518bo+yKHYa6CTRRfh2w==}
+    dev: false
 
   /vue/3.2.41:
     resolution: {integrity: sha512-uuuvnrDXEeZ9VUPljgHkqB5IaVO8SxhPpqF2eWOukVrBnRBx2THPSGQBnVRt0GrIG1gvCmFXMGbd7FqcT1ixNQ==}

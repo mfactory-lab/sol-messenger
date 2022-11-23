@@ -91,11 +91,11 @@ $app-header-marked-color: #00A57D;
   &__buttons {
     .header-btn {
       box-shadow: $app-header-btn-shadow;
-      border-radius: 28px;
       font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
       line-height: 16px;
       font-size: 14px;
       padding: 0 30px;
+      width: 180px;
     }
   }
 

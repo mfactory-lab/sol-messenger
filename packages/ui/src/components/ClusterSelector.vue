@@ -30,7 +30,7 @@ const select = (e: Endpoint) => {
     auto-close
     color="secondary"
     text-color="#000"
-    rounded
+    square
     unelevated
     :ripple="false"
   >
