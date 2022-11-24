@@ -9,24 +9,24 @@ export const ENDPOINTS: Endpoint[] = [
   //   cluster: 'mainnet-beta',
   //   url: 'https://jpoolone.genesysgo.net/',
   // },
-  {
-    id: 'serum-mainnet',
-    name: 'Serum RPC',
-    cluster: 'mainnet-beta',
-    url: 'https://solana-api.projectserum.com/',
-  },
-  {
-    id: 'rpcpool-mainnet',
-    name: 'RPCPool RPC',
-    cluster: 'mainnet-beta',
-    url: 'https://mainnet.rpcpool.com/',
-  },
-  {
-    id: 'mainnet',
-    name: 'Solana RPC',
-    cluster: 'mainnet-beta',
-    url: clusterApiUrl('mainnet-beta'),
-  },
+  // {
+  //   id: 'serum-mainnet',
+  //   name: 'Serum RPC',
+  //   cluster: 'mainnet-beta',
+  //   url: 'https://solana-api.projectserum.com/',
+  // },
+  // {
+  //   id: 'rpcpool-mainnet',
+  //   name: 'RPCPool RPC',
+  //   cluster: 'mainnet-beta',
+  //   url: 'https://mainnet.rpcpool.com/',
+  // },
+  // {
+  //   id: 'mainnet',
+  //   name: 'Solana RPC',
+  //   cluster: 'mainnet-beta',
+  //   url: clusterApiUrl('mainnet-beta'),
+  // },
 ]
 
 const devnet: Endpoint = {
@@ -37,22 +37,22 @@ const devnet: Endpoint = {
 }
 ENDPOINTS.push(devnet)
 
-const testnet: Endpoint = {
-  id: 'testnet',
-  name: 'TestNet',
-  cluster: 'testnet',
-  url: 'https://testnet.rpcpool.com/',
-}
-ENDPOINTS.push(testnet)
+// const testnet: Endpoint = {
+//   id: 'testnet',
+//   name: 'TestNet',
+//   cluster: 'testnet',
+//   url: 'https://testnet.rpcpool.com/',
+// }
+// ENDPOINTS.push(testnet)
 
-if (import.meta.env.DEV) {
-  ENDPOINTS.push({
-    id: 'localnet',
-    name: 'LocalNet',
-    cluster: 'localnet',
-    url: 'http://127.0.0.1:8899',
-  })
-}
+// if (import.meta.env.DEV) {
+//   ENDPOINTS.push({
+//     id: 'localnet',
+//     name: 'LocalNet',
+//     cluster: 'localnet',
+//     url: 'http://127.0.0.1:8899',
+//   })
+// }
 
 /**
  * Default cluster is devnet

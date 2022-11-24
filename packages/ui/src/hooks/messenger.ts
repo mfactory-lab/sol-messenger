@@ -79,7 +79,7 @@ export function useChannelDelete() {
 }
 
 export function useChannelAuthorizeMember() {
-  const { authorizeMember } = useMessengerStore()
+  const { authorizeMember, refreshList } = useMessengerStore()
   const { ok, error } = useHelper()
 
   const state = reactive({
@@ -91,6 +91,7 @@ export function useChannelAuthorizeMember() {
     try {
       state.loading = true
       await authorizeMember(key)
+      await refreshList()
       ok('Member was authorized')
     } catch (e) {
       error('Something went wrong')
@@ -145,7 +146,7 @@ export function useChannelAddMember() {
 }
 
 export function useChannelDeleteMember() {
-  const { deleteMember } = useMessengerStore()
+  const { deleteMember, refreshList } = useMessengerStore()
   const { ok, error } = useHelper()
 
   const state = reactive({
@@ -156,6 +157,7 @@ export function useChannelDeleteMember() {
     try {
       state.loading = true
       await deleteMember(key)
+      await refreshList()
       ok('Member was deleted')
     } catch (e) {
       error('Something went wrong')
