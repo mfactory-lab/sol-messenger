@@ -449,6 +449,7 @@ export class MessengerClient {
       createDeleteMemberInstruction({
         channel: props.channel,
         membership,
+        membershipAuthority: props.authority,
         authority,
         authorityMembership,
         anchorRemainingAccounts: devices.map(acc => ({
@@ -464,6 +465,7 @@ export class MessengerClient {
     try {
       signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
+      console.log(e)
       throw errorFromCode(e.code) ?? e
     }
 
@@ -474,10 +476,11 @@ export class MessengerClient {
    * Authorize member request
    */
   async authorizeMember(props: AuthorizeMemberProps, opts?: ConfirmOptions) {
+    const key = props.key ?? props.authority
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
     const [authorityDevice] = await this.getDevicePDA(authorityMembership)
     const [membership] = await this.getMembershipPDA(props.channel, props.authority)
-    const [device] = await this.getDevicePDA(membership, props.key)
+    const [device] = await this.getDevicePDA(membership, key)
 
     const authorityDeviceInfo = await this.loadDevice(authorityDevice)
 
@@ -486,7 +489,7 @@ export class MessengerClient {
     }
 
     const rawCek = await this.decryptCEK(authorityDeviceInfo.cek)
-    const cek = await this.encryptCEK(rawCek, props.key)
+    const cek = await this.encryptCEK(rawCek, key)
 
     const tx = new Transaction()
 
@@ -733,7 +736,7 @@ interface AddMemberProps {
 interface AuthorizeMemberProps {
   channel: PublicKey
   authority: PublicKey
-  key: PublicKey
+  key?: PublicKey
 }
 
 interface GrantAccessMemberProps {

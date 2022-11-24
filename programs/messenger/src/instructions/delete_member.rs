@@ -30,15 +30,17 @@ pub fn handler<'info>(ctx: Context<'_, '_, '_, 'info, DeleteMember<'info>>) -> R
 
     channel.member_count = channel.member_count.saturating_sub(1);
 
+    let membership = &ctx.accounts.membership;
+    let membership_authority = &ctx.accounts.membership_authority;
+
     // delete devices
     if !ctx.remaining_accounts.is_empty() {
         for acc in ctx.remaining_accounts {
-            let device = assert_valid_device(acc, &channel.key(), authority.key)?;
-            close(device.to_account_info(), authority.to_account_info())?;
+            let device = assert_valid_device(acc, &membership.channel, &membership.authority)?;
+            close(device.to_account_info(), membership_authority.to_account_info())?;
         }
     }
 
-    let membership = &ctx.accounts.membership;
     let timestamp = Clock::get()?.unix_timestamp;
 
     emit!(DeleteMemberEvent {
@@ -56,8 +58,15 @@ pub struct DeleteMember<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
 
-    #[account(mut, has_one = channel, close = authority)]
+    #[account(mut,
+        has_one = channel,
+        constraint = membership.authority == membership_authority.key(),
+        close = membership_authority,
+    )]
     pub membership: Account<'info, ChannelMembership>,
+
+    /// CHECK:
+    pub membership_authority: AccountInfo<'info>,
 
     /// CHECK:
     pub authority_membership: AccountInfo<'info>,

@@ -24,6 +24,7 @@ export const deleteMemberStruct = new beet.BeetArgsStruct<{
  *
  * @property [_writable_] channel
  * @property [_writable_] membership
+ * @property [] membershipAuthority
  * @property [] authorityMembership
  * @property [_writable_, **signer**] authority
  * @category Instructions
@@ -33,6 +34,7 @@ export const deleteMemberStruct = new beet.BeetArgsStruct<{
 export interface DeleteMemberInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
+  membershipAuthority: web3.PublicKey
   authorityMembership: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -67,6 +69,11 @@ export function createDeleteMemberInstruction(
     {
       pubkey: accounts.membership,
       isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.membershipAuthority,
+      isWritable: false,
       isSigner: false,
     },
     {

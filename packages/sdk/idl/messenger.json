@@ -283,6 +283,11 @@
           "isSigner": false
         },
         {
+          "name": "membershipAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "authorityMembership",
           "isMut": false,
           "isSigner": false
