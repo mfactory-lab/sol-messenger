@@ -26,7 +26,7 @@ export const deleteMemberStruct = new beet.BeetArgsStruct<{
  * @property [_writable_] membership
  * @property [_writable_] membershipAuthority
  * @property [] authorityMembership
- * @property [_writable_, **signer**] authority
+ * @property [**signer**] authority
  * @category Instructions
  * @category DeleteMember
  * @category generated
@@ -83,7 +83,7 @@ export function createDeleteMemberInstruction(
     },
     {
       pubkey: accounts.authority,
-      isWritable: true,
+      isWritable: false,
       isSigner: true,
     },
     {

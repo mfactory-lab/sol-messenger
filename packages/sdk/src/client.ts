@@ -159,7 +159,7 @@ export class MessengerClient {
     return accounts.map((acc) => {
       return {
         pubkey: acc.pubkey,
-        data: ChannelMembership.fromAccountInfo(acc.account),
+        data: ChannelMembership.fromAccountInfo(acc.account)[0],
       }
     })
   }
@@ -193,7 +193,7 @@ export class MessengerClient {
     return accounts.map((acc) => {
       return {
         pubkey: acc.pubkey,
-        data: ChannelDevice.fromAccountInfo(acc.account),
+        data: ChannelDevice.fromAccountInfo(acc.account)[0],
       }
     })
   }
@@ -586,7 +586,8 @@ export class MessengerClient {
    * Delete device
    */
   async deleteDevice(props: DeleteDeviceProps, opts?: ConfirmOptions) {
-    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+    const deviceAuthority = props.authority ?? this.provider.publicKey
+    const [authorityMembership] = await this.getMembershipPDA(props.channel, deviceAuthority)
     const [device] = await this.getDevicePDA(authorityMembership, props.key)
 
     const tx = new Transaction()
@@ -596,6 +597,7 @@ export class MessengerClient {
         channel: props.channel,
         authority: this.provider.publicKey,
         device,
+        deviceAuthority,
       }),
     )
 
@@ -758,6 +760,7 @@ interface AddDeviceProps {
 interface DeleteDeviceProps {
   channel: PublicKey
   key: PublicKey
+  authority?: PublicKey
 }
 
 interface PostMessageProps {

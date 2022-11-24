@@ -24,7 +24,8 @@ export const deleteDeviceStruct = new beet.BeetArgsStruct<{
  *
  * @property [_writable_] channel
  * @property [_writable_] device
- * @property [_writable_, **signer**] authority
+ * @property [_writable_] deviceAuthority
+ * @property [**signer**] authority
  * @category Instructions
  * @category DeleteDevice
  * @category generated
@@ -32,6 +33,7 @@ export const deleteDeviceStruct = new beet.BeetArgsStruct<{
 export interface DeleteDeviceInstructionAccounts {
   channel: web3.PublicKey
   device: web3.PublicKey
+  deviceAuthority: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
@@ -68,8 +70,13 @@ export function createDeleteDeviceInstruction(
       isSigner: false,
     },
     {
-      pubkey: accounts.authority,
+      pubkey: accounts.deviceAuthority,
       isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.authority,
+      isWritable: false,
       isSigner: true,
     },
     {

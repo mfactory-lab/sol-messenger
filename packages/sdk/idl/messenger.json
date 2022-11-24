@@ -1,5 +1,5 @@
 {
-  "version": "0.0.9",
+  "version": "0.0.10",
   "name": "messenger",
   "instructions": [
     {
@@ -294,7 +294,7 @@
         },
         {
           "name": "authority",
-          "isMut": true,
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -357,8 +357,13 @@
           "isSigner": false
         },
         {
-          "name": "authority",
+          "name": "deviceAuthority",
           "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -919,6 +924,11 @@
           "name": "membership",
           "type": "publicKey",
           "index": true
+        },
+        {
+          "name": "device",
+          "type": "publicKey",
+          "index": false
         },
         {
           "name": "timestamp",
