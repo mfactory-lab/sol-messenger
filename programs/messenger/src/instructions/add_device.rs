@@ -41,7 +41,7 @@ pub struct AddDevice<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
 
-    #[account(mut, has_one = channel)]
+    #[account(mut, has_one = channel, has_one = authority)]
     pub membership: Box<Account<'info, ChannelMembership>>,
 
     #[account(
