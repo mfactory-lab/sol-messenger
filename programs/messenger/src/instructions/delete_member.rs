@@ -66,6 +66,7 @@ pub struct DeleteMember<'info> {
     pub membership: Account<'info, ChannelMembership>,
 
     /// CHECK:
+    #[account(mut)]
     pub membership_authority: AccountInfo<'info>,
 
     /// CHECK:
