@@ -6,7 +6,6 @@ mod events;
 mod instructions;
 mod state;
 mod utils;
-// mod utils;
 
 use anchor_lang::prelude::*;
 use errors::*;
@@ -62,7 +61,7 @@ pub mod messenger {
         post_message::handler(ctx, message)
     }
 
-    pub fn read_message(ctx: Context<ReadMessage>, message_id: u32) -> Result<()> {
+    pub fn read_message(ctx: Context<ReadMessage>, message_id: u64) -> Result<()> {
         read_message::handler(ctx, message_id)
     }
 }

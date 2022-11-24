@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, mem::size_of};
+use std::collections::VecDeque;
 
 use anchor_lang::prelude::*;
 
@@ -19,7 +19,7 @@ pub struct Channel {
     /// Number of members
     pub member_count: u16,
     /// Message counter
-    pub message_count: u32,
+    pub message_count: u64,
     /// The maximum number of messages that are stored in [messages]
     pub max_messages: u16,
     /// List of messages
@@ -34,7 +34,7 @@ impl Channel {
         + 32 // creator key
         + 8 + 8 // creation date + last message date
         + 1 // flags
-        + 2 + 4 // member_count + message_count
+        + 2 + 8 // member_count + message_count
         + 2 + (4 + (Message::SIZE * max_messages as usize)) // max_messages + messages
     }
 
@@ -132,7 +132,7 @@ pub struct ChannelMembership {
     /// Name of the channel member
     pub name: String,
     /// The last read message id
-    pub last_read_message_id: MessageId,
+    pub last_read_message_id: u64,
     /// Creation date
     pub created_at: i64,
     /// Membership flags
@@ -148,7 +148,7 @@ impl ChannelMembership {
         // + 32 + CEKData::SIZE // key + cek
         + ChannelMembershipStatus::SIZE + (1 + 32) // status + status_target
         + (4 + MAX_MEMBER_NAME_LENGTH) // name
-        + size_of::<MessageId>() + 8 // last_read_message_id + created_at
+        + 8 + 8 // last_read_message_id + created_at
         + 1 + 1 // flags + bump
     }
 
@@ -220,12 +220,10 @@ impl CEKData {
     }
 }
 
-type MessageId = u32; // TODO: u64
-
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
 pub struct Message {
     /// Uniq message id
-    pub id: MessageId,
+    pub id: u64,
     /// The message sender id
     pub sender: Pubkey,
     /// The unix timestamp at which the message was received
@@ -237,7 +235,7 @@ pub struct Message {
 }
 
 impl Message {
-    pub const SIZE: usize = size_of::<MessageId>() + 32 + 8 + 1 + (4 + MAX_MESSAGE_LENGTH);
+    pub const SIZE: usize = 8 + 32 + 8 + 1 + (4 + MAX_MESSAGE_LENGTH);
 
     pub fn is_encrypted(&self) -> bool {
         self.flags & MessageFlags::IsEncrypted > 0

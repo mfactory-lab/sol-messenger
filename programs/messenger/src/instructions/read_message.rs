@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{state::*, MessengerError};
 
-pub fn handler(ctx: Context<ReadMessage>, message_id: u32) -> Result<()> {
+pub fn handler(ctx: Context<ReadMessage>, message_id: u64) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
 
     if channel.to_account_info().data_is_empty() {
