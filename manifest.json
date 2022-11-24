@@ -84,18 +84,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.9029ac15.js",
+    "file": "assets/index.0b56075f.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.ccfc6256.js"
+      "_vendor.d72e700f.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.39308845.css"
+      "assets/index.54baca3f.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -105,10 +105,10 @@
       "assets/transfer.796e9da5.svg",
       "assets/plus.ee413328.svg",
       "assets/info.bfade5eb.svg",
+      "assets/solana-logo.3caace62.svg",
       "assets/telegram.360d0c59.svg",
       "assets/twitter.e4e729c2.svg",
       "assets/discord.4c88a6e4.svg",
-      "assets/solana-logo.3caace62.svg",
       "assets/Eva-Icons.f19a427f.woff2",
       "assets/Eva-Icons.ba7db2a0.woff",
       "assets/KFOkCnqEu92Fr1MmgVxIIzQ.34e9582c.woff",
@@ -121,24 +121,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.ccfc6256.js": {
-    "file": "assets/vendor.ccfc6256.js"
+  "_vendor.d72e700f.js": {
+    "file": "assets/vendor.d72e700f.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.a7881ffa.js",
+    "file": "assets/empty.6b980a80.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.ccfc6256.js"
+      "_vendor.d72e700f.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.7957b805.js",
+    "file": "assets/_...all_.c9d47871.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ccfc6256.js",
+      "_vendor.d72e700f.js",
       "index.html"
     ],
     "css": [
@@ -150,7 +150,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.39308845.css",
+    "file": "assets/index.54baca3f.css",
     "src": "index.css"
   }
 }
