@@ -18,8 +18,6 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
     let membership = &mut ctx.accounts.membership;
     membership.channel = channel.key();
     membership.authority = ctx.accounts.authority.key();
-    // membership.key = ctx.accounts.key.key();
-    // membership.cek = CEKData::empty();
     membership.name = data.name;
     membership.created_at = timestamp;
     membership.flags = 0;
@@ -37,7 +35,7 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
     emit!(JoinChannelEvent {
         channel: channel.key(),
         membership: membership.key(),
-        // device: device.key(),
+        device: device.key(),
         timestamp,
     });
 
@@ -66,7 +64,7 @@ pub struct JoinChannel<'info> {
 
     #[account(
         init,
-        seeds = [channel.key().as_ref(), key.key().as_ref()],
+        seeds = [channel.key().as_ref(), authority.key().as_ref()],
         bump,
         payer = authority,
         space = ChannelMembership::space()

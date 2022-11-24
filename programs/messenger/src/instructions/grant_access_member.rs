@@ -7,10 +7,10 @@ use crate::{
 
 pub fn handler(ctx: Context<GrantAccessMember>, data: GrantAccessMemberData) -> Result<()> {
     let channel = &ctx.accounts.channel;
-    let authority_key = ctx.accounts.authority.key;
+    let authority = &ctx.accounts.authority;
     let authority_membership = &ctx.accounts.authority_membership;
 
-    let is_super_admin = channel.authorize(authority_key);
+    let is_super_admin = channel.authorize(authority.key);
 
     if !is_super_admin && !authority_membership.is_owner() {
         msg!("Error: Only the channel owner can grant access");
@@ -36,7 +36,7 @@ pub struct GrantAccessMemberData {
 pub struct GrantAccessMember<'info> {
     pub channel: Box<Account<'info, Channel>>,
 
-    #[account(mut, has_one = channel, close = authority)]
+    #[account(mut, has_one = channel)]
     pub membership: Account<'info, ChannelMembership>,
 
     #[account(has_one = channel, has_one = authority, constraint = authority_membership.is_authorized() @ MessengerError::Unauthorized)]

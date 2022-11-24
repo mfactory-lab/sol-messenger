@@ -71,7 +71,7 @@ pub struct AuthorizeMember<'info> {
     #[account(mut, has_one = channel)]
     pub membership: Box<Account<'info, ChannelMembership>>,
 
-    #[account(mut, has_one = channel, constraint = membership.authority == device.authority)]
+    #[account(mut, has_one = channel, constraint = device.authority == membership.authority)]
     pub device: Box<Account<'info, ChannelDevice>>,
 
     pub authority: Signer<'info>,

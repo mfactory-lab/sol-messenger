@@ -32,7 +32,7 @@ pub struct JoinChannelEvent {
     pub channel: Pubkey,
     #[index]
     pub membership: Pubkey,
-    // pub device: Pubkey,
+    pub device: Pubkey,
     pub timestamp: i64,
 }
 

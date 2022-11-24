@@ -72,7 +72,6 @@ pub struct DeleteMember<'info> {
     /// CHECK:
     pub authority_membership: AccountInfo<'info>,
 
-    #[account(mut)]
     pub authority: Signer<'info>,
 
     pub system_program: Program<'info, System>,

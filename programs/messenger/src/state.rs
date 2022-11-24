@@ -256,5 +256,6 @@ mod tests {
         msg!("{:?}", ChannelMembershipAccess::AddMember);
         msg!("{:?}", ChannelMembershipAccess::AuthorizeMember);
         msg!("{:?}", ChannelMembershipAccess::Admin);
+        unimplemented!();
     }
 }
