@@ -42,7 +42,7 @@ importers:
 
   packages/sdk:
     specifiers:
-      '@metaplex-foundation/solita': ^0.19.0
+      '@metaplex-foundation/solita': ^0.19.1
       '@solana/web3.js': ^1.66.0
       '@stablelib/random': ^1.0.2
       '@stablelib/sha256': ^1.0.1
@@ -61,7 +61,7 @@ importers:
       tweetnacl: 1.0.3
       uint8arrays: 3.1.1
     devDependencies:
-      '@metaplex-foundation/solita': 0.19.0
+      '@metaplex-foundation/solita': 0.19.1
 
   packages/ui:
     specifiers:
@@ -222,6 +222,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.9
+    dev: false
 
   /@babel/runtime/7.20.1:
     resolution: {integrity: sha512-mrzLkl6U9YLF8qpqI7TB82PESyEGjm/0Ly91jG575eVxMMlb8fYfOXFZIJ8XfLrJZQbm7dlKry2bJmXBUEkdFg==}
@@ -461,7 +462,7 @@ packages:
     resolution: {integrity: sha512-tgyEl6dvtLln8XX81JyBvWjIiEcjTkUwZbrM5dIobTmoqMuGewSyk9CClno8qsMsFdB5T3jC91Rjeqmu/6xk2g==}
     dependencies:
       '@metaplex-foundation/beet': 0.7.1
-      '@solana/web3.js': 1.66.1
+      '@solana/web3.js': 1.66.2
       bs58: 5.0.0
       debug: 4.3.4
     transitivePeerDependencies:
@@ -492,14 +493,14 @@ packages:
       - supports-color
     dev: true
 
-  /@metaplex-foundation/solita/0.19.0:
-    resolution: {integrity: sha512-dcQixKM/oEvfuQolH06wNhdUvtRzxB+yeTGJDEIEizylMetdRnbYvRzac+1shUTB6KnvmvVsRrDUhTQ/PpaSPQ==}
+  /@metaplex-foundation/solita/0.19.1:
+    resolution: {integrity: sha512-5kjhWDT8Qt/B6sOWbtRl5tzc1y98K4Q+fPNH+vhIhC5NzBW2BD5V+5mMU3W7agl5viT8UjKJ1HquqdtQYjj3MA==}
     hasBin: true
     dependencies:
       '@metaplex-foundation/beet': 0.7.1
       '@metaplex-foundation/beet-solana': 0.3.1
       '@metaplex-foundation/rustbin': 0.3.1
-      '@solana/web3.js': 1.66.1
+      '@solana/web3.js': 1.66.2
       ansi-colors: 4.1.3
       camelcase: 6.3.0
       debug: 4.3.4
@@ -1280,6 +1281,7 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
+    dev: false
 
   /@solana/web3.js/1.66.2:
     resolution: {integrity: sha512-RyaHMR2jGmaesnYP045VLeBGfR/gAW3cvZHzMFGg7bkO+WOYOYp1nEllf0/la4U4qsYGKCsO9eEevR5fhHiVHg==}
@@ -1304,7 +1306,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: false
 
   /@solflare-wallet/sdk/1.1.0_@solana+web3.js@1.66.1:
     resolution: {integrity: sha512-h/OmjgRMDC6CkPHlkUQgOIRv1QXEZp+kQg132zU1KAcikZvc25xf0yMMRU0APUypQ6EJEz6bgQR6BRvvVA9/ZA==}
@@ -4514,13 +4515,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
+      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
-      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9
@@ -5493,6 +5494,7 @@ packages:
 
   /regenerator-runtime/0.13.9:
     resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
+    dev: false
 
   /regexp-tree/0.1.24:
     resolution: {integrity: sha512-s2aEVuLhvnVJW6s/iPgEGK6R+/xngd2jNQ+xy4bXNDKxZKJH6jpPHY6kVeVv1IeLCHgswRj+Kl3ELaDjG6V1iw==}
