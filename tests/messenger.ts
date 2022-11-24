@@ -81,17 +81,17 @@ describe('messenger', () => {
 
       assert.equal(channelInfo.name, data.name)
       assert.equal(channelInfo.maxMessages, data.maxMessages)
-      assert.equal(channelInfo.creator.toBase58(), sender.publicKey.toBase58())
+      assert.deepEqual(channelInfo.creator, sender.publicKey)
 
       const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
 
       const membership = await client.loadMembership(membershipAddr)
-      assert.equal(membership.channel.toBase58(), channel.publicKey.toBase58())
-      assert.equal(membership.authority.toBase58(), sender.publicKey.toBase58())
+      assert.deepEqual(membership.channel, channel.publicKey)
+      assert.deepEqual(membership.authority, sender.publicKey)
       assert.equal(membership.name, data.memberName)
 
       const device = await client.loadDevice((await client.getDevicePDA(membershipAddr))[0])
-      assert.equal(device.key.toBase58(), sender.publicKey.toBase58())
+      assert.deepEqual(device.key, sender.publicKey)
       assert.equal(device.cek.encryptedKey, cekEncrypted.encryptedKey)
     })
 
@@ -112,6 +112,21 @@ describe('messenger', () => {
       } catch (e: any) {
         assert.ok(e.message.includes('custom program error: 0x0'))
       }
+    })
+
+    it('can add new device', async () => {
+      const kp = Keypair.generate()
+      await client.addDevice({ channel: channel.publicKey, key: kp.publicKey })
+
+      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr, kp.publicKey)
+      const device = await client.loadDevice(deviceAddr)
+      assert.deepEqual(device.authority, sender.publicKey)
+      assert.deepEqual(device.channel, channel.publicKey)
+      assert.deepEqual(device.key, kp.publicKey)
+
+      const cek = await client.decryptCEK(device.cek, kp.secretKey)
+      assert.ok(cek.length > 0)
     })
 
     it('can post encrypted message', async () => {
@@ -290,6 +305,19 @@ describe('messenger', () => {
       } catch (e: any) {
         assert.ok(e.message.startsWith('Unable to find Channel account'))
       }
+    })
+  })
+
+  describe('admin', () => {
+    it('can admin delete a device', async () => {
+      const channels = await client.loadAllChannels()
+      const devices = await client.loadDevices(channels[0].pubkey)
+      const device = devices[0]
+      await getClient(admin).deleteDevice({
+        channel: device.data.channel,
+        authority: device.data.authority,
+        key: device.data.key,
+      })
     })
 
     it('can admin delete a member', async () => {
