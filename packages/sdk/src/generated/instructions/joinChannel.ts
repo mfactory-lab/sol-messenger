@@ -39,6 +39,7 @@ export const joinChannelStruct = new beet.FixableBeetArgsStruct<
  *
  * @property [_writable_] channel
  * @property [_writable_] membership
+ * @property [_writable_] device
  * @property [_writable_, **signer**] authority
  * @property [**signer**] key
  * @category Instructions
@@ -48,6 +49,7 @@ export const joinChannelStruct = new beet.FixableBeetArgsStruct<
 export interface JoinChannelInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
+  device: web3.PublicKey
   authority: web3.PublicKey
   key: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -85,6 +87,11 @@ export function createJoinChannelInstruction(
     },
     {
       pubkey: accounts.membership,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.device,
       isWritable: true,
       isSigner: false,
     },

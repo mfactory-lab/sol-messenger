@@ -41,6 +41,7 @@ export const authorizeMemberStruct = new beet.FixableBeetArgsStruct<
  *
  * @property [] channel
  * @property [_writable_] membership
+ * @property [_writable_] device
  * @property [**signer**] authority
  * @property [_writable_] authorityMembership
  * @category Instructions
@@ -50,6 +51,7 @@ export const authorizeMemberStruct = new beet.FixableBeetArgsStruct<
 export interface AuthorizeMemberInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
+  device: web3.PublicKey
   authority: web3.PublicKey
   authorityMembership: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -87,6 +89,11 @@ export function createAuthorizeMemberInstruction(
     },
     {
       pubkey: accounts.membership,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.device,
       isWritable: true,
       isSigner: false,
     },

@@ -1,5 +1,5 @@
 {
-  "version": "0.0.8",
+  "version": "0.0.9",
   "name": "messenger",
   "instructions": [
     {
@@ -12,6 +12,11 @@
         },
         {
           "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "device",
           "isMut": true,
           "isSigner": false
         },
@@ -76,6 +81,11 @@
         },
         {
           "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "device",
           "isMut": true,
           "isSigner": false
         },
@@ -187,6 +197,11 @@
           "isSigner": false
         },
         {
+          "name": "inviteeDevice",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "authorityMembership",
           "isMut": true,
           "isSigner": false
@@ -221,6 +236,11 @@
         },
         {
           "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "device",
           "isMut": true,
           "isSigner": false
         },
@@ -281,6 +301,70 @@
       "args": []
     },
     {
+      "name": "addDevice",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "device",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "AddDeviceData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "deleteDevice",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "device",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "postMessage",
       "accounts": [
         {
@@ -308,6 +392,37 @@
         {
           "name": "message",
           "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "readMessage",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "messageId",
+          "type": "u64"
         }
       ]
     }
@@ -340,6 +455,13 @@
             "type": "i64"
           },
           {
+            "name": "lastMessageAt",
+            "docs": [
+              "Last message date"
+            ],
+            "type": "i64"
+          },
+          {
             "name": "flags",
             "docs": [
               "Channel flags"
@@ -358,7 +480,7 @@
             "docs": [
               "Message counter"
             ],
-            "type": "u32"
+            "type": "u64"
           },
           {
             "name": "maxMessages",
@@ -377,6 +499,51 @@
                 "defined": "Message"
               }
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ChannelDevice",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "channel",
+            "docs": [
+              "Associated [Channel] address"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "Authority of the [ChannelKey]"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "key",
+            "docs": [
+              "The device key used to encrypt the `cek`"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "cek",
+            "docs": [
+              "The content encryption key (CEK)"
+            ],
+            "type": {
+              "defined": "CEKData"
+            }
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "Bump seed for deriving PDA seeds"
+            ],
+            "type": "u8"
           }
         ]
       }
@@ -401,28 +568,21 @@
             "type": "publicKey"
           },
           {
-            "name": "key",
-            "docs": [
-              "The device key used to encrypt the `CEK`"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "cek",
-            "docs": [
-              "The content encryption key (CEK) of the channel"
-            ],
-            "type": {
-              "defined": "CEKData"
-            }
-          },
-          {
             "name": "status",
             "docs": [
               "Status of membership"
             ],
             "type": {
               "defined": "ChannelMembershipStatus"
+            }
+          },
+          {
+            "name": "statusTarget",
+            "docs": [
+              "Status target key"
+            ],
+            "type": {
+              "option": "publicKey"
             }
           },
           {
@@ -433,13 +593,11 @@
             "type": "string"
           },
           {
-            "name": "invitedBy",
+            "name": "lastReadMessageId",
             "docs": [
-              "Inviter address"
+              "The last read message id"
             ],
-            "type": {
-              "option": "publicKey"
-            }
+            "type": "u64"
           },
           {
             "name": "createdAt",
@@ -467,6 +625,24 @@
     }
   ],
   "types": [
+    {
+      "name": "AddDeviceData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "publicKey"
+          },
+          {
+            "name": "cek",
+            "type": {
+              "defined": "CEKData"
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "AddMemberData",
       "type": {
@@ -500,9 +676,7 @@
             "docs": [
               "Device key"
             ],
-            "type": {
-              "option": "publicKey"
-            }
+            "type": "publicKey"
           }
         ]
       }
@@ -617,7 +791,7 @@
             "docs": [
               "Uniq message id"
             ],
-            "type": "u32"
+            "type": "u64"
           },
           {
             "name": "sender",
@@ -656,26 +830,10 @@
         "kind": "enum",
         "variants": [
           {
-            "name": "Authorized",
-            "fields": [
-              {
-                "name": "by",
-                "type": {
-                  "option": "publicKey"
-                }
-              }
-            ]
+            "name": "Authorized"
           },
           {
-            "name": "Pending",
-            "fields": [
-              {
-                "name": "authority",
-                "type": {
-                  "option": "publicKey"
-                }
-              }
-            ]
+            "name": "Pending"
           }
         ]
       }
@@ -858,6 +1016,56 @@
           "index": false
         }
       ]
+    },
+    {
+      "name": "AddDeviceEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "device",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DeleteDeviceEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "device",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -878,16 +1086,21 @@
     },
     {
       "code": 6003,
+      "name": "InvalidDevice",
+      "msg": "Invalid device"
+    },
+    {
+      "code": 6004,
       "name": "InvalidMessage",
       "msg": "Invalid message"
     },
     {
-      "code": 6004,
+      "code": 6005,
       "name": "NameTooLong",
       "msg": "Name too long"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "MessageTooLong",
       "msg": "Message too long"
     }

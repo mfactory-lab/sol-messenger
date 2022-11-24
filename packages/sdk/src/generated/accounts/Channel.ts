@@ -20,9 +20,10 @@ export interface ChannelArgs {
   name: string
   creator: web3.PublicKey
   createdAt: beet.bignum
+  lastMessageAt: beet.bignum
   flags: number
   memberCount: number
-  messageCount: number
+  messageCount: beet.bignum
   maxMessages: number
   messages: Message[]
 }
@@ -40,9 +41,10 @@ export class Channel implements ChannelArgs {
     readonly name: string,
     readonly creator: web3.PublicKey,
     readonly createdAt: beet.bignum,
+    readonly lastMessageAt: beet.bignum,
     readonly flags: number,
     readonly memberCount: number,
-    readonly messageCount: number,
+    readonly messageCount: beet.bignum,
     readonly maxMessages: number,
     readonly messages: Message[],
   ) {}
@@ -55,6 +57,7 @@ export class Channel implements ChannelArgs {
       args.name,
       args.creator,
       args.createdAt,
+      args.lastMessageAt,
       args.flags,
       args.memberCount,
       args.messageCount,
@@ -181,9 +184,30 @@ export class Channel implements ChannelArgs {
         }
         return x
       })(),
+      lastMessageAt: (() => {
+        const x = <{ toNumber: () => number }> this.lastMessageAt
+        if (typeof x.toNumber === 'function') {
+          try {
+            return x.toNumber()
+          } catch (_) {
+            return x
+          }
+        }
+        return x
+      })(),
       flags: this.flags,
       memberCount: this.memberCount,
-      messageCount: this.messageCount,
+      messageCount: (() => {
+        const x = <{ toNumber: () => number }> this.messageCount
+        if (typeof x.toNumber === 'function') {
+          try {
+            return x.toNumber()
+          } catch (_) {
+            return x
+          }
+        }
+        return x
+      })(),
       maxMessages: this.maxMessages,
       messages: this.messages,
     }
@@ -205,9 +229,10 @@ export const channelBeet = new beet.FixableBeetStruct<
     ['name', beet.utf8String],
     ['creator', beetSolana.publicKey],
     ['createdAt', beet.i64],
+    ['lastMessageAt', beet.i64],
     ['flags', beet.u8],
     ['memberCount', beet.u16],
-    ['messageCount', beet.u32],
+    ['messageCount', beet.u64],
     ['maxMessages', beet.u16],
     ['messages', beet.array(messageBeet)],
   ],

@@ -7,83 +7,77 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { InitChannelData } from '../types/InitChannelData'
-import { initChannelDataBeet } from '../types/InitChannelData'
 
 /**
  * @category Instructions
- * @category InitChannel
+ * @category ReadMessage
  * @category generated
  */
-export interface InitChannelInstructionArgs {
-  data: InitChannelData
+export interface ReadMessageInstructionArgs {
+  messageId: beet.bignum
 }
 /**
  * @category Instructions
- * @category InitChannel
+ * @category ReadMessage
  * @category generated
  */
-export const initChannelStruct = new beet.FixableBeetArgsStruct<
-  InitChannelInstructionArgs & {
+export const readMessageStruct = new beet.BeetArgsStruct<
+  ReadMessageInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['data', initChannelDataBeet],
+    ['messageId', beet.u64],
   ],
-  'InitChannelInstructionArgs',
+  'ReadMessageInstructionArgs',
 )
 /**
- * Accounts required by the _initChannel_ instruction
+ * Accounts required by the _readMessage_ instruction
  *
- * @property [_writable_, **signer**] channel
+ * @property [_writable_] channel
  * @property [_writable_] membership
- * @property [_writable_] device
- * @property [_writable_, **signer**] authority
- * @property [**signer**] key
+ * @property [**signer**] authority
  * @category Instructions
- * @category InitChannel
+ * @category ReadMessage
  * @category generated
  */
-export interface InitChannelInstructionAccounts {
+export interface ReadMessageInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
-  device: web3.PublicKey
   authority: web3.PublicKey
-  key: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const initChannelInstructionDiscriminator = [
-  21, 200, 152, 39, 19, 178, 76, 47,
+export const readMessageInstructionDiscriminator = [
+  54, 166, 48, 51, 234, 46, 110, 163,
 ]
 
 /**
- * Creates a _InitChannel_ instruction.
+ * Creates a _ReadMessage_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category InitChannel
+ * @category ReadMessage
  * @category generated
  */
-export function createInitChannelInstruction(
-  accounts: InitChannelInstructionAccounts,
-  args: InitChannelInstructionArgs,
+export function createReadMessageInstruction(
+  accounts: ReadMessageInstructionAccounts,
+  args: ReadMessageInstructionArgs,
   programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
 ) {
-  const [data] = initChannelStruct.serialize({
-    instructionDiscriminator: initChannelInstructionDiscriminator,
+  const [data] = readMessageStruct.serialize({
+    instructionDiscriminator: readMessageInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.channel,
       isWritable: true,
-      isSigner: true,
+      isSigner: false,
     },
     {
       pubkey: accounts.membership,
@@ -91,17 +85,7 @@ export function createInitChannelInstruction(
       isSigner: false,
     },
     {
-      pubkey: accounts.device,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
       pubkey: accounts.authority,
-      isWritable: true,
-      isSigner: true,
-    },
-    {
-      pubkey: accounts.key,
       isWritable: false,
       isSigner: true,
     },

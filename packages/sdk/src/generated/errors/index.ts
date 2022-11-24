@@ -75,13 +75,33 @@ createErrorFromNameLookup.set(
 )
 
 /**
+ * InvalidDevice: 'Invalid device'
+ *
+ * @category Errors
+ * @category generated
+ */
+export class InvalidDeviceError extends Error {
+  readonly code: number = 0x1773
+  readonly name: string = 'InvalidDevice'
+  constructor() {
+    super('Invalid device')
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, InvalidDeviceError)
+    }
+  }
+}
+
+createErrorFromCodeLookup.set(0x1773, () => new InvalidDeviceError())
+createErrorFromNameLookup.set('InvalidDevice', () => new InvalidDeviceError())
+
+/**
  * InvalidMessage: 'Invalid message'
  *
  * @category Errors
  * @category generated
  */
 export class InvalidMessageError extends Error {
-  readonly code: number = 0x1773
+  readonly code: number = 0x1774
   readonly name: string = 'InvalidMessage'
   constructor() {
     super('Invalid message')
@@ -91,7 +111,7 @@ export class InvalidMessageError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1773, () => new InvalidMessageError())
+createErrorFromCodeLookup.set(0x1774, () => new InvalidMessageError())
 createErrorFromNameLookup.set('InvalidMessage', () => new InvalidMessageError())
 
 /**
@@ -101,7 +121,7 @@ createErrorFromNameLookup.set('InvalidMessage', () => new InvalidMessageError())
  * @category generated
  */
 export class NameTooLongError extends Error {
-  readonly code: number = 0x1774
+  readonly code: number = 0x1775
   readonly name: string = 'NameTooLong'
   constructor() {
     super('Name too long')
@@ -111,7 +131,7 @@ export class NameTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1774, () => new NameTooLongError())
+createErrorFromCodeLookup.set(0x1775, () => new NameTooLongError())
 createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
 
 /**
@@ -121,7 +141,7 @@ createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
  * @category generated
  */
 export class MessageTooLongError extends Error {
-  readonly code: number = 0x1775
+  readonly code: number = 0x1776
   readonly name: string = 'MessageTooLong'
   constructor() {
     super('Message too long')
@@ -131,7 +151,7 @@ export class MessageTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1775, () => new MessageTooLongError())
+createErrorFromCodeLookup.set(0x1776, () => new MessageTooLongError())
 createErrorFromNameLookup.set('MessageTooLong', () => new MessageTooLongError())
 
 /**

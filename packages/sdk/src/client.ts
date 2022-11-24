@@ -1,24 +1,30 @@
-import { BorshCoder, EventManager } from '@project-serum/anchor'
 import type { AnchorProvider } from '@project-serum/anchor'
-import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
+import { BorshCoder, EventManager } from '@project-serum/anchor'
 import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
+import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
 import type { CEKData, Message } from './generated'
-
 import {
   Channel,
+  ChannelDevice,
   ChannelMembership,
+  ChannelMembershipStatus,
   PROGRAM_ID,
+  channelDeviceDiscriminator,
   channelDiscriminator,
   channelMembershipDiscriminator,
+  createAddDeviceInstruction,
   createAddMemberInstruction,
   createAuthorizeMemberInstruction,
   createDeleteChannelInstruction,
+  createDeleteDeviceInstruction,
   createDeleteMemberInstruction,
+  createGrantAccessMemberInstruction,
   createInitChannelInstruction,
   createJoinChannelInstruction,
   createLeaveChannelInstruction,
   createPostMessageInstruction,
+  createReadMessageInstruction,
   errorFromCode,
   errorFromName,
 } from './generated'
@@ -141,16 +147,12 @@ export class MessengerClient {
   }
 
   /**
-   * Load list of {@link ChannelMembership} for the device {@link key}
+   * Load list of {@link ChannelMembership}
    */
-  async loadMemberships(key?: PublicKey) {
+  async loadMemberships() {
     const request = ChannelMembership.gpaBuilder()
       .addFilter('accountDiscriminator', channelMembershipDiscriminator)
       .addFilter('authority', this.provider.publicKey)
-
-    if (key) {
-      request.addFilter('key', key)
-    }
 
     const accounts = await request.run(this.provider.connection)
 
@@ -163,7 +165,7 @@ export class MessengerClient {
   }
 
   /**
-   * Load {@link ChannelMembership} for {@link addr}
+   * Load {@link ChannelMembership} by {@link addr}
    */
   async loadMembership(addr: PublicKey, commitment?: Commitment) {
     return ChannelMembership.fromAccountAddress(this.provider.connection, addr, commitment)
@@ -172,9 +174,43 @@ export class MessengerClient {
   /**
    * Get channel membership PDA
    */
-  async getMembershipPDA(channel: PublicKey, addr?: PublicKey) {
+  async getMembershipPDA(channel: PublicKey, authority?: PublicKey) {
+    authority = authority ?? this.provider.publicKey
+    return await PublicKey.findProgramAddress([channel.toBuffer(), authority.toBuffer()], this.programId)
+  }
+
+  /**
+   * Load list of {@link ChannelDevice} for the {@link channel}
+   */
+  async loadDevices(channel: PublicKey, authority?: PublicKey) {
+    const request = ChannelDevice.gpaBuilder()
+      .addFilter('accountDiscriminator', channelDeviceDiscriminator)
+      .addFilter('authority', authority ?? this.provider.publicKey)
+      .addFilter('channel', channel)
+
+    const accounts = await request.run(this.provider.connection)
+
+    return accounts.map((acc) => {
+      return {
+        pubkey: acc.pubkey,
+        data: ChannelDevice.fromAccountInfo(acc.account),
+      }
+    })
+  }
+
+  /**
+   * Load {@link ChannelDevice} by {@link addr}
+   */
+  async loadDevice(addr: PublicKey, commitment?: Commitment) {
+    return ChannelDevice.fromAccountAddress(this.provider.connection, addr, commitment)
+  }
+
+  /**
+   * Get channel device PDA
+   */
+  async getDevicePDA(membership: PublicKey, addr?: PublicKey) {
     addr = addr ?? this.keypair!.publicKey
-    return await PublicKey.findProgramAddress([channel.toBuffer(), addr.toBuffer()], this.programId)
+    return await PublicKey.findProgramAddress([membership.toBuffer(), addr.toBuffer()], this.programId)
   }
 
   /**
@@ -208,12 +244,13 @@ export class MessengerClient {
   /**
    * Initialize new channel
    */
-  async initChannel(props: InitChannelProps) {
+  async initChannel(props: InitChannelProps, opts?: ConfirmOptions) {
     const channel = props.channel ?? Keypair.generate()
     const cek = await generateCEK()
     const cekEncrypted = await this.encryptCEK(cek)
 
     const [membership] = await this.getMembershipPDA(channel.publicKey)
+    const [device] = await this.getDevicePDA(membership)
     const authority = this.provider.publicKey
 
     const tx = new Transaction()
@@ -223,6 +260,7 @@ export class MessengerClient {
         key: this.keypair!.publicKey,
         channel: channel.publicKey,
         membership,
+        device,
         authority,
       }, {
         data: {
@@ -239,7 +277,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair as Signer], props.opts)
+      signature = await this.provider.sendAndConfirm(tx, [channel, this.keypair as Signer], opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
@@ -250,7 +288,7 @@ export class MessengerClient {
   /**
    * Delete channel
    */
-  async deleteChannel({ channel, opts }: DeleteChannelProps) {
+  async deleteChannel({ channel }: DeleteChannelProps, opts?: ConfirmOptions) {
     const authority = this.provider.publicKey
     const [authorityMembership] = await this.getMembershipPDA(channel)
 
@@ -274,18 +312,21 @@ export class MessengerClient {
   /**
    * Join channel
    */
-  async joinChannel(props: JoinChannelProps) {
+  async joinChannel(props: JoinChannelProps, opts?: ConfirmOptions) {
     const [membership] = await this.getMembershipPDA(props.channel)
+    const [device] = await this.getDevicePDA(membership)
     const authority = this.provider.publicKey
+    const key = this.keypair!.publicKey
 
     const tx = new Transaction()
 
     tx.add(
       createJoinChannelInstruction({
         channel: props.channel,
-        key: this.keypair!.publicKey,
         membership,
+        device,
         authority,
+        key,
       }, {
         data: {
           name: props.name,
@@ -297,7 +338,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer], props.opts)
+      signature = await this.provider.sendAndConfirm(tx, [this.keypair as Signer], opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
@@ -308,24 +349,31 @@ export class MessengerClient {
   /**
    * Leave the channel
    */
-  async leaveChannel(props: LeaveChannelProps) {
+  async leaveChannel(props: LeaveChannelProps, opts?: ConfirmOptions) {
     const [membership] = await this.getMembershipPDA(props.channel)
     const authority = this.provider.publicKey
 
     const tx = new Transaction()
+
+    const devices = await this.loadDevices(props.channel)
 
     tx.add(
       createLeaveChannelInstruction({
         channel: props.channel,
         membership,
         authority,
+        anchorRemainingAccounts: devices.map(acc => ({
+          pubkey: acc.pubkey,
+          isSigner: false,
+          isWritable: true,
+        })),
       }),
     )
 
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx)
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
@@ -336,19 +384,22 @@ export class MessengerClient {
   /**
    * Add new member to the channel
    */
-  async addMember(props: AddMemberProps) {
+  async addMember(props: AddMemberProps, opts?: ConfirmOptions) {
     const key = props.key ?? props.invitee
 
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
-    const [inviteeMembership] = await this.getMembershipPDA(props.channel, key)
+    const [authorityDevice] = await this.getDevicePDA(authorityMembership)
+    const [inviteeMembership] = await this.getMembershipPDA(props.channel, props.invitee)
+    const [inviteeDevice] = await this.getDevicePDA(inviteeMembership, key)
 
-    const membership = await this.loadMembership(authorityMembership)
+    const device = await this.loadDevice(authorityDevice)
+    // const membership = await this.loadMembership(authorityMembership)
 
-    if (!membership.cek.encryptedKey) {
+    if (!device.cek.encryptedKey) {
       throw errorFromName('Unauthorized')
     }
 
-    const rawCek = await this.decryptCEK(membership.cek)
+    const rawCek = await this.decryptCEK(device.cek)
     const cek = await this.encryptCEK(rawCek, key)
 
     const tx = new Transaction()
@@ -360,6 +411,7 @@ export class MessengerClient {
         invitee: props.invitee,
         authorityMembership,
         inviteeMembership,
+        inviteeDevice,
       }, {
         data: {
           name: props.name ?? '',
@@ -373,9 +425,9 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx)
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
-      throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
+      throw errorFromCode(e.code) ?? e
     }
 
     return { signature }
@@ -384,10 +436,13 @@ export class MessengerClient {
   /**
    * Delete channel member
    */
-  async deleteMember(props: DeleteMemberProps) {
-    const [membership] = props.membership ? [props.membership] : await this.getMembershipPDA(props.channel, props.key)
+  async deleteMember(props: DeleteMemberProps, opts?: ConfirmOptions) {
+    const [membership] = await this.getMembershipPDA(props.channel, props.authority)
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
     const authority = this.provider.publicKey
+
+    const devices = await this.loadDevices(props.channel, props.authority)
+
     const tx = new Transaction()
 
     tx.add(
@@ -396,13 +451,18 @@ export class MessengerClient {
         membership,
         authority,
         authorityMembership,
+        anchorRemainingAccounts: devices.map(acc => ({
+          pubkey: acc.pubkey,
+          isSigner: false,
+          isWritable: true,
+        })),
       }),
     )
 
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx)
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
@@ -413,17 +473,19 @@ export class MessengerClient {
   /**
    * Authorize member request
    */
-  async authorizeMember(props: AuthorizeMemberProps) {
+  async authorizeMember(props: AuthorizeMemberProps, opts?: ConfirmOptions) {
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
-    const [membership] = await this.getMembershipPDA(props.channel, props.key)
+    const [authorityDevice] = await this.getDevicePDA(authorityMembership)
+    const [membership] = await this.getMembershipPDA(props.channel, props.authority)
+    const [device] = await this.getDevicePDA(membership, props.key)
 
-    const authorityMembershipInfo = await this.loadMembership(authorityMembership)
+    const authorityDeviceInfo = await this.loadDevice(authorityDevice)
 
-    if (!authorityMembershipInfo.cek.encryptedKey) {
+    if (!authorityDeviceInfo.cek.encryptedKey) {
       throw errorFromName('Unauthorized')
     }
 
-    const rawCek = await this.decryptCEK(authorityMembershipInfo.cek)
+    const rawCek = await this.decryptCEK(authorityDeviceInfo.cek)
     const cek = await this.encryptCEK(rawCek, props.key)
 
     const tx = new Transaction()
@@ -432,6 +494,7 @@ export class MessengerClient {
       createAuthorizeMemberInstruction({
         channel: props.channel,
         membership,
+        device,
         authority: this.provider.publicKey,
         authorityMembership,
       }, { data: { cek } }),
@@ -440,7 +503,7 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx)
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
     }
@@ -449,19 +512,116 @@ export class MessengerClient {
   }
 
   /**
+   * Grant new access to the member
+   */
+  async grantAccessMember(props: GrantAccessMemberProps, opts?: ConfirmOptions) {
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+    const [membership] = await this.getMembershipPDA(props.channel, props.authority)
+
+    const tx = new Transaction()
+
+    tx.add(
+      createGrantAccessMemberInstruction({
+        channel: props.channel,
+        membership,
+        authority: this.provider.publicKey,
+        authorityMembership,
+      }, { data: { flags: props.flags } }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? errorFromName('Unauthorized')
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Add new device to the channel
+   */
+  async addDevice(props: AddDeviceProps, opts?: ConfirmOptions) {
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+    const [authorityDevice] = await this.getDevicePDA(authorityMembership)
+    const [newDevice] = await this.getDevicePDA(authorityMembership, props.key)
+
+    const device = await this.loadDevice(authorityDevice)
+
+    if (!device?.cek.encryptedKey) {
+      throw errorFromName('Unauthorized')
+    }
+
+    const rawCek = await this.decryptCEK(device.cek)
+    const cek = await this.encryptCEK(rawCek, props.key)
+
+    const tx = new Transaction()
+
+    tx.add(
+      createAddDeviceInstruction({
+        channel: props.channel,
+        authority: this.provider.publicKey,
+        membership: authorityMembership,
+        device: newDevice,
+      }, { data: { cek, key: props.key } }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Delete device
+   */
+  async deleteDevice(props: DeleteDeviceProps, opts?: ConfirmOptions) {
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+    const [device] = await this.getDevicePDA(authorityMembership, props.key)
+
+    const tx = new Transaction()
+
+    tx.add(
+      createDeleteDeviceInstruction({
+        channel: props.channel,
+        authority: this.provider.publicKey,
+        device,
+      }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
    * Add new message to the channel
    */
-  async postMessage(props: PostMessageProps) {
-    const [membershipAddr] = await this.getMembershipPDA(props.channel)
+  async postMessage(props: PostMessageProps, opts?: ConfirmOptions) {
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+    const [authorityDevice] = await this.getDevicePDA(authorityMembership)
 
     let message
     let flags = 0
     if (props.encrypt) {
-      const membership = await this.loadMembership(membershipAddr)
-      if (!membership.cek.header) {
+      const device = await this.loadDevice(authorityDevice)
+      if (!device.cek.header) {
         throw errorFromName('Unauthorized')
       }
-      const cek = await this.decryptCEK(membership.cek)
+      const cek = await this.decryptCEK(device.cek)
       message = await this.encryptMessage(props.message, cek)
       flags |= 0b001
     } else {
@@ -473,7 +633,7 @@ export class MessengerClient {
     tx.add(
       createPostMessageInstruction({
         channel: props.channel,
-        membership: membershipAddr,
+        membership: authorityMembership,
         authority: this.provider.publicKey,
       }, { message: String.fromCharCode(flags) + message }),
     )
@@ -481,7 +641,36 @@ export class MessengerClient {
     let signature: string
 
     try {
-      signature = await this.provider.sendAndConfirm(tx)
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Set the `last_read_message_id` of the {@link ChannelMembership}
+   */
+  async readMessage(props: ReadMessageProps, opts?: ConfirmOptions) {
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+
+    const tx = new Transaction()
+
+    tx.add(
+      createReadMessageInstruction({
+        channel: props.channel,
+        membership: authorityMembership,
+        authority: this.provider.publicKey,
+      }, {
+        messageId: props.messageId,
+      }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
       throw errorFromCode(e.code) ?? e
     }
@@ -495,6 +684,8 @@ export class MessengerClient {
       isPermissionless: (c: Channel) => (c.flags & ChannelFlags.Permissionless) > 0,
     },
     member: {
+      isAuthorized: (m: ChannelMembership) => m.status === ChannelMembershipStatus.Authorized,
+      isPending: (m: ChannelMembership) => m.status === ChannelMembershipStatus.Pending,
       isOwner: (m: ChannelMembership) => m.flags >= ChannelMembershipFlags.Owner,
       isAdmin: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.Admin) === ChannelMembershipFlags.Admin,
       canAddMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.AddMember) > 0,
@@ -509,7 +700,6 @@ export class MessengerClient {
 
 interface DeleteChannelProps {
   channel: PublicKey
-  opts?: ConfirmOptions
 }
 
 interface InitChannelProps {
@@ -519,45 +709,61 @@ interface InitChannelProps {
   memberName?: string
   maxMessages: number
   channel?: Keypair
-  opts?: ConfirmOptions
 }
 
 interface JoinChannelProps {
   channel: PublicKey
   name: string
   authority?: PublicKey
-  opts?: ConfirmOptions
 }
 
 interface LeaveChannelProps {
   channel: PublicKey
-  opts?: ConfirmOptions
 }
 
 interface AddMemberProps {
   channel: PublicKey
   invitee: PublicKey
+  // By default, device key is the same as `invitee`
   key?: PublicKey
   name?: string
   flags?: number
-  opts?: ConfirmOptions
 }
 
 interface AuthorizeMemberProps {
   channel: PublicKey
+  authority: PublicKey
   key: PublicKey
+}
+
+interface GrantAccessMemberProps {
+  channel: PublicKey
+  authority: PublicKey
+  flags: number
 }
 
 interface DeleteMemberProps {
   channel: PublicKey
-  membership?: PublicKey
-  key?: PublicKey
-  opts?: ConfirmOptions
+  authority: PublicKey
+}
+
+interface AddDeviceProps {
+  channel: PublicKey
+  key: PublicKey
+}
+
+interface DeleteDeviceProps {
+  channel: PublicKey
+  key: PublicKey
 }
 
 interface PostMessageProps {
   channel: PublicKey
   message: string
   encrypt?: boolean
-  opts?: ConfirmOptions
+}
+
+interface ReadMessageProps {
+  channel: PublicKey
+  messageId: number
 }

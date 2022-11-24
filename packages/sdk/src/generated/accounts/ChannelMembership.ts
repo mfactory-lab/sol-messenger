@@ -8,10 +8,8 @@
 import * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-import type { CEKData } from '../types/CEKData'
-import { cEKDataBeet } from '../types/CEKData'
-import type { ChannelMembershipStatus } from '../types/ChannelMembershipStatus'
 import {
+  ChannelMembershipStatus,
   channelMembershipStatusBeet,
 } from '../types/ChannelMembershipStatus'
 
@@ -23,11 +21,10 @@ import {
 export interface ChannelMembershipArgs {
   channel: web3.PublicKey
   authority: web3.PublicKey
-  key: web3.PublicKey
-  cek: CEKData
   status: ChannelMembershipStatus
+  statusTarget: beet.COption<web3.PublicKey>
   name: string
-  invitedBy: beet.COption<web3.PublicKey>
+  lastReadMessageId: beet.bignum
   createdAt: beet.bignum
   flags: number
   bump: number
@@ -47,11 +44,10 @@ export class ChannelMembership implements ChannelMembershipArgs {
   private constructor(
     readonly channel: web3.PublicKey,
     readonly authority: web3.PublicKey,
-    readonly key: web3.PublicKey,
-    readonly cek: CEKData,
     readonly status: ChannelMembershipStatus,
+    readonly statusTarget: beet.COption<web3.PublicKey>,
     readonly name: string,
-    readonly invitedBy: beet.COption<web3.PublicKey>,
+    readonly lastReadMessageId: beet.bignum,
     readonly createdAt: beet.bignum,
     readonly flags: number,
     readonly bump: number,
@@ -64,11 +60,10 @@ export class ChannelMembership implements ChannelMembershipArgs {
     return new ChannelMembership(
       args.channel,
       args.authority,
-      args.key,
-      args.cek,
       args.status,
+      args.statusTarget,
       args.name,
-      args.invitedBy,
+      args.lastReadMessageId,
       args.createdAt,
       args.flags,
       args.bump,
@@ -182,11 +177,20 @@ export class ChannelMembership implements ChannelMembershipArgs {
     return {
       channel: this.channel.toBase58(),
       authority: this.authority.toBase58(),
-      key: this.key.toBase58(),
-      cek: this.cek,
-      status: this.status.__kind,
+      status: `ChannelMembershipStatus.${ChannelMembershipStatus[this.status]}`,
+      statusTarget: this.statusTarget,
       name: this.name,
-      invitedBy: this.invitedBy,
+      lastReadMessageId: (() => {
+        const x = <{ toNumber: () => number }> this.lastReadMessageId
+        if (typeof x.toNumber === 'function') {
+          try {
+            return x.toNumber()
+          } catch (_) {
+            return x
+          }
+        }
+        return x
+      })(),
       createdAt: (() => {
         const x = <{ toNumber: () => number }> this.createdAt
         if (typeof x.toNumber === 'function') {
@@ -218,11 +222,10 @@ export const channelMembershipBeet = new beet.FixableBeetStruct<
     ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
     ['channel', beetSolana.publicKey],
     ['authority', beetSolana.publicKey],
-    ['key', beetSolana.publicKey],
-    ['cek', cEKDataBeet],
     ['status', channelMembershipStatusBeet],
+    ['statusTarget', beet.coption(beetSolana.publicKey)],
     ['name', beet.utf8String],
-    ['invitedBy', beet.coption(beetSolana.publicKey)],
+    ['lastReadMessageId', beet.u64],
     ['createdAt', beet.i64],
     ['flags', beet.u8],
     ['bump', beet.u8],
