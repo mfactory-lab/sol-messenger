@@ -11,6 +11,9 @@ pub enum MessengerError {
     #[msg("Invalid membership")]
     InvalidMembership,
 
+    #[msg("Invalid device")]
+    InvalidDevice,
+
     #[msg("Invalid message")]
     InvalidMessage,
 

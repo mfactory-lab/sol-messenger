@@ -30,7 +30,7 @@ pub mod messenger {
         join_channel::handler(ctx, data)
     }
 
-    pub fn leave_channel(ctx: Context<LeaveChannel>) -> Result<()> {
+    pub fn leave_channel<'info>(ctx: Context<'_, '_, '_, 'info, LeaveChannel<'info>>) -> Result<()> {
         leave_channel::handler(ctx)
     }
 
@@ -46,11 +46,23 @@ pub mod messenger {
         authorize_member::handler(ctx, data)
     }
 
-    pub fn delete_member(ctx: Context<DeleteMember>) -> Result<()> {
+    pub fn delete_member<'info>(ctx: Context<'_, '_, '_, 'info, DeleteMember<'info>>) -> Result<()> {
         delete_member::handler(ctx)
+    }
+
+    pub fn add_device(ctx: Context<AddDevice>, data: AddDeviceData) -> Result<()> {
+        add_device::handler(ctx, data)
+    }
+
+    pub fn delete_device(ctx: Context<DeleteDevice>) -> Result<()> {
+        delete_device::handler(ctx)
     }
 
     pub fn post_message(ctx: Context<PostMessage>, message: String) -> Result<()> {
         post_message::handler(ctx, message)
+    }
+
+    pub fn read_message(ctx: Context<ReadMessage>, message_id: u32) -> Result<()> {
+        read_message::handler(ctx, message_id)
     }
 }

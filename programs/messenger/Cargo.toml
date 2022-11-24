@@ -2,9 +2,10 @@
 name = "messenger"
 version = "0.0.8"
 description = "On-chain messenger"
-edition = "2021"
+authors = ["Vladyslav Korniienko <vk.tiamo@gmail.com>"]
 homepage = "https://jfactory.ch"
 repository = "https://github.com/mfactory-lab/sol-messenger"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]

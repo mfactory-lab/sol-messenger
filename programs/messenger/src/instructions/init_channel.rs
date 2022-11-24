@@ -5,7 +5,7 @@ use crate::{constants::MAX_CHANNEL_NAME_LENGTH, events::NewChannelEvent, state::
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     data.validate()?;
 
-    let clock = Clock::get()?;
+    let timestamp = Clock::get()?.unix_timestamp;
 
     let authority = &ctx.accounts.authority;
 
@@ -17,7 +17,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     channel.flags = 0;
     channel.max_messages = data.max_messages;
     channel.messages = Vec::with_capacity(data.max_messages as usize);
-    channel.created_at = clock.unix_timestamp;
+    channel.created_at = timestamp;
 
     if data.public {
         channel.flags |= ChannelFlags::IsPublic;
@@ -27,18 +27,23 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
         channel.flags |= ChannelFlags::Permissionless;
     }
 
-    let key = &ctx.accounts.key;
-
     let membership = &mut ctx.accounts.membership;
     membership.channel = channel.key();
     membership.authority = authority.key();
-    membership.key = key.key();
-    membership.cek = data.cek;
+    // membership.key = ctx.accounts.key.key();
+    // membership.cek = data.cek;
     membership.name = data.member_name;
-    membership.status = ChannelMembershipStatus::Authorized { by: None };
-    membership.created_at = clock.unix_timestamp;
+    membership.status = ChannelMembershipStatus::Authorized;
+    membership.created_at = timestamp;
     membership.flags = ChannelMembershipAccess::Owner;
     membership.bump = ctx.bumps["membership"];
+
+    let device = &mut ctx.accounts.device;
+    device.channel = channel.key();
+    device.authority = authority.key();
+    device.key = ctx.accounts.key.key();
+    device.cek = data.cek;
+    device.bump = ctx.bumps["device"];
 
     emit!(NewChannelEvent {
         channel: channel.key(),
@@ -84,12 +89,21 @@ pub struct InitChannel<'info> {
 
     #[account(
         init,
-        seeds = [channel.key().as_ref(), key.key().as_ref()],
+        seeds = [channel.key().as_ref(), authority.key().as_ref()],
         bump,
         payer = authority,
         space = ChannelMembership::space()
     )]
     pub membership: Box<Account<'info, ChannelMembership>>,
+
+    #[account(
+        init,
+        seeds = [membership.key().as_ref(), key.key().as_ref()],
+        bump,
+        payer = authority,
+        space = ChannelDevice::space()
+    )]
+    pub device: Box<Account<'info, ChannelDevice>>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

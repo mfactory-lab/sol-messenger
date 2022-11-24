@@ -1,6 +1,9 @@
 use anchor_lang::{prelude::*, solana_program::system_program};
 
-use crate::{errors::MessengerError, state::ChannelMembership};
+use crate::{
+    errors::MessengerError,
+    state::{ChannelDevice, ChannelMembership},
+};
 
 pub fn close<'info>(info: AccountInfo<'info>, sol_destination: AccountInfo<'info>) -> Result<()> {
     // Transfer lamports from the account to the sol_destination.
@@ -12,7 +15,7 @@ pub fn close<'info>(info: AccountInfo<'info>, sol_destination: AccountInfo<'info
     info.realloc(0, false).map_err(Into::into)
 }
 
-pub fn validate_membership<'info>(
+pub fn assert_valid_membership<'info>(
     account: &AccountInfo<'info>,
     channel: &Pubkey,
     authority: &Pubkey,
@@ -28,6 +31,24 @@ pub fn validate_membership<'info>(
         return Err(MessengerError::InvalidMembership.into());
     }
     Ok(membership)
+}
+
+pub fn assert_valid_device<'info>(
+    account: &AccountInfo<'info>,
+    channel: &Pubkey,
+    authority: &Pubkey,
+) -> Result<Account<'info, ChannelDevice>> {
+    let device: Account<'info, ChannelDevice> =
+        Account::try_from(account).map_err(|_e| MessengerError::InvalidDevice)?;
+    if device.channel != channel.key() {
+        msg!("Error: Invalid device channel");
+        return Err(MessengerError::InvalidDevice.into());
+    }
+    if device.authority != authority.key() {
+        msg!("Error: Invalid device authority");
+        return Err(MessengerError::InvalidDevice.into());
+    }
+    Ok(device)
 }
 
 // /// The seed string used to derive a program address for a Solarium channel (for direct channels)

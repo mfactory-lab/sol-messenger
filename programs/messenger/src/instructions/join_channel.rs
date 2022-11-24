@@ -11,27 +11,33 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
         return Err(MessengerError::InvalidChannel.into());
     }
 
+    channel.member_count = channel.member_count.saturating_add(1);
+
     let timestamp = Clock::get()?.unix_timestamp;
 
     let membership = &mut ctx.accounts.membership;
     membership.channel = channel.key();
     membership.authority = ctx.accounts.authority.key();
-    membership.key = ctx.accounts.key.key();
-    membership.cek = CEKData::empty();
+    // membership.key = ctx.accounts.key.key();
+    // membership.cek = CEKData::empty();
     membership.name = data.name;
-    membership.invited_by = None;
     membership.created_at = timestamp;
     membership.flags = 0;
-    membership.status = ChannelMembershipStatus::Pending {
-        authority: data.authority,
-    };
+    membership.status = ChannelMembershipStatus::Pending;
+    membership.status_target = data.authority;
     membership.bump = ctx.bumps["membership"];
 
-    channel.member_count = channel.member_count.saturating_add(1);
+    let device = &mut ctx.accounts.device;
+    device.channel = channel.key();
+    device.authority = ctx.accounts.authority.key();
+    device.key = ctx.accounts.key.key();
+    device.cek = CEKData::empty();
+    device.bump = ctx.bumps["device"];
 
     emit!(JoinChannelEvent {
         channel: channel.key(),
         membership: membership.key(),
+        // device: device.key(),
         timestamp,
     });
 
@@ -66,6 +72,15 @@ pub struct JoinChannel<'info> {
         space = ChannelMembership::space()
     )]
     pub membership: Box<Account<'info, ChannelMembership>>,
+
+    #[account(
+        init,
+        seeds = [membership.key().as_ref(), key.key().as_ref()],
+        bump,
+        payer = authority,
+        space = ChannelDevice::space()
+    )]
+    pub device: Box<Account<'info, ChannelDevice>>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

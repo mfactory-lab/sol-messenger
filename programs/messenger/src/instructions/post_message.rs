@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::NewMessageEvent, state::*, utils::validate_membership, MessengerError};
+use crate::{events::NewMessageEvent, state::*, utils::assert_valid_membership, MessengerError};
 
 pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
@@ -12,7 +12,7 @@ pub fn handler(ctx: Context<PostMessage>, content: String) -> Result<()> {
     let authority_key = ctx.accounts.authority.key;
 
     if !channel.is_public() {
-        let membership = validate_membership(
+        let membership = assert_valid_membership(
             &ctx.accounts.membership.to_account_info(),
             &channel.key(),
             authority_key,
