@@ -43,9 +43,10 @@ const addMember = () => emit('submit', state.value)
           <q-btn
             type="submit"
             class="dialog-submit-btn"
-            text-color="white"
+            text-color="black"
             :ripple="false"
-            rounded
+            square
+            flat
           >
             Add Member
           </q-btn>

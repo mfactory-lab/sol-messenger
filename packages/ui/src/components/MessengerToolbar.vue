@@ -42,6 +42,13 @@ const showMembers = () => emit('showMembers')
 const onDeleteChannel = () => emit('deleteChannel')
 const onAddMember = () => emit('addMember')
 
+const pendingUsersCount = computed(() => {
+  if (!channelStore.isOwner || !channelStore.isAdmin) {
+    return
+  }
+  return state.channelMembers.filter(ch => ch.data.status.__kind === 'Pending').length
+})
+
 watch(searchText, (s) => {
   onSearch(String(s))
 })
@@ -84,46 +91,81 @@ watch(searchText, (s) => {
         <q-btn class="chat-menu" flat square :disable="!isWalletConnected">
           <dots-icon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
-            <q-list style="min-width: 150px" bordered>
-              <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
-                <q-item-section>
-                  <q-btn flat square class="bg-blue-grey-7 text-white">
+            <q-list style="min-width: 120px" bordered>
+              <q-item
+                v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
+                clickable
+                @click="$emit('showDeviceKey')"
+              >
+                <q-item-section class="q-pa-none">
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-blue-grey-7 text-white q-px-xs"
+                  >
                     Device key
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
+                class="
+                  q-my-sm q-mx-sm q-pa-none
+                  chat-menu__item
+                  relative-position
+                "
                 clickable
                 :disable="!channel"
                 @click="showMembers"
               >
                 <q-item-section>
-                  <q-btn flat square class="bg-cyan-9 text-white">
+                  <div v-if="pendingUsersCount > 0" class="members-count bg-cyan-9">
+                    {{ pendingUsersCount }}
+                  </div>
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-cyan-9 text-white q-px-xs"
+                  >
                     Members
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
                 :disable="!channelStore.canAddMember"
                 @click="onAddMember"
               >
                 <q-item-section>
-                  <q-btn flat square class="bg-amber-7 text-white">
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-amber-7 text-white q-px-xs"
+                  >
                     Add member
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
                 :disable="!channelStore.isChannelCreator"
                 @click="$emit('deleteChannel')"
               >
                 <q-item-section>
-                  <q-btn flat square class="bg-negative text-white">
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-negative text-white q-px-xs"
+                  >
                     Delete
                   </q-btn>
                 </q-item-section>
@@ -150,7 +192,7 @@ $accent-color: #ffd140;
   position: relative;
 
   .panel-search {
-    width: 169px;
+    width: 219px;
     padding: 0 15px;
     display: flex;
     border-right: 1px solid #fff;
@@ -178,50 +220,52 @@ $accent-color: #ffd140;
     display: flex;
     font-family: "Montserrat", sans-serif;
     align-items: center;
-    padding: 10px;
+    padding: 7px 9px 7px 24px;
     height: 100%;
     width: 100%;
 
-    .chat-info {
-      display: flex;
-      font-size: 13px;
-      line-height: 16px;
-      text-transform: uppercase;
+    .chat {
+      &-info {
+        display: flex;
+        font-size: 13px;
+        line-height: 16px;
+        text-transform: uppercase;
+      }
 
-      .chat-members {
+      &-members {
         padding-right: 10px;
         margin-right: 10px;
         border-right: 1px solid $main-color;
       }
-    }
 
-    .chat-name {
-      color: $accent-color;
-      font-weight: 500;
-      font-size: 13px;
-      line-height: 16px;
-      text-transform: uppercase;
-      margin-right: 16px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      flex: 1;
-      text-align: right;
-    }
+      &-name {
+        color: $accent-color;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 16px;
+        text-transform: uppercase;
+        margin-right: 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        flex: 1;
+        text-align: right;
+      }
 
-    .chat-menu {
-      border: 1px solid rgb(210 230 240 / 20%);
-      background: rgb(146 167 177 / 20%);
-      cursor: pointer;
-      position: relative;
-      height: 22px;
-      min-height: 0;
-      width: 31px;
-      padding: 0;
-      transform: translateX(3px);
+      &-menu {
+        border: 1px solid rgb(210 230 240 / 20%);
+        background: rgb(146 167 177 / 20%);
+        cursor: pointer;
+        position: relative;
+        height: 22px;
+        min-height: 0;
+        width: 31px;
+        padding: 0;
+        transform: translateX(2px);
 
-      &:hover {
-        background: rgb(146 167 177 / 50%);
+        &:hover {
+          background: rgb(146 167 177 / 50%);
+        }
       }
     }
   }
@@ -301,5 +345,27 @@ $accent-color: #ffd140;
 
 input.q-field__native {
   color: $main-color;
+}
+
+.chat-menu__item {
+  min-height: 0 !important;
+  z-index: 1;
+
+  .members-count {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px;
+    z-index: 2;
+  }
 }
 </style>

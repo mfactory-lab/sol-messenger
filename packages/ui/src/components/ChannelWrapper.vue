@@ -21,7 +21,8 @@ function isSomeoneMessage(sender: any) {
 
 const messages = computed(() => {
   const data = []
-  let i = 0; let prev
+  let i = 0
+  let prev
   for (const msg of state.channelMessages) {
     if (prev && `${msg.sender}` === `${prev}`) {
       data[i - 1].text.push(msg.content)
@@ -56,10 +57,12 @@ watch(mes, (c) => {
 
 <template>
   <q-card class="messenger-card" square flat>
-    <div ref="chat" class="messenger-content">
-      <channel-wrapper-skeleton v-if="channel.isChannelLoading" />
+    <div class="messenger-content">
+      <div v-if="channel.isChannelLoading" class="preloader">
+        <q-spinner-hourglass color="primary" size="2em" />
+      </div>
 
-      <div v-else-if="state.channel" class="row justify-center channel-wrapper">
+      <div v-else-if="state.channel" ref="chat" class="row justify-center channel-wrapper">
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
             v-for="msg in messages"
@@ -74,8 +77,13 @@ watch(mes, (c) => {
         </div>
       </div>
 
+      <div v-else-if="!channel.isWalletConnected" class="messenger-empty">
+        <img src="@/assets/img/solana-logo.svg" alt="logo">
+        <span name="connect">Please connect a wallet</span>
+      </div>
+
       <div v-else class="messenger-empty">
-        Please connect a wallet
+        <span name="select">Please select a channel</span>
       </div>
     </div>
 
@@ -89,17 +97,21 @@ watch(mes, (c) => {
 </template>
 
 <style lang="scss" scoped>
+.channel-wrapper {
+  max-width: 600px;
+  height: 342px;
+  overflow-y: auto;
+}
 .messenger-card {
   display: flex;
   flex-direction: column;
 
   .messenger-content {
     flex: 1;
-    overflow-y: auto;
 
-    .channel-wrapper {
+    /*     .channel-wrapper {
       height: 100%;
-    }
+    } */
   }
 
   .messenger-messages {
@@ -114,10 +126,32 @@ watch(mes, (c) => {
     color: #aaa;
     min-height: 200px;
     display: flex;
-    align-content: center;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 40px;
     height: 100%;
+
+    img {
+      width: 143px;
+      height: 143px;
+      object-fit: contain;
+    }
+
+    span[name="connect"] {
+      font-size: 15px;
+      line-height: 18px;
+      text-transform: uppercase;
+      color: #ff5c5c;
+    }
   }
+}
+
+.preloader {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

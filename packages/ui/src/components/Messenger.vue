@@ -75,6 +75,7 @@ const handleJoinToChannel = (name: string) => {
               :key="ch.name"
               :pubkey="ch.pubkey"
               :channel="ch.data"
+              active-class="select-channel"
               :is-active="`${state.channelAddr}` === `${ch.pubkey}`"
               @select="loadChannel(ch.pubkey)"
             />
@@ -141,7 +142,7 @@ const handleJoinToChannel = (name: string) => {
 
 <style lang="scss">
 .messenger-wrapper {
-  max-width: 800px;
+  max-width: 750px;
   margin: 0 auto;
 
   .messenger-main {
@@ -167,14 +168,6 @@ const handleJoinToChannel = (name: string) => {
   flex: 1;
   height: 100%;
 }
-.messenger-messages {
-  width: 100%;
-  max-width: 600px;
-  max-height: 342px;
-  padding: 20px 30px;
-  overflow-y: auto;
-  min-height: 200px;
-}
 
 .messenger-empty {
   padding: 2rem;
@@ -199,7 +192,7 @@ const handleJoinToChannel = (name: string) => {
   position: relative;
   padding: 0;
   border-radius: 0;
-  width: 170px;
+  width: 220px;
   display: flex;
   flex-direction: column;
   background: #fdfcfc !important;
@@ -325,6 +318,18 @@ const handleJoinToChannel = (name: string) => {
     color: #fff;
     font-size: 11px;
     text-transform: capitalize;
+  }
+}
+
+.select-channel {
+  background: $primary;
+
+  .chat-name {
+    color: #fff;
+  }
+
+  .q-spinner {
+    color: #fff !important;
   }
 }
 </style>

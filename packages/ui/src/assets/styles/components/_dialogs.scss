@@ -15,5 +15,9 @@
   font-weight: 400;
   padding-top: 5px;
   min-width: 120px;
-  background-color: #455a64;
+  background-color: $yellow;
+
+  span[name="wallet"] {
+    transform: translateY(-1px);
+  }
 }

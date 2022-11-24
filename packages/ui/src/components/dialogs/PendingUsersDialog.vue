@@ -15,12 +15,10 @@ const deleteMember = useChannelDeleteMember()
 const handleAuthorize = async (key: PublicKey, addr: PublicKey) => {
   state.channelAddr = addr
   await authorizeMember.submit(key)
-  await refreshList()
 }
 const handleDelete = async (key: PublicKey, addr: PublicKey) => {
   state.channelAddr = addr
   await deleteMember.submit(key)
-  await refreshList()
 }
 
 const isLoading = computed(() => authorizeMember.state.loading)
