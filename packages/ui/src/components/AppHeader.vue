@@ -1,28 +1,26 @@
 <template>
   <q-header class="app-header">
     <div class="container">
-      <q-toolbar>
-        <div class="app-header__info">
-          <div class="app-header__logo">
-            <div class="logo-wrapper">
-              <router-link to="/" />
-            </div>
-          </div>
-
-          <div class="app-header__title">
-            <h1>BLOCKCHAIN messenger <span class="marked">SOLANA</span> </h1>
+      <div class="app-header__info">
+        <div class="app-header__logo">
+          <div class="logo-wrapper">
+            <router-link to="/" />
           </div>
         </div>
 
-        <q-space />
-
-        <div class="app-header__right">
-          <div class="app-header__buttons">
-            <cluster-selector class="app-header__cluster-btn header-btn" />
-            <connect-wallet class="app-header__wallet-btn header-btn" />
-          </div>
+        <div class="app-header__title">
+          <h1>BLOCKCHAIN <br> messenger <span class="marked">SOLANA</span> </h1>
         </div>
-      </q-toolbar>
+      </div>
+
+      <q-space />
+
+      <div class="app-header__right">
+        <div class="app-header__buttons">
+          <cluster-selector class="app-header__cluster-btn header-btn" />
+          <connect-wallet class="app-header__wallet-btn header-btn" />
+        </div>
+      </div>
     </div>
   </q-header>
 </template>

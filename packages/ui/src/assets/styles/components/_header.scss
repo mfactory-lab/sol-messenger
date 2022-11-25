@@ -15,6 +15,10 @@ $app-header-marked-color: #00a57d;
     justify-content: center;
     align-items: center;
     min-height: $app-header-height;
+    
+    @media (max-width: $breakpoint-xs) {
+      flex-direction: column;
+    }
   }
 
   &__title {
@@ -23,7 +27,11 @@ $app-header-marked-color: #00a57d;
       text-transform: uppercase;
       font-weight: 500;
       line-height: 19.5px;
-      font-family: "Montserrat", sans-serif;
+      font-family: $font-secondary;
+
+      @media (max-width: $breakpoint-xs) {
+        font-size: 19px;
+      }
 
       .marked {
         color: $app-header-marked-color;
@@ -36,6 +44,12 @@ $app-header-marked-color: #00a57d;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    gap: 33px;
+
+    @media (max-width: $breakpoint-xs) {
+      padding: 13px 0 11px;
+      gap: 10px;
+    }
   }
 
   &__nav {
@@ -63,6 +77,13 @@ $app-header-marked-color: #00a57d;
     height: 60px;
     margin-right: 10px;
 
+    @media (max-width: $breakpoint-xs) {
+      width: 93px;
+      height: 77px;
+      right: -4px;
+    }
+
+
     .logo-wrapper {
       height: 100%;
       position: static;
@@ -70,16 +91,19 @@ $app-header-marked-color: #00a57d;
       &::after {
         content: "";
         position: absolute;
-        width: 39px;
-        height: 39px;
+        width: 36px;
+        height: 36px;
         background: url(@/assets/img/solana-logo-green.svg) no-repeat;
-        bottom: -22px;
-        left: 15px;
-        filter: drop-shadow(0px 3px 2px rgba(0, 0, 0, 0.5));
+        background-size: 100% 100%;
+        top: 3px;
+        right: -14px;
 
-        @media (max-width: $breakpoint-xs) {
-          display: none;
+        @media (max-width: $breakpoint-sm) {
+          width: 22px;
+          height: 22px;
+          right: -7px;
         }
+
       }
 
       a {
@@ -90,6 +114,10 @@ $app-header-marked-color: #00a57d;
         background: url("@/assets/img/logo-bg.svg") no-repeat 50% 0;
         background-size: contain;
         filter: drop-shadow(0px 3px 2px rgba(0, 0, 0, 0.3));
+
+        @media (max-width: $breakpoint-xs) {
+          filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.3));
+        }
       }
       img {
         margin-top: -5px;
@@ -104,13 +132,25 @@ $app-header-marked-color: #00a57d;
   }
 
   &__buttons {
+    display: flex;
+
+    @media (max-width: $breakpoint-xs) {
+      margin-bottom: 24px;
+    }
+
     .header-btn {
-      box-shadow: $app-header-btn-shadow;
-      font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: $font-primary;
       line-height: 16px;
       font-size: 14px;
-      padding: 0 30px;
-      width: 180px;
+      height: 36px;
+
+      &:first-child {
+        width: 150px;
+      }
+
+      &:last-child {
+        width: 180px;
+      }
     }
   }
 
@@ -131,7 +171,6 @@ $app-header-marked-color: #00a57d;
     height: 32px;
     min-height: auto;
     font-weight: 400;
-    padding-top: 5px;
     min-width: 120px;
     background-color: $primary;
   }
@@ -149,10 +188,6 @@ $app-header-marked-color: #00a57d;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-    }
-
-    &__title {
-      margin-top: 6px;
     }
 
     &__logo {
@@ -215,14 +250,6 @@ $app-header-marked-color: #00a57d;
     flex-direction: column;
   }
   .app-header {
-    &__logo {
-      width: 40px;
-      height: 40px;
-      img {
-        width: 40px;
-        height: 40px;
-      }
-    }
 
     &__nav {
       width: 100%;
