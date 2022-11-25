@@ -32,13 +32,13 @@ function getStatusClass(status: any) {
           <q-item
             v-for="m in state.channelMembers"
             :key="m.pubkey.toString()"
-            active-class="bg-teal-1"
+            active-class="owner"
             :active="`${m.pubkey}` === `${state.channelMembershipAddr}`"
             class="memberlist-item"
           >
             <q-item-section class="memberlist-info">
               <q-item-label class="row justify-between">
-                <span class="text-weight-medium">
+                <span class="text-weight-medium wallet">
                   {{ formatMemberName(m.data) }}</span>
                 <q-badge
                   :class="getStatusClass(m.data.status.__kind)"

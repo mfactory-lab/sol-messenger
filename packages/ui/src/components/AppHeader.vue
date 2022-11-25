@@ -1,5 +1,5 @@
 <template>
-  <q-header class="app-header">
+  <header class="app-header">
     <div class="container">
       <div class="app-header__info">
         <div class="app-header__logo">
@@ -22,7 +22,7 @@
         </div>
       </div>
     </div>
-  </q-header>
+  </header>
 </template>
 
 <style lang="scss">
