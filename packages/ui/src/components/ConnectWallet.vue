@@ -124,7 +124,6 @@ function ok() {
   <q-btn
     v-if="connected"
     v-bind="$attrs"
-    :class="$style.btn"
     :ripple="false"
     color="primary-gray"
     text-color="white"
@@ -139,8 +138,10 @@ function ok() {
     v-else
     v-bind="$attrs"
     color="primary-gray"
+    class="q-pa-none btn"
     text-color="white"
     square
+    flat
     :ripple="false"
     :loading="connecting"
     @click="show"
@@ -255,17 +256,6 @@ function ok() {
     &:hover {
       border-color: #e8e8e8;
     }
-  }
-}
-</style>
-
-<style lang="scss" module>
-.btn {
-  white-space: nowrap;
-  flex-wrap: nowrap;
-  img {
-    height: 0.6em;
-    margin-right: 0.2em;
   }
 }
 </style>

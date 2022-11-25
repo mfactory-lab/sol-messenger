@@ -1,0 +1,41 @@
+body.body--dark {
+    .app-header {
+        background: $dark-page;
+    }
+    .app-info,
+    .app-header__title {
+        color: #cdd1d3;
+    }
+    .messenger-content,
+    .messenger-channels,
+    .message-control {
+        background-color: $bg-dark !important;
+    }
+
+    .message-input,
+    .panel-search,
+    .panel-info,
+    .custom-tooltip {
+        background: #262727 !important;
+    }
+
+    .custom-tooltip {
+        color: #fff !important;
+        box-shadow: 1px 1px 3px 0 rgb(255 255 255 / 20%) !important;
+    }
+
+    .owner {
+        background: #193440f0;
+
+        .wallet {
+            color: #ffffffde;
+        }
+    }
+
+    .panel-toolbar {
+        border: 1px solid #7f7f7f;
+    }
+    .panel-search {
+        border-right: 1px solid #5c5d5d;
+    }
+}

@@ -59,7 +59,6 @@ const create = [
 
 <style lang="scss">
 .how-it-works {
-  max-width: 750px;
   margin: 0 auto;
   padding-bottom: 28px;
   position: relative;
@@ -68,6 +67,10 @@ const create = [
   color: $primary;
   padding: 24px 0 0;
   width: 100%;
+
+  @media (max-width: $breakpoint-xs) {
+    width: 95%;
+  }
 
   &__title {
     font-weight: 700;

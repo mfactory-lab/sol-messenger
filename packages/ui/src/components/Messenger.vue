@@ -332,4 +332,7 @@ const handleJoinToChannel = (name: string) => {
     color: #fff !important;
   }
 }
+.owner {
+  background: #e0f2f1;
+}
 </style>

@@ -43,7 +43,7 @@ const isDelete = computed(() => deleteMember.state.loading)
             :label="ch.channel.data.name"
             caption="channel"
             :default-opened="idx === 0"
-            header-class="bg-blue-grey-1"
+            header-class="owner"
           >
             <q-list separator>
               <q-item
@@ -106,5 +106,8 @@ const isDelete = computed(() => deleteMember.state.loading)
 }
 .pending-item {
   padding: 5px 15px;
+}
+.owner {
+  background: #eceff1;
 }
 </style>

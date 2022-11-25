@@ -134,6 +134,7 @@ const isInChat = (ch: OwnChannel) => {
               </span>
             </q-item-section>
             <div v-if="isInChat(ch)" class="already-in-chat">
+              <custom-tooltip text="already in channel" />
               <check-icon size="18" />
             </div>
           </q-item>

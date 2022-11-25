@@ -25,7 +25,6 @@ const memberStatus = computed(
       ?.status,
 )
 const isPending = computed(() => memberStatus.value === 'Pending')
-
 const initials = computed(() => props.channel.name.slice(0, 2))
 
 const isPublicChannel = computed(() => props.channel.flags === 1)
