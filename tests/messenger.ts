@@ -42,7 +42,7 @@ describe('messenger', () => {
     let channel: PublicKey
 
     it('can init a public channel', async () => {
-      const data = { name: 'General', public: true, maxMessages: 15 }
+      const data = { name: 'General', public: true, maxMessages: 100 }
       const { channel: _channel } = await client.initChannel(data)
       channel = _channel.publicKey
 
@@ -74,7 +74,7 @@ describe('messenger', () => {
     let channel: Keypair
 
     it('can init a private channel', async () => {
-      const data = { name: 'test', memberName: 'creator', maxMessages: 10 }
+      const data = { name: 'test', memberName: 'creator', maxMessages: 100 }
       const { cekEncrypted, channel: _channel } = await client.initChannel(data)
       channel = _channel
       const channelInfo = await client.loadChannel(channel.publicKey)
