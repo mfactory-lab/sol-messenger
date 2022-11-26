@@ -8,7 +8,7 @@
         {
           "name": "channel",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "membership",
@@ -502,7 +502,7 @@
           {
             "name": "messages",
             "docs": [
-              "List of messages"
+              "List of latest messages"
             ],
             "type": {
               "vec": {

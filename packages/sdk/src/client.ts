@@ -1,7 +1,7 @@
 import type { AnchorProvider } from '@project-serum/anchor'
 import { BorshCoder, EventManager } from '@project-serum/anchor'
 import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
-import { Keypair, PublicKey, Transaction } from '@solana/web3.js'
+import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
 import type { CEKData, Message } from './generated'
 import {
@@ -25,8 +25,7 @@ import {
   createLeaveChannelInstruction,
   createPostMessageInstruction,
   createReadMessageInstruction,
-  errorFromCode,
-  errorFromName,
+  errorFromCode, errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -102,6 +101,7 @@ export class MessengerClient {
   async loadAllChannels() {
     const accounts = await Channel.gpaBuilder()
       .addFilter('accountDiscriminator', channelDiscriminator)
+      // .addFilter('name', name)
       .run(this.provider.connection)
 
     return accounts.map((acc) => {
@@ -117,16 +117,6 @@ export class MessengerClient {
    */
   async loadChannel(addr: PublicKey, commitment?: Commitment) {
     return Channel.fromAccountAddress(this.provider.connection, addr, commitment)
-  }
-
-  /**
-   * Load list of {@link Channel} participated by user
-   * TODO: implement
-   */
-  async loadMyChannels() {
-    const accounts = await this.loadMemberships()
-    // return this.provider.connection.getMultipleAccountsInfo()
-    return accounts
   }
 
   /**
@@ -254,6 +244,22 @@ export class MessengerClient {
     const authority = this.provider.publicKey
 
     const tx = new Transaction()
+
+    // TODO: refactory
+    const space = 109 + (453 * props.maxMessages)
+
+    tx.add(
+      SystemProgram.createAccount({
+        fromPubkey: authority,
+        newAccountPubkey: channel.publicKey,
+        lamports: await this.connection.getMinimumBalanceForRentExemption(
+          space,
+          opts?.commitment,
+        ),
+        space,
+        programId: this.programId,
+      }),
+    )
 
     tx.add(
       createInitChannelInstruction({

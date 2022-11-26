@@ -37,7 +37,7 @@ export const initChannelStruct = new beet.FixableBeetArgsStruct<
 /**
  * Accounts required by the _initChannel_ instruction
  *
- * @property [_writable_, **signer**] channel
+ * @property [_writable_] channel
  * @property [_writable_] membership
  * @property [_writable_] device
  * @property [_writable_, **signer**] authority
@@ -83,7 +83,7 @@ export function createInitChannelInstruction(
     {
       pubkey: accounts.channel,
       isWritable: true,
-      isSigner: true,
+      isSigner: false,
     },
     {
       pubkey: accounts.membership,
