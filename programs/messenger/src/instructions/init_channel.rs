@@ -80,12 +80,8 @@ impl InitChannelData {
     data: InitChannelData,
 )]
 pub struct InitChannel<'info> {
-    #[account(
-        init,
-        payer = authority,
-        space = Channel::space(data.max_messages),
-    )]
-    channel: Box<Account<'info, Channel>>,
+    #[account(zero)]
+    channel: Account<'info, Channel>,
 
     #[account(
         init,

@@ -22,7 +22,7 @@ pub struct Channel {
     pub message_count: u64,
     /// The maximum number of messages that are stored in [messages]
     pub max_messages: u16,
-    /// List of messages
+    /// List of latest messages
     pub messages: Vec<Message>,
 }
 
@@ -253,9 +253,10 @@ mod tests {
 
     #[test]
     fn test() {
-        msg!("{:?}", ChannelMembershipAccess::AddMember);
-        msg!("{:?}", ChannelMembershipAccess::AuthorizeMember);
-        msg!("{:?}", ChannelMembershipAccess::Admin);
-        unimplemented!();
+        msg!("{:?}", Channel::space(0));
+        // msg!("{:?}", ChannelMembershipAccess::AddMember);
+        // msg!("{:?}", ChannelMembershipAccess::AuthorizeMember);
+        // msg!("{:?}", ChannelMembershipAccess::Admin);
+        // unimplemented!();
     }
 }
