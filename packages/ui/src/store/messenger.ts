@@ -218,9 +218,9 @@ export const useMessengerStore = defineStore('messenger', () => {
   async function loadChannel(addr: Address) {
     state.channelLoading = true
     state.channelMessages = []
-    state.channelMembers = []
+    state.channelMembers = state.channelMembers ?? []
     state.channelMembershipAddr = undefined
-    state.channelMembership = undefined
+    state.channelMembership = state.channelMembership ?? undefined
     state.channelAddr = new PublicKey(addr)
 
     try {
@@ -351,7 +351,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       key: new PublicKey(addr),
       opts: { commitment: 'finalized' },
     })
-    await refreshMembers()
   }
 
   async function authorizeMember(key: Address) {

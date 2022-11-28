@@ -8,7 +8,7 @@ const dialogProps = defineProps({
 
 const showDialog = ref(false)
 
-const { state, refreshList } = useMessengerStore()
+const { state } = useMessengerStore()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
 

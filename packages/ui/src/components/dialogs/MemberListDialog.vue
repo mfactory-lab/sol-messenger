@@ -12,9 +12,8 @@ const emit = defineEmits(['submit', 'deleteMember'])
 const { state } = useMessengerStore()
 const channel = useChannelStore()
 
-const isCanAuthorizedMember = (status: string) => {
-  return status === 'Pending' && channel.canAuthorizeMember
-}
+const isCanAuthorizedMember = (status: string) =>
+  status === 'Pending' && channel.canAuthorizeMember
 
 function getStatusClass(status: any) {
   return String(status).toLowerCase()

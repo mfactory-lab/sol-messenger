@@ -5,7 +5,7 @@ import type { AllChannels } from './messenger'
 export const useNotificationsStore = defineStore('notifications', () => {
   const wallet = useAnchorWallet()
 
-  const { loadMembers } = useMessengerStore()
+  const { loadMembers, state: messengerStore } = useMessengerStore()
   const channel = useChannelStore()
 
   const state = reactive({
@@ -15,10 +15,11 @@ export const useNotificationsStore = defineStore('notifications', () => {
   })
 
   watch(
-    () => channel.ownChannels,
+    [() => channel.ownChannels,
+      () => messengerStore.channelMembers],
     async (p, n) => {
       if (n.length > 0) {
-        await loadMemberships(n)
+        await loadMemberships(n[0])
       }
     },
   )
