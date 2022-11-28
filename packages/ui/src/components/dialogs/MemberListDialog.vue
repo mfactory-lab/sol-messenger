@@ -39,12 +39,12 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
             class="memberlist-item"
           >
             <q-item-section class="memberlist-info">
-              <q-item-label class="row justify-between">
+              <q-item-label class="row">
                 <span class="text-weight-medium wallet">
                   {{ formatMemberName(m.data) }}</span>
                 <q-badge
                   :class="getStatusClass(m.data.status.__kind)"
-                  class="memberlist-status q-pa-xs"
+                  class="memberlist-status q-pa-xs q-ml-lg"
                 >
                   {{ m.data.status.__kind }}
                 </q-badge>
