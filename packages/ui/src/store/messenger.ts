@@ -205,9 +205,14 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function joinChannel(addr: Address, name: string) {
     const channel = new PublicKey(addr)
-    await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
-    await loadChannel(addr)
-    await refreshList()
+    try {
+      await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
+      await loadChannel(addr)
+      const joinedChannel = { pubkey: addr.toString(), status: 'Pending' }
+      state.ownChannels.push(joinedChannel)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   async function loadChannel(addr: Address) {
