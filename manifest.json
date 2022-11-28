@@ -23,13 +23,13 @@
     "file": "assets/mathwallet.1d763e81.svg",
     "src": "src/assets/img/wallets/mathwallet.svg"
   },
-  "src/assets/img/info.svg": {
-    "file": "assets/info.bfade5eb.svg",
-    "src": "src/assets/img/info.svg"
-  },
   "src/assets/img/solana-logo.svg": {
     "file": "assets/solana-logo.3caace62.svg",
     "src": "src/assets/img/solana-logo.svg"
+  },
+  "src/assets/img/info.svg": {
+    "file": "assets/info.bfade5eb.svg",
+    "src": "src/assets/img/info.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -84,18 +84,18 @@
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "index.html": {
-    "file": "assets/index.590564d8.js",
+    "file": "assets/index.3ebaefcd.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.4bda8dd1.js"
+      "_vendor.b54ab2b2.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.2fc204f2.css"
+      "assets/index.22f1b2fd.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -121,24 +121,24 @@
       "assets/logo-bg.e59730d9.svg"
     ]
   },
-  "_vendor.4bda8dd1.js": {
-    "file": "assets/vendor.4bda8dd1.js"
+  "_vendor.b54ab2b2.js": {
+    "file": "assets/vendor.b54ab2b2.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.9f2817c4.js",
+    "file": "assets/empty.31acf6db.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.4bda8dd1.js"
+      "_vendor.b54ab2b2.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.2bf59d05.js",
+    "file": "assets/_...all_.8c2995af.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.4bda8dd1.js",
+      "_vendor.b54ab2b2.js",
       "index.html"
     ],
     "css": [
@@ -150,7 +150,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.2fc204f2.css",
+    "file": "assets/index.22f1b2fd.css",
     "src": "index.css"
   }
 }
