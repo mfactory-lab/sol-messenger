@@ -159,7 +159,7 @@ const isInChat = (ch: OwnChannel) => {
           @click="refreshList"
         >
           <refresh-icon style="color: #fff" />
-          <custom-tooltip text="Request to join" />
+          <custom-tooltip text="Refresh channels" />
         </q-btn>
         <q-btn
           class="control-button"

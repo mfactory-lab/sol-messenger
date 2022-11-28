@@ -3,9 +3,14 @@ import { useWallet } from 'solana-wallets-vue'
 
 const DEFAULT_MAX_MESSAGES = 15
 
+export async function userBalance() {
+  const { balance } = useUserStore()
+  return await balance > 0
+}
+
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
-  const { isWalletConnected, ok, error } = useHelper()
+  const { isWalletConnected, ok, error, custom } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -19,6 +24,10 @@ export function useChannelCreate() {
   async function submit() {
     if (isWalletConnected()) {
       try {
+        if (!await userBalance()) {
+          custom('You don\'t have enough SOL on your balance')
+          return
+        }
         await createChannel(state.name, {
           maxMessages: state.maxMessages,
           public: state.public,
@@ -62,6 +71,7 @@ export function useChannelDelete() {
       return
     }
     try {
+      console.log(await userBalance())
       state.loading = true
       await messenger.deleteChannel(
         messenger.state.channelAddr,
@@ -79,7 +89,7 @@ export function useChannelDelete() {
 }
 
 export function useChannelAuthorizeMember() {
-  const { authorizeMember, refreshList } = useMessengerStore()
+  const { authorizeMember, loadChannel, state: messengerState } = useMessengerStore()
   const { ok, error } = useHelper()
 
   const state = reactive({
@@ -91,7 +101,7 @@ export function useChannelAuthorizeMember() {
     try {
       state.loading = true
       await authorizeMember(key)
-      await refreshList()
+      await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was authorized')
     } catch (e) {
       error('Something went wrong')
@@ -106,7 +116,7 @@ export function useChannelAuthorizeMember() {
 
 export function useChannelAddMember() {
   const { state: messengerState, addMember } = useMessengerStore()
-  const { ok, info, error } = useHelper()
+  const { ok, info, error, custom } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -120,6 +130,10 @@ export function useChannelAddMember() {
       return
     }
     try {
+      if (!await userBalance()) {
+        custom('You don\'t have enough SOL on your balance')
+        return
+      }
       await addMember(data.wallet, data.key, data.name)
       ok('Member was added')
       return true
@@ -146,7 +160,7 @@ export function useChannelAddMember() {
 }
 
 export function useChannelDeleteMember() {
-  const { deleteMember, refreshList } = useMessengerStore()
+  const { deleteMember, loadChannel, state: messengerState } = useMessengerStore()
   const { ok, error } = useHelper()
 
   const state = reactive({
@@ -157,7 +171,7 @@ export function useChannelDeleteMember() {
     try {
       state.loading = true
       await deleteMember(key)
-      await refreshList()
+      await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was deleted')
     } catch (e) {
       error('Something went wrong')
@@ -172,7 +186,7 @@ export function useChannelDeleteMember() {
 
 export function useChannelJoin() {
   const { state: messengerState, joinChannel } = useMessengerStore()
-  const { ok, info, error } = useHelper()
+  const { ok, info, error, custom } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -187,6 +201,10 @@ export function useChannelJoin() {
     }
     state.loading = true
     try {
+      if (!await userBalance()) {
+        custom('You don\'t have enough SOL on your balance')
+        return
+      }
       await joinChannel(messengerState.channelAddr, state.name)
       reset()
       ok('Request was sent')
@@ -221,6 +239,7 @@ export function useHelper() {
   const ok = (message: string) => notify({ type: 'positive', message, timeout: 2000 })
   const info = (message: string) => notify({ type: 'info', message, timeout: 2000 })
   const error = (message: string) => notify({ type: 'negative', message, timeout: 2000 })
+  const custom = (message: string) => notify({ type: 'warning', message, position: 'top' })
 
   function isWalletConnected() {
     if (!wallet.publicKey.value) {
@@ -230,5 +249,5 @@ export function useHelper() {
     return true
   }
 
-  return { ok, info, error, isWalletConnected }
+  return { ok, info, error, custom, isWalletConnected }
 }

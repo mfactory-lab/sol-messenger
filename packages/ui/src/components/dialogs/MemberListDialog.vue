@@ -12,13 +12,14 @@ const emit = defineEmits(['submit', 'deleteMember'])
 const { state } = useMessengerStore()
 const channel = useChannelStore()
 
-const isCanAuthorizedMember = (status: string) => {
-  return status === 'Pending' && channel.canAuthorizeMember
-}
+const isCanAuthorizedMember = (status: string) =>
+  status === 'Pending' && channel.canAuthorizeMember
 
 function getStatusClass(status: any) {
   return String(status).toLowerCase()
 }
+
+const isOwner = (name: string) => state.channel?.creator.toBase58() === name
 </script>
 
 <template>
@@ -37,12 +38,12 @@ function getStatusClass(status: any) {
             class="memberlist-item"
           >
             <q-item-section class="memberlist-info">
-              <q-item-label class="row justify-between">
+              <q-item-label class="row">
                 <span class="text-weight-medium wallet">
                   {{ formatMemberName(m.data) }}</span>
                 <q-badge
                   :class="getStatusClass(m.data.status.__kind)"
-                  class="memberlist-status q-pa-xs"
+                  class="memberlist-status q-pa-xs q-ml-lg"
                 >
                   {{ m.data.status.__kind }}
                 </q-badge>
@@ -72,7 +73,10 @@ function getStatusClass(status: any) {
                 Authorize
               </q-btn>
               <q-btn
-                v-if="channel.canDeleteMember"
+                v-if="
+                  channel.canDeleteMember
+                    && !isOwner(m.data.authority.toBase58())
+                "
                 color="negative"
                 size="sm"
                 unelevated

@@ -205,17 +205,22 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function joinChannel(addr: Address, name: string) {
     const channel = new PublicKey(addr)
-    await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
-    await loadChannel(addr)
-    await refreshList()
+    try {
+      await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
+      await loadChannel(addr)
+      const joinedChannel = { pubkey: addr.toString(), status: 'Pending' }
+      state.ownChannels.push(joinedChannel)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   async function loadChannel(addr: Address) {
     state.channelLoading = true
-    state.channelMessages = []
-    state.channelMembers = []
+    state.channelMessages = state.channelMessages ?? []
+    state.channelMembers = state.channelMembers ?? []
     state.channelMembershipAddr = undefined
-    state.channelMembership = undefined
+    state.channelMembership = state.channelMembership ?? undefined
     state.channelAddr = new PublicKey(addr)
 
     try {
@@ -346,7 +351,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       key: new PublicKey(addr),
       opts: { commitment: 'finalized' },
     })
-    await refreshMembers()
   }
 
   async function authorizeMember(key: Address) {
