@@ -19,6 +19,8 @@ const isCanAuthorizedMember = (status: string) => {
 function getStatusClass(status: any) {
   return String(status).toLowerCase()
 }
+
+const isOwner = (name: string) => state.channel?.creator.toBase58() === name
 </script>
 
 <template>
@@ -72,7 +74,10 @@ function getStatusClass(status: any) {
                 Authorize
               </q-btn>
               <q-btn
-                v-if="channel.canDeleteMember"
+                v-if="
+                  channel.canDeleteMember
+                    && !isOwner(m.data.authority.toBase58())
+                "
                 color="negative"
                 size="sm"
                 unelevated
