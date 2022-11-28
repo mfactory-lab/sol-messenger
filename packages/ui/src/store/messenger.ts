@@ -217,7 +217,7 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function loadChannel(addr: Address) {
     state.channelLoading = true
-    state.channelMessages = []
+    state.channelMessages = state.channelMessages ?? []
     state.channelMembers = state.channelMembers ?? []
     state.channelMembershipAddr = undefined
     state.channelMembership = state.channelMembership ?? undefined
