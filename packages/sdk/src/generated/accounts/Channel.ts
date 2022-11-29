@@ -17,6 +17,7 @@ import { messageBeet } from '../types/Message'
  * @category generated
  */
 export interface ChannelArgs {
+  workspace: string
   name: string
   creator: web3.PublicKey
   createdAt: beet.bignum
@@ -38,6 +39,7 @@ export const channelDiscriminator = [49, 159, 99, 106, 220, 87, 219, 88]
  */
 export class Channel implements ChannelArgs {
   private constructor(
+    readonly workspace: string,
     readonly name: string,
     readonly creator: web3.PublicKey,
     readonly createdAt: beet.bignum,
@@ -54,6 +56,7 @@ export class Channel implements ChannelArgs {
    */
   static fromArgs(args: ChannelArgs) {
     return new Channel(
+      args.workspace,
       args.name,
       args.creator,
       args.createdAt,
@@ -171,6 +174,7 @@ export class Channel implements ChannelArgs {
    */
   pretty() {
     return {
+      workspace: this.workspace,
       name: this.name,
       creator: this.creator.toBase58(),
       createdAt: (() => {
@@ -226,6 +230,7 @@ export const channelBeet = new beet.FixableBeetStruct<
 >(
   [
     ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
+    ['workspace', beet.utf8String],
     ['name', beet.utf8String],
     ['creator', beetSolana.publicKey],
     ['createdAt', beet.i64],

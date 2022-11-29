@@ -9,6 +9,7 @@ import * as beet from '@metaplex-foundation/beet'
 import type { CEKData } from './CEKData'
 import { cEKDataBeet } from './CEKData'
 export interface InitChannelData {
+  workspace: string
   name: string
   maxMessages: number
   memberName: string
@@ -24,6 +25,7 @@ export interface InitChannelData {
 export const initChannelDataBeet
   = new beet.FixableBeetArgsStruct<InitChannelData>(
     [
+      ['workspace', beet.utf8String],
       ['name', beet.utf8String],
       ['maxMessages', beet.u16],
       ['memberName', beet.utf8String],

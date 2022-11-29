@@ -1,7 +1,7 @@
 import type { AnchorProvider } from '@project-serum/anchor'
 import { BorshCoder, EventManager } from '@project-serum/anchor'
-import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
 import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
+import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
 import type { CEKData, Message } from './generated'
 import {
@@ -49,8 +49,18 @@ export enum MessageFlags {
   isEncrypted = 0b001,
 }
 
+const constants = {
+  maxWorkspaceLength: 32,
+  maxChannelNameLength: 32,
+  maxMemberNameLength: 32,
+  maxMessageLength: 400,
+  maxCEKLength: 100,
+}
+
 export class MessengerClient {
   programId = PROGRAM_ID
+  constants = constants
+  workspace = undefined
 
   _coder: BorshCoder
   _events: EventManager
@@ -65,6 +75,25 @@ export class MessengerClient {
 
   get connection() {
     return this.provider.connection
+  }
+
+  utils = {
+    channel: {
+      isPublic: (c: Channel) => (c.flags & ChannelFlags.IsPublic) > 0,
+      isPermissionless: (c: Channel) => (c.flags & ChannelFlags.Permissionless) > 0,
+    },
+    member: {
+      isAuthorized: (m: ChannelMembership) => m.status === ChannelMembershipStatus.Authorized,
+      isPending: (m: ChannelMembership) => m.status === ChannelMembershipStatus.Pending,
+      isOwner: (m: ChannelMembership) => m.flags >= ChannelMembershipFlags.Owner,
+      isAdmin: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.Admin) === ChannelMembershipFlags.Admin,
+      canAddMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.AddMember) > 0,
+      canDeleteMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.DeleteMember) > 0,
+      canAuthorizeMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.AuthorizeMember) > 0,
+    },
+    message: {
+      isEncrypted: (m: Message) => (m.flags & MessageFlags.isEncrypted) > 0,
+    },
   }
 
   /**
@@ -98,13 +127,23 @@ export class MessengerClient {
   /**
    * Load all channels
    */
-  async loadAllChannels() {
-    const accounts = await Channel.gpaBuilder()
+  async loadAllChannels(filter: { name?: string; creator?: string } = {}) {
+    const builder = Channel.gpaBuilder()
       .addFilter('accountDiscriminator', channelDiscriminator)
-      // .addFilter('name', name)
-      .run(this.provider.connection)
 
-    return accounts.map((acc) => {
+    if (this.workspace !== undefined) {
+      builder.addFilter('workspace', this.workspace)
+    }
+
+    if (filter.name) {
+      builder.addFilter('name', filter.name)
+    }
+
+    if (filter.creator) {
+      builder.addFilter('creator', filter.creator)
+    }
+
+    return (await builder.run(this.provider.connection)).map((acc) => {
       return {
         pubkey: acc.pubkey,
         data: Channel.fromAccountInfo(acc.account)[0],
@@ -245,8 +284,7 @@ export class MessengerClient {
 
     const tx = new Transaction()
 
-    // TODO: refactory
-    const space = 109 + (453 * props.maxMessages)
+    const space = this.channelSpace(props.maxMessages)
 
     tx.add(
       SystemProgram.createAccount({
@@ -270,6 +308,7 @@ export class MessengerClient {
         authority,
       }, {
         data: {
+          workspace: props.workspace ?? '',
           name: props.name,
           public: props.public ?? false,
           permissionless: props.permissionless ?? false,
@@ -661,7 +700,7 @@ export class MessengerClient {
   }
 
   /**
-   * Set the `last_read_message_id` of the {@link ChannelMembership}
+   * Set the `lastReadMessageId` of the {@link ChannelMembership}
    */
   async readMessage(props: ReadMessageProps, opts?: ConfirmOptions) {
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
@@ -689,23 +728,28 @@ export class MessengerClient {
     return { signature }
   }
 
-  utils = {
-    channel: {
-      isPublic: (c: Channel) => (c.flags & ChannelFlags.IsPublic) > 0,
-      isPermissionless: (c: Channel) => (c.flags & ChannelFlags.Permissionless) > 0,
-    },
-    member: {
-      isAuthorized: (m: ChannelMembership) => m.status === ChannelMembershipStatus.Authorized,
-      isPending: (m: ChannelMembership) => m.status === ChannelMembershipStatus.Pending,
-      isOwner: (m: ChannelMembership) => m.flags >= ChannelMembershipFlags.Owner,
-      isAdmin: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.Admin) === ChannelMembershipFlags.Admin,
-      canAddMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.AddMember) > 0,
-      canDeleteMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.DeleteMember) > 0,
-      canAuthorizeMember: (m: ChannelMembership) => (m.flags & ChannelMembershipFlags.AuthorizeMember) > 0,
-    },
-    message: {
-      isEncrypted: (m: Message) => (m.flags & MessageFlags.isEncrypted) > 0,
-    },
+  /**
+   * Calculate channel space in bytes
+   */
+  channelSpace(maxMessages = 1) {
+    return Channel.byteSize({
+      workspace: 'x'.repeat(this.constants.maxWorkspaceLength),
+      name: 'x'.repeat(this.constants.maxChannelNameLength),
+      creator: PublicKey.default,
+      createdAt: 0,
+      lastMessageAt: 0,
+      flags: 0,
+      memberCount: 0,
+      messageCount: 0,
+      maxMessages,
+      messages: Array(maxMessages).fill({
+        id: 0,
+        sender: PublicKey.default,
+        createdAt: 0,
+        flags: 0,
+        content: 'x'.repeat(this.constants.maxMessageLength),
+      }),
+    })
   }
 }
 
@@ -715,6 +759,7 @@ interface DeleteChannelProps {
 
 interface InitChannelProps {
   name: string
+  workspace?: string
   public?: boolean
   permissionless?: boolean
   memberName?: string

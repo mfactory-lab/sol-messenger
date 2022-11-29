@@ -135,13 +135,36 @@ createErrorFromCodeLookup.set(0x1775, () => new NameTooLongError())
 createErrorFromNameLookup.set('NameTooLong', () => new NameTooLongError())
 
 /**
+ * WorkspaceTooLong: 'Workspace too long'
+ *
+ * @category Errors
+ * @category generated
+ */
+export class WorkspaceTooLongError extends Error {
+  readonly code: number = 0x1776
+  readonly name: string = 'WorkspaceTooLong'
+  constructor() {
+    super('Workspace too long')
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, WorkspaceTooLongError)
+    }
+  }
+}
+
+createErrorFromCodeLookup.set(0x1776, () => new WorkspaceTooLongError())
+createErrorFromNameLookup.set(
+  'WorkspaceTooLong',
+  () => new WorkspaceTooLongError(),
+)
+
+/**
  * MessageTooLong: 'Message too long'
  *
  * @category Errors
  * @category generated
  */
 export class MessageTooLongError extends Error {
-  readonly code: number = 0x1776
+  readonly code: number = 0x1777
   readonly name: string = 'MessageTooLong'
   constructor() {
     super('Message too long')
@@ -151,7 +174,7 @@ export class MessageTooLongError extends Error {
   }
 }
 
-createErrorFromCodeLookup.set(0x1776, () => new MessageTooLongError())
+createErrorFromCodeLookup.set(0x1777, () => new MessageTooLongError())
 createErrorFromNameLookup.set('MessageTooLong', () => new MessageTooLongError())
 
 /**
