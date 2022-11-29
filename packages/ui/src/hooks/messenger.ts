@@ -1,16 +1,26 @@
+import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
+import type { PublicKey } from '@solana/web3.js'
+import { Connection, LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js'
 
 const DEFAULT_MAX_MESSAGES = 15
 
 export async function userBalance() {
-  const { balance } = useUserStore()
-  return await balance > 0
+  const wallet = useWallet()
+
+  const _wallet = wallet.publicKey.value as PublicKey
+
+  const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
+  const walletBalance = await connection.getBalance(_wallet)
+  const balance = await walletBalance / LAMPORTS_PER_SOL
+
+  return balance > 0.1
 }
 
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
-  const { isWalletConnected, ok, error, custom } = useHelper()
+  const { isWalletConnected, ok, error, noSol } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -25,7 +35,7 @@ export function useChannelCreate() {
     if (isWalletConnected()) {
       try {
         if (!await userBalance()) {
-          custom('You don\'t have enough SOL on your balance')
+          noSol()
           return
         }
         await createChannel(state.name, {
@@ -116,7 +126,7 @@ export function useChannelAuthorizeMember() {
 
 export function useChannelAddMember() {
   const { state: messengerState, addMember } = useMessengerStore()
-  const { ok, info, error, custom } = useHelper()
+  const { ok, info, error, noSol } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -131,7 +141,7 @@ export function useChannelAddMember() {
     }
     try {
       if (!await userBalance()) {
-        custom('You don\'t have enough SOL on your balance')
+        noSol()
         return
       }
       await addMember(data.wallet, data.key, data.name)
@@ -186,7 +196,7 @@ export function useChannelDeleteMember() {
 
 export function useChannelJoin() {
   const { state: messengerState, joinChannel } = useMessengerStore()
-  const { ok, info, error, custom } = useHelper()
+  const { ok, info, error, noSol } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -202,7 +212,7 @@ export function useChannelJoin() {
     state.loading = true
     try {
       if (!await userBalance()) {
-        custom('You don\'t have enough SOL on your balance')
+        noSol()
         return
       }
       await joinChannel(messengerState.channelAddr, state.name)
@@ -235,11 +245,33 @@ export function useChannelJoin() {
 export function useHelper() {
   const wallet = useWallet()
 
+  const { airdropSol } = useAirdropStore()
+
   const { notify } = useQuasar()
-  const ok = (message: string) => notify({ type: 'positive', message, timeout: 2000 })
   const info = (message: string) => notify({ type: 'info', message, timeout: 2000 })
   const error = (message: string) => notify({ type: 'negative', message, timeout: 2000 })
-  const custom = (message: string) => notify({ type: 'warning', message, position: 'top' })
+  const ok = (message: string, position = 'bottom' as keyof QNotifyCreateOptions['position']) => notify({
+    type: 'positive',
+    message,
+    timeout: 2000,
+    position,
+  })
+  const noSol = () => notify({
+    type: 'warning',
+    message: 'You don\'t have enough SOL on your balance!',
+    position: 'top',
+    timeout: 0,
+    actions: [
+      {
+        label: 'GET SOL',
+        class: 'btn--no-hover',
+        padding: '0 15px 0 10px',
+        size: '14px',
+        color: 'black',
+        handler: () => airdropSol(),
+      },
+    ],
+  })
 
   function isWalletConnected() {
     if (!wallet.publicKey.value) {
@@ -249,5 +281,5 @@ export function useHelper() {
     return true
   }
 
-  return { ok, info, error, custom, isWalletConnected }
+  return { ok, info, error, noSol, isWalletConnected }
 }
