@@ -444,6 +444,13 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "workspace",
+            "docs": [
+              "Workspace used to group channels"
+            ],
+            "type": "string"
+          },
+          {
             "name": "name",
             "docs": [
               "Name of the channel"
@@ -722,6 +729,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "workspace",
+            "type": "string"
+          },
           {
             "name": "name",
             "type": "string"
@@ -1116,6 +1127,11 @@
     },
     {
       "code": 6006,
+      "name": "WorkspaceTooLong",
+      "msg": "Workspace too long"
+    },
+    {
+      "code": 6007,
       "name": "MessageTooLong",
       "msg": "Message too long"
     }
