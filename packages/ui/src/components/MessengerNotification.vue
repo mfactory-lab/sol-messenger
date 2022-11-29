@@ -58,6 +58,10 @@ const showPendingDialog = () => {
   }
 }
 
+.q-btn.btn--no-hover .q-focus-helper {
+  display: none;
+}
+
 @keyframes ring {
   0% {
     transform: rotate(0);
