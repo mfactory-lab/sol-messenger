@@ -12,4 +12,4 @@ cluster = "localnet"
 wallet = "/Users/tiamo/.config/solana/id.json"
 
 [programs.localnet]
-messenger = "6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm"
+messenger = "4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw"

@@ -67,7 +67,7 @@ export const postMessageInstructionDiscriminator = [
 export function createPostMessageInstruction(
   accounts: PostMessageInstructionAccounts,
   args: PostMessageInstructionArgs,
-  programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
+  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
   const [data] = postMessageStruct.serialize({
     instructionDiscriminator: postMessageInstructionDiscriminator,

@@ -53,7 +53,7 @@ export const deleteDeviceInstructionDiscriminator = [
  */
 export function createDeleteDeviceInstruction(
   accounts: DeleteDeviceInstructionAccounts,
-  programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
+  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
   const [data] = deleteDeviceStruct.serialize({
     instructionDiscriminator: deleteDeviceInstructionDiscriminator,

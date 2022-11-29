@@ -106,7 +106,7 @@ export class Channel implements ChannelArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      '6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm',
+      '4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw',
     ),
   ) {
     return beetSolana.GpaBuilder.fromStruct(programId, channelBeet)

@@ -11,7 +11,7 @@ use anchor_lang::prelude::*;
 use errors::*;
 use instructions::*;
 
-declare_id!("6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm");
+declare_id!("4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw");
 
 #[program]
 pub mod messenger {

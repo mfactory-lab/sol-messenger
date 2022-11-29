@@ -51,7 +51,7 @@ export const leaveChannelInstructionDiscriminator = [
  */
 export function createLeaveChannelInstruction(
   accounts: LeaveChannelInstructionAccounts,
-  programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
+  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
   const [data] = leaveChannelStruct.serialize({
     instructionDiscriminator: leaveChannelInstructionDiscriminator,
