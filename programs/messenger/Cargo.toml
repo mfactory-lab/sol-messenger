@@ -1,6 +1,6 @@
 [package]
 name = "messenger"
-version = "0.0.10"
+version = "0.0.11"
 description = "On-chain messenger"
 authors = ["Vladyslav Korniienko <vk.tiamo@gmail.com>"]
 homepage = "https://jfactory.ch"
