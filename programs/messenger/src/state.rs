@@ -169,15 +169,15 @@ impl ChannelMembership {
     }
 
     pub fn can_add_member(&self, channel: &Channel) -> bool {
-        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::AddMember > 0
+        channel.is_permissionless() || self.flags & ChannelMembershipAccess::AddMember > 0
     }
 
     pub fn can_delete_member(&self, channel: &Channel) -> bool {
-        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::DeleteMember > 0
+        channel.is_permissionless() || self.flags & ChannelMembershipAccess::DeleteMember > 0
     }
 
     pub fn can_authorize_member(&self, channel: &Channel) -> bool {
-        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::AuthorizeMember > 0
+        channel.is_permissionless() || self.flags & ChannelMembershipAccess::AuthorizeMember > 0
     }
 }
 
