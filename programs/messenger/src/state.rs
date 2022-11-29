@@ -6,6 +6,8 @@ use crate::{constants::*, MessengerError};
 
 #[account]
 pub struct Channel {
+    /// Workspace used to group channels
+    pub workspace: String,
     /// Name of the channel
     pub name: String,
     /// Channel creator
@@ -30,6 +32,7 @@ impl Channel {
     /// Calculate channel space
     pub fn space(max_messages: u16) -> usize {
         8 // discriminator
+        + (4 + MAX_WORKSPACE_LENGTH) // workspace
         + (4 + MAX_CHANNEL_NAME_LENGTH) // name
         + 32 // creator key
         + 8 + 8 // creation date + last message date

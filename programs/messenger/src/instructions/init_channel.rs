@@ -1,6 +1,11 @@
 use anchor_lang::prelude::*;
 
-use crate::{constants::MAX_CHANNEL_NAME_LENGTH, events::NewChannelEvent, state::*, MessengerError};
+use crate::{
+    constants::{MAX_CHANNEL_NAME_LENGTH, MAX_WORKSPACE_LENGTH},
+    events::NewChannelEvent,
+    state::*,
+    MessengerError,
+};
 
 pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     data.validate()?;
@@ -10,6 +15,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     let authority = &ctx.accounts.authority;
 
     let channel = &mut ctx.accounts.channel;
+    channel.workspace = data.workspace.to_owned();
     channel.name = data.name.to_owned();
     channel.creator = authority.key();
     channel.member_count = 1;
@@ -57,6 +63,7 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct InitChannelData {
+    pub workspace: String,
     pub name: String,
     pub max_messages: u16,
     pub member_name: String,
@@ -68,6 +75,9 @@ pub struct InitChannelData {
 
 impl InitChannelData {
     pub fn validate(&self) -> Result<()> {
+        if self.workspace.len() > MAX_WORKSPACE_LENGTH {
+            return Err(MessengerError::WorkspaceTooLong.into());
+        }
         if self.name.len() > MAX_CHANNEL_NAME_LENGTH {
             return Err(MessengerError::NameTooLong.into());
         }

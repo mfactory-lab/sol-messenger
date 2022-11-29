@@ -20,6 +20,9 @@ pub enum MessengerError {
     #[msg("Name too long")]
     NameTooLong,
 
+    #[msg("Workspace too long")]
+    WorkspaceTooLong,
+
     #[msg("Message too long")]
     MessageTooLong,
 }
