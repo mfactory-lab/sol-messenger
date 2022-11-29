@@ -9,7 +9,7 @@ test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
 [provider]
 cluster = "localnet"
-wallet = "/Users/tiamo/.config/solana/id.json"
+wallet = "./target/deploy/messenger-manager.json"
 
 [programs.localnet]
 messenger = "4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw"
