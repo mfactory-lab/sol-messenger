@@ -1,4 +1,5 @@
-import { Keypair } from '@solana/web3.js'
+import type { PublicKey } from '@solana/web3.js'
+import { Connection, Keypair, LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js'
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import bs58 from 'bs58'
@@ -40,9 +41,20 @@ export const useUserStore = defineStore('user', () => {
     fromEncoded(secretKey.value = key)
   }
 
+  async function userBalance() {
+    const _wallet = wallet.value?.publicKey
+
+    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
+    const walletBalance = await connection.getBalance(_wallet as PublicKey)
+    const balance = await walletBalance / LAMPORTS_PER_SOL
+
+    return balance > 0.1
+  }
+
   return {
     keypair,
     generateKey,
     importKey,
+    userBalance,
   }
 })

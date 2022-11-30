@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import { DotsIcon } from 'vue-tabler-icons'
+import { ArrowLeftIcon, DotsIcon } from 'vue-tabler-icons'
 
 const emit = defineEmits([
   'search',
@@ -13,6 +14,8 @@ const emit = defineEmits([
 const wallet = useWallet()
 const { state } = useMessengerStore()
 const channelStore = useChannelStore()
+const mobileStore = useMobileStore()
+const { screen } = useQuasar()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
@@ -46,18 +49,40 @@ const pendingUsersCount = computed(() => {
   if (!channelStore.isOwner || !channelStore.isAdmin) {
     return
   }
-  return state.channelMembers.filter(ch => ch.data.status.__kind === 'Pending').length
+  return state.channelMembers.filter(
+    ch => ch.data.status.__kind === 'Pending',
+  ).length
 })
 
 watch(searchText, (s) => {
   onSearch(String(s))
 })
+
+const isArrowBack = computed(
+  () => mobileStore.isMobile && mobileStore.state.searchOrInfo === 'info',
+)
+
+watch(
+  () => state.channelAddr,
+  (ch) => {
+    if (ch) {
+      if (mobileStore.isMobile) {
+        mobileStore.state.searchOrInfo = 'info'
+      }
+    }
+  },
+)
 </script>
 
 <template>
-  <div class="panel-toolbar">
+  <div class="panel-toolbar" :class="mobileStore.state.searchOrInfo">
     <messenger-notification />
 
+    <arrow-left-icon
+      v-if="isArrowBack"
+      class="back-arrow"
+      @click="mobileStore.state.searchOrInfo = 'search'"
+    />
     <div class="panel-search">
       <div class="search-wrapper">
         <q-input
@@ -83,7 +108,7 @@ watch(searchText, (s) => {
       </div>
 
       <q-space class="" />
-      <div class="chat-name">
+      <div class="chat-name" :title="channel?.name">
         {{ channel?.name }}
       </div>
 
@@ -121,7 +146,10 @@ watch(searchText, (s) => {
                 @click="showMembers"
               >
                 <q-item-section>
-                  <div v-if="pendingUsersCount > 0" class="members-count bg-cyan-9">
+                  <div
+                    v-if="pendingUsersCount > 0"
+                    class="members-count bg-cyan-9"
+                  >
                     {{ pendingUsersCount }}
                   </div>
                   <q-btn
@@ -279,6 +307,11 @@ $accent-color: #ffd140;
     display: inline-flex;
     align-items: center;
 
+    @media (max-width: $breakpoint-xs) {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
     &__info {
       cursor: pointer;
       color: $gray-blue;
@@ -326,19 +359,18 @@ $accent-color: #ffd140;
       align-items: center;
     }
     .search-wrapper {
-      width: 100%;
+      width: 85%;
+      margin: 0 auto;
     }
     .panel-info {
       border: none;
       border-top: 1px solid #fff;
-      padding: 5px 10px;
+      padding: 5px 10px 5px 40px;
+      min-height: 44px;
       .chat-info,
       .chat-name {
         font-size: 11px;
       }
-    }
-
-    .search-input {
     }
   }
 }
@@ -366,6 +398,27 @@ input.q-field__native {
     font-size: 12px;
     padding: 6px;
     z-index: 2;
+  }
+}
+
+.back-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
+}
+
+.panel-toolbar.search {
+  .panel-info {
+    @media (max-width: $breakpoint-xs) {
+      display: none;
+    }
+  }
+}
+
+.panel-toolbar.info {
+  .panel-search {
+    display: none;
   }
 }
 </style>
