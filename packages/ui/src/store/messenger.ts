@@ -198,8 +198,13 @@ export const useMessengerStore = defineStore('messenger', () => {
   async function deleteChannel(addr: Address) {
     const channel = new PublicKey(addr)
     await client.deleteChannel({ channel, opts: { commitment: 'confirmed' } })
-    const channelIdx = state.allChannels.findIndex(ch => ch.pubkey.toBase58() === addr.toString())
-    state.allChannels.splice(channelIdx, 1)
+    deleteChannelFromChannels(addr)
+  }
+
+  async function leaveChannel(channel: PublicKey) {
+    console.log('leaveChannel channel === ', channel.toBase58())
+    await client.leaveChannel({ channel, opts: { commitment: 'confirmed' } })
+    deleteChannelFromChannels(channel)
   }
 
   async function joinChannel(addr: Address, name: string) {
@@ -376,9 +381,17 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelAddr = addr
   }
 
+  function deleteChannelFromChannels(addr: PublicKey | string) {
+    const channelIdx = state.allChannels.findIndex(ch => ch.pubkey.toBase58() === addr.toString())
+    state.allChannels.splice(channelIdx, 1)
+    state.channelMessages = []
+    state.channel = undefined
+  }
+
   return {
     state,
     client,
+    leaveChannel,
     loadChannel,
     joinChannel,
     createChannel,

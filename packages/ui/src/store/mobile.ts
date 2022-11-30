@@ -5,7 +5,7 @@ export const useMobileStore = defineStore('mobile', () => {
   const { screen } = useQuasar()
 
   const state = reactive({
-    searchOrInfo: '',
+    searchOrInfo: 'search',
   })
 
   const isMobile = computed(() => screen.xs)

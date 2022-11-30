@@ -228,6 +228,36 @@ export function useChannelJoin() {
   }
 }
 
+export function useChannelLeave() {
+  const messenger = useMessengerStore()
+  const { info, ok, error } = useHelper()
+
+  const state = reactive({
+    loading: false,
+  })
+
+  async function submit() {
+    if (!messenger.state.channelAddr) {
+      info('Please select a channel')
+      return
+    }
+    try {
+      state.loading = true
+      await messenger.leaveChannel(
+        messenger.state.channelAddr,
+      )
+      ok('Channel was abandoned!')
+    } catch (e) {
+      console.log('Error', e)
+      error('Something went wrong')
+    } finally {
+      state.loading = false
+    }
+  }
+
+  return { state, submit }
+}
+
 /**
  * Private helper hook
  */

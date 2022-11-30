@@ -15,6 +15,7 @@ const addMember = useChannelAddMember()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
 const deleteChannel = useChannelDelete()
+const leaveChannel = useChannelLeave()
 
 const postMessageState = reactive({ message: '' })
 const allChannels = computed(() => state.allChannels)
@@ -71,6 +72,7 @@ const isMobileMessages = computed(() => {
       @search="onSearch"
       @show-members="authorizeMember.state.dialog = true"
       @delete-channel="deleteChannel.submit(state.channelAddr)"
+      @leave-channel="leaveChannel.submit(state.channelAddr)"
       @add-member="addMember.state.dialog = true"
       @show-device-key="showDeviceKeyDialog = true"
     />

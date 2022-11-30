@@ -135,6 +135,7 @@ declare global {
   const useChannelDelete: typeof import('../src/hooks/messenger')['useChannelDelete']
   const useChannelDeleteMember: typeof import('../src/hooks/messenger')['useChannelDeleteMember']
   const useChannelJoin: typeof import('../src/hooks/messenger')['useChannelJoin']
+  const useChannelLeave: typeof import('../src/hooks/messenger')['useChannelLeave']
   const useChannelStore: typeof import('../src/store/channel')['useChannelStore']
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
@@ -433,6 +434,7 @@ declare module 'vue' {
     readonly useChannelDelete: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelDelete']>
     readonly useChannelDeleteMember: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelDeleteMember']>
     readonly useChannelJoin: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelJoin']>
+    readonly useChannelLeave: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelLeave']>
     readonly useChannelStore: UnwrapRef<typeof import('../src/store/channel')['useChannelStore']>
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
