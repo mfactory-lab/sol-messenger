@@ -9,6 +9,7 @@ const emit = defineEmits([
   'deleteChannel',
   'addMember',
   'showDeviceKey',
+  'leaveChannel',
 ])
 
 const wallet = useWallet()
@@ -181,6 +182,7 @@ watch(
                 </q-item-section>
               </q-item>
               <q-item
+                v-if="channelStore.isOwner"
                 v-close-popup
                 class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
@@ -195,6 +197,24 @@ watch(
                     class="bg-negative text-white q-px-xs"
                   >
                     Delete
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-else
+                v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
+                clickable
+                @click="$emit('leaveChannel')"
+              >
+                <q-item-section>
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-negative text-white q-px-xs"
+                  >
+                    Leave
                   </q-btn>
                 </q-item-section>
               </q-item>
