@@ -1,3 +1,4 @@
+import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 
@@ -5,7 +6,8 @@ const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
-  const { isWalletConnected, ok, error } = useHelper()
+  const { isWalletConnected, ok, error, noSol } = useHelper()
+  const { userBalance } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -19,6 +21,10 @@ export function useChannelCreate() {
   async function submit() {
     if (isWalletConnected()) {
       try {
+        if (!await userBalance()) {
+          noSol()
+          return
+        }
         await createChannel(state.name, {
           maxMessages: state.maxMessages,
           public: state.public,
@@ -79,7 +85,7 @@ export function useChannelDelete() {
 }
 
 export function useChannelAuthorizeMember() {
-  const { authorizeMember } = useMessengerStore()
+  const { authorizeMember, loadChannel, state: messengerState } = useMessengerStore()
   const { ok, error } = useHelper()
 
   const state = reactive({
@@ -91,6 +97,7 @@ export function useChannelAuthorizeMember() {
     try {
       state.loading = true
       await authorizeMember(key)
+      await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was authorized')
     } catch (e) {
       error('Something went wrong')
@@ -104,8 +111,9 @@ export function useChannelAuthorizeMember() {
 }
 
 export function useChannelAddMember() {
-  const { state: messengerState, addMember } = useMessengerStore()
-  const { ok, info, error } = useHelper()
+  const { state: messengerState, addMember, loadChannel } = useMessengerStore()
+  const { ok, info, error, noSol } = useHelper()
+  const { userBalance } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -119,7 +127,12 @@ export function useChannelAddMember() {
       return
     }
     try {
+      if (!await userBalance()) {
+        noSol()
+        return
+      }
       await addMember(data.wallet, data.key, data.name)
+      await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was added')
       return true
     } catch (e) {
@@ -145,7 +158,7 @@ export function useChannelAddMember() {
 }
 
 export function useChannelDeleteMember() {
-  const { deleteMember } = useMessengerStore()
+  const { deleteMember, loadChannel, state: messengerState } = useMessengerStore()
   const { ok, error } = useHelper()
 
   const state = reactive({
@@ -156,6 +169,7 @@ export function useChannelDeleteMember() {
     try {
       state.loading = true
       await deleteMember(key)
+      await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was deleted')
     } catch (e) {
       error('Something went wrong')
@@ -170,7 +184,8 @@ export function useChannelDeleteMember() {
 
 export function useChannelJoin() {
   const { state: messengerState, joinChannel } = useMessengerStore()
-  const { ok, info, error } = useHelper()
+  const { ok, info, error, noSol } = useHelper()
+  const { userBalance } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -185,6 +200,10 @@ export function useChannelJoin() {
     }
     state.loading = true
     try {
+      if (!await userBalance()) {
+        noSol()
+        return
+      }
       await joinChannel(messengerState.channelAddr, state.name)
       reset()
       ok('Request was sent')
@@ -209,16 +228,69 @@ export function useChannelJoin() {
   }
 }
 
+export function useChannelLeave() {
+  const messenger = useMessengerStore()
+  const { info, ok, error } = useHelper()
+
+  const state = reactive({
+    loading: false,
+  })
+
+  async function submit() {
+    if (!messenger.state.channelAddr) {
+      info('Please select a channel')
+      return
+    }
+    try {
+      state.loading = true
+      await messenger.leaveChannel(
+        messenger.state.channelAddr,
+      )
+      ok('Channel was abandoned!')
+    } catch (e) {
+      console.log('Error', e)
+      error('Something went wrong')
+    } finally {
+      state.loading = false
+    }
+  }
+
+  return { state, submit }
+}
+
 /**
  * Private helper hook
  */
 export function useHelper() {
   const wallet = useWallet()
 
+  const { airdropSol } = useAirdrop()
+
   const { notify } = useQuasar()
-  const ok = (message: string) => notify({ type: 'positive', message, timeout: 2000 })
   const info = (message: string) => notify({ type: 'info', message, timeout: 2000 })
   const error = (message: string) => notify({ type: 'negative', message, timeout: 2000 })
+  const ok = (message: string, position = 'bottom' as keyof QNotifyCreateOptions['position']) => notify({
+    type: 'positive',
+    message,
+    timeout: 2000,
+    position,
+  })
+  const noSol = () => notify({
+    type: 'warning',
+    message: 'You don\'t have enough SOL on your balance!',
+    position: 'top',
+    timeout: 0,
+    actions: [
+      {
+        label: 'GET SOL',
+        class: 'btn--no-hover',
+        padding: '0 15px 0 10px',
+        size: '14px',
+        color: 'black',
+        handler: () => airdropSol(),
+      },
+    ],
+  })
 
   function isWalletConnected() {
     if (!wallet.publicKey.value) {
@@ -228,5 +300,5 @@ export function useHelper() {
     return true
   }
 
-  return { ok, info, error, isWalletConnected }
+  return { ok, info, error, noSol, isWalletConnected }
 }

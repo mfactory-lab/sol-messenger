@@ -8,19 +8,17 @@ const dialogProps = defineProps({
 
 const showDialog = ref(false)
 
-const { state, refreshList } = useMessengerStore()
+const { state } = useMessengerStore()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
 
 const handleAuthorize = async (key: PublicKey, addr: PublicKey) => {
   state.channelAddr = addr
   await authorizeMember.submit(key)
-  await refreshList()
 }
 const handleDelete = async (key: PublicKey, addr: PublicKey) => {
   state.channelAddr = addr
   await deleteMember.submit(key)
-  await refreshList()
 }
 
 const isLoading = computed(() => authorizeMember.state.loading)
@@ -45,7 +43,7 @@ const isDelete = computed(() => deleteMember.state.loading)
             :label="ch.channel.data.name"
             caption="channel"
             :default-opened="idx === 0"
-            header-class="bg-blue-grey-1"
+            header-class="owner"
           >
             <q-list separator>
               <q-item
@@ -108,5 +106,8 @@ const isDelete = computed(() => deleteMember.state.loading)
 }
 .pending-item {
   padding: 5px 15px;
+}
+.owner {
+  background: #eceff1;
 }
 </style>

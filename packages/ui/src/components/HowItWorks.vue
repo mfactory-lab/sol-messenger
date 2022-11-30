@@ -59,29 +59,18 @@ const create = [
 
 <style lang="scss">
 .how-it-works {
-  max-width: 800px;
   margin: 0 auto;
   padding-bottom: 28px;
   position: relative;
-
-  &::after {
-    content: "";
-    width: 85px;
-    height: 85px;
-    background: url(@/assets/img/solana-logo.svg) no-repeat;
-    position: absolute;
-    top: 45px;
-    right: 30px;
-
-    @media (max-width: $breakpoint-xs) {
-      display: none;
-    }
-  }
 }
 .app-info {
   color: $primary;
   padding: 24px 0 0;
-  max-width: 492px;
+  width: 100%;
+
+  @media (max-width: $breakpoint-xs) {
+    width: 95%;
+  }
 
   &__title {
     font-weight: 700;

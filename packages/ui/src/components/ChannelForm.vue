@@ -22,7 +22,6 @@ const sendMessage = () => {
         ref="inputFocus"
         v-model="message"
         class="col-grow message-input"
-        bg-color="white"
         placeholder="Type a message"
         dense
         borderless

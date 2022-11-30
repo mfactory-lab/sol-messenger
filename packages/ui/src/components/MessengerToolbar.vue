@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import { DotsIcon } from 'vue-tabler-icons'
+import { ArrowLeftIcon, DotsIcon } from 'vue-tabler-icons'
 
 const emit = defineEmits([
   'search',
@@ -8,11 +9,14 @@ const emit = defineEmits([
   'deleteChannel',
   'addMember',
   'showDeviceKey',
+  'leaveChannel',
 ])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
 const channelStore = useChannelStore()
+const mobileStore = useMobileStore()
+const { screen } = useQuasar()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
@@ -42,15 +46,44 @@ const showMembers = () => emit('showMembers')
 const onDeleteChannel = () => emit('deleteChannel')
 const onAddMember = () => emit('addMember')
 
+const pendingUsersCount = computed(() => {
+  if (!channelStore.isOwner || !channelStore.isAdmin) {
+    return
+  }
+  return state.channelMembers.filter(
+    ch => ch.data.status.__kind === 'Pending',
+  ).length
+})
+
 watch(searchText, (s) => {
   onSearch(String(s))
 })
+
+const isArrowBack = computed(
+  () => mobileStore.isMobile && mobileStore.state.searchOrInfo === 'info',
+)
+
+watch(
+  () => state.channelAddr,
+  (ch) => {
+    if (ch) {
+      if (mobileStore.isMobile) {
+        mobileStore.state.searchOrInfo = 'info'
+      }
+    }
+  },
+)
 </script>
 
 <template>
-  <div class="panel-toolbar">
+  <div class="panel-toolbar" :class="mobileStore.state.searchOrInfo">
     <messenger-notification />
 
+    <arrow-left-icon
+      v-if="isArrowBack"
+      class="back-arrow"
+      @click="mobileStore.state.searchOrInfo = 'search'"
+    />
     <div class="panel-search">
       <div class="search-wrapper">
         <q-input
@@ -76,55 +109,113 @@ watch(searchText, (s) => {
       </div>
 
       <q-space class="" />
-      <div class="chat-name">
+      <div class="chat-name" :title="channel?.name">
         {{ channel?.name }}
       </div>
 
       <div>
-        <q-btn class="chat-menu" flat square :disable="!isWalletConnected">
+        <q-btn class="chat-menu" flat square :disable="!isWalletConnected || !channel">
           <dots-icon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
-            <q-list style="min-width: 150px" bordered>
-              <q-item v-close-popup clickable @click="$emit('showDeviceKey')">
-                <q-item-section>
-                  <q-btn flat square class="bg-blue-grey-7 text-white">
+            <q-list style="min-width: 120px" bordered>
+              <q-item
+                v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
+                clickable
+                @click="$emit('showDeviceKey')"
+              >
+                <q-item-section class="q-pa-none">
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-blue-grey-7 text-white q-px-xs"
+                  >
                     Device key
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item
                 v-close-popup
+                class="
+                  q-my-sm q-mx-sm q-pa-none
+                  chat-menu__item
+                  relative-position
+                "
                 clickable
                 :disable="!channel"
                 @click="showMembers"
               >
                 <q-item-section>
-                  <q-btn flat square class="bg-cyan-9 text-white">
+                  <div
+                    v-if="pendingUsersCount > 0"
+                    class="members-count bg-cyan-9"
+                  >
+                    {{ pendingUsersCount }}
+                  </div>
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-cyan-9 text-white q-px-xs"
+                  >
                     Members
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item
+                v-if="channelStore.isOwner"
                 v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
                 :disable="!channelStore.canAddMember"
                 @click="onAddMember"
               >
                 <q-item-section>
-                  <q-btn flat square class="bg-amber-7 text-white">
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-amber-7 text-white q-px-xs"
+                  >
                     Add member
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item
+                v-if="channelStore.isOwner"
                 v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
                 :disable="!channelStore.isChannelCreator"
                 @click="$emit('deleteChannel')"
               >
                 <q-item-section>
-                  <q-btn flat square class="bg-negative text-white">
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-negative text-white q-px-xs"
+                  >
                     Delete
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-else
+                v-close-popup
+                class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
+                clickable
+                @click="$emit('leaveChannel')"
+              >
+                <q-item-section>
+                  <q-btn
+                    flat
+                    square
+                    size="sm"
+                    class="bg-negative text-white q-px-xs"
+                  >
+                    Leave
                   </q-btn>
                 </q-item-section>
               </q-item>
@@ -150,7 +241,7 @@ $accent-color: #ffd140;
   position: relative;
 
   .panel-search {
-    width: 169px;
+    width: 219px;
     padding: 0 15px;
     display: flex;
     border-right: 1px solid #fff;
@@ -178,50 +269,52 @@ $accent-color: #ffd140;
     display: flex;
     font-family: "Montserrat", sans-serif;
     align-items: center;
-    padding: 10px;
+    padding: 7px 9px 7px 24px;
     height: 100%;
     width: 100%;
 
-    .chat-info {
-      display: flex;
-      font-size: 13px;
-      line-height: 16px;
-      text-transform: uppercase;
+    .chat {
+      &-info {
+        display: flex;
+        font-size: 13px;
+        line-height: 16px;
+        text-transform: uppercase;
+      }
 
-      .chat-members {
+      &-members {
         padding-right: 10px;
         margin-right: 10px;
         border-right: 1px solid $main-color;
       }
-    }
 
-    .chat-name {
-      color: $accent-color;
-      font-weight: 500;
-      font-size: 13px;
-      line-height: 16px;
-      text-transform: uppercase;
-      margin-right: 16px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      flex: 1;
-      text-align: right;
-    }
+      &-name {
+        color: $accent-color;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 16px;
+        text-transform: uppercase;
+        margin-right: 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        flex: 1;
+        text-align: right;
+      }
 
-    .chat-menu {
-      border: 1px solid rgb(210 230 240 / 20%);
-      background: rgb(146 167 177 / 20%);
-      cursor: pointer;
-      position: relative;
-      height: 22px;
-      min-height: 0;
-      width: 31px;
-      padding: 0;
-      transform: translateX(3px);
+      &-menu {
+        border: 1px solid rgb(210 230 240 / 20%);
+        background: rgb(146 167 177 / 20%);
+        cursor: pointer;
+        position: relative;
+        height: 22px;
+        min-height: 0;
+        width: 31px;
+        padding: 0;
+        transform: translateX(2px);
 
-      &:hover {
-        background: rgb(146 167 177 / 50%);
+        &:hover {
+          background: rgb(146 167 177 / 50%);
+        }
       }
     }
   }
@@ -234,6 +327,11 @@ $accent-color: #ffd140;
     width: auto;
     display: inline-flex;
     align-items: center;
+
+    @media (max-width: $breakpoint-xs) {
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
     &__info {
       cursor: pointer;
@@ -282,24 +380,66 @@ $accent-color: #ffd140;
       align-items: center;
     }
     .search-wrapper {
-      width: 100%;
+      width: 85%;
+      margin: 0 auto;
     }
     .panel-info {
       border: none;
       border-top: 1px solid #fff;
-      padding: 5px 10px;
+      padding: 5px 10px 5px 40px;
+      min-height: 44px;
       .chat-info,
       .chat-name {
         font-size: 11px;
       }
-    }
-
-    .search-input {
     }
   }
 }
 
 input.q-field__native {
   color: $main-color;
+}
+
+.chat-menu__item {
+  min-height: 0 !important;
+  z-index: 1;
+
+  .members-count {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px;
+    z-index: 2;
+  }
+}
+
+.back-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
+}
+
+.panel-toolbar.search {
+  .panel-info {
+    @media (max-width: $breakpoint-xs) {
+      display: none;
+    }
+  }
+}
+
+.panel-toolbar.info {
+  .panel-search {
+    display: none;
+  }
 }
 </style>

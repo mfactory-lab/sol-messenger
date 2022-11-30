@@ -110,6 +110,7 @@ declare global {
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
+  const useAirdrop: typeof import('../src/hooks/airdrop')['useAirdrop']
   const useArrayEvery: typeof import('@vueuse/core')['useArrayEvery']
   const useArrayFilter: typeof import('@vueuse/core')['useArrayFilter']
   const useArrayFind: typeof import('@vueuse/core')['useArrayFind']
@@ -134,6 +135,7 @@ declare global {
   const useChannelDelete: typeof import('../src/hooks/messenger')['useChannelDelete']
   const useChannelDeleteMember: typeof import('../src/hooks/messenger')['useChannelDeleteMember']
   const useChannelJoin: typeof import('../src/hooks/messenger')['useChannelJoin']
+  const useChannelLeave: typeof import('../src/hooks/messenger')['useChannelLeave']
   const useChannelStore: typeof import('../src/store/channel')['useChannelStore']
   const useClipboard: typeof import('@vueuse/core')['useClipboard']
   const useCloned: typeof import('@vueuse/core')['useCloned']
@@ -200,6 +202,7 @@ declare global {
   const useMemory: typeof import('@vueuse/core')['useMemory']
   const useMessengerStore: typeof import('../src/store/messenger')['useMessengerStore']
   const useMobileDetect: typeof import('../src/hooks/mobile')['useMobileDetect']
+  const useMobileStore: typeof import('../src/store/mobile')['useMobileStore']
   const useMonitorTransaction: typeof import('../src/hooks/monitor')['useMonitorTransaction']
   const useMounted: typeof import('@vueuse/core')['useMounted']
   const useMouse: typeof import('@vueuse/core')['useMouse']
@@ -406,6 +409,7 @@ declare module 'vue' {
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
+    readonly useAirdrop: UnwrapRef<typeof import('../src/hooks/airdrop')['useAirdrop']>
     readonly useArrayEvery: UnwrapRef<typeof import('@vueuse/core')['useArrayEvery']>
     readonly useArrayFilter: UnwrapRef<typeof import('@vueuse/core')['useArrayFilter']>
     readonly useArrayFind: UnwrapRef<typeof import('@vueuse/core')['useArrayFind']>
@@ -430,6 +434,7 @@ declare module 'vue' {
     readonly useChannelDelete: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelDelete']>
     readonly useChannelDeleteMember: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelDeleteMember']>
     readonly useChannelJoin: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelJoin']>
+    readonly useChannelLeave: UnwrapRef<typeof import('../src/hooks/messenger')['useChannelLeave']>
     readonly useChannelStore: UnwrapRef<typeof import('../src/store/channel')['useChannelStore']>
     readonly useClipboard: UnwrapRef<typeof import('@vueuse/core')['useClipboard']>
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
@@ -496,6 +501,7 @@ declare module 'vue' {
     readonly useMemory: UnwrapRef<typeof import('@vueuse/core')['useMemory']>
     readonly useMessengerStore: UnwrapRef<typeof import('../src/store/messenger')['useMessengerStore']>
     readonly useMobileDetect: UnwrapRef<typeof import('../src/hooks/mobile')['useMobileDetect']>
+    readonly useMobileStore: UnwrapRef<typeof import('../src/store/mobile')['useMobileStore']>
     readonly useMonitorTransaction: UnwrapRef<typeof import('../src/hooks/monitor')['useMonitorTransaction']>
     readonly useMounted: UnwrapRef<typeof import('@vueuse/core')['useMounted']>
     readonly useMouse: UnwrapRef<typeof import('@vueuse/core')['useMouse']>

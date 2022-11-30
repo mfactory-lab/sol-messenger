@@ -174,7 +174,7 @@ export const useMessengerStore = defineStore('messenger', () => {
   async function createChannel(name: string, opts: any) {
     try {
       state.creating = true
-      await client.initChannel({
+      const { channel } = await client.initChannel({
         name,
         maxMessages: opts.maxMessages ?? 15,
         public: opts.public,
@@ -182,14 +182,14 @@ export const useMessengerStore = defineStore('messenger', () => {
         opts: { commitment: opts.commitment ?? 'confirmed' },
       })
 
-      await init()
-      /*       await loadChannel(channel.publicKey)
+      // await init()
+      await loadChannel(channel.publicKey)
       if (state.channel) {
         state.allChannels.push({
           pubkey: channel.publicKey,
           data: state.channel,
         })
-      } */
+      }
     } finally {
       state.creating = false
     }
@@ -197,25 +197,34 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function deleteChannel(addr: Address) {
     const channel = new PublicKey(addr)
-    // const key = new PublicKey('2MF6T12ez4Wdzo9AggucE2659bGsrh6n39M8JR9afa6S')
-    // const [membership] = await client.getMembershipPDA(channel, key)
     await client.deleteChannel({ channel, opts: { commitment: 'confirmed' } })
-    await init()
+    deleteChannelFromChannels(addr)
+  }
+
+  async function leaveChannel(channel: PublicKey) {
+    console.log('leaveChannel channel === ', channel.toBase58())
+    await client.leaveChannel({ channel, opts: { commitment: 'confirmed' } })
+    deleteChannelFromChannels(channel)
   }
 
   async function joinChannel(addr: Address, name: string) {
     const channel = new PublicKey(addr)
-    await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
-    await loadChannel(addr)
-    await refreshList()
+    try {
+      await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
+      await loadChannel(addr)
+      const joinedChannel = { pubkey: addr.toString(), status: 'Pending' }
+      state.ownChannels.push(joinedChannel)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   async function loadChannel(addr: Address) {
     state.channelLoading = true
-    state.channelMessages = []
-    state.channelMembers = []
+    state.channelMessages = state.channelMessages ?? []
+    state.channelMembers = state.channelMembers ?? []
     state.channelMembershipAddr = undefined
-    state.channelMembership = undefined
+    state.channelMembership = state.channelMembership ?? undefined
     state.channelAddr = new PublicKey(addr)
 
     try {
@@ -346,7 +355,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       key: new PublicKey(addr),
       opts: { commitment: 'finalized' },
     })
-    await refreshMembers()
   }
 
   async function authorizeMember(key: Address) {
@@ -373,9 +381,17 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelAddr = addr
   }
 
+  function deleteChannelFromChannels(addr: PublicKey | string) {
+    const channelIdx = state.allChannels.findIndex(ch => ch.pubkey.toBase58() === addr.toString())
+    state.allChannels.splice(channelIdx, 1)
+    state.channelMessages = []
+    state.channel = undefined
+  }
+
   return {
     state,
     client,
+    leaveChannel,
     loadChannel,
     joinChannel,
     createChannel,

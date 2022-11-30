@@ -74,7 +74,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 
 .button-wrapper {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   flex-direction: row;
   gap: 9px;

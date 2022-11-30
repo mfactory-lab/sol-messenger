@@ -7,6 +7,7 @@ const wallet = useWallet()
 
 const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
 const channel = useChannelStore()
+const mobileStore = useMobileStore()
 
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
@@ -14,6 +15,7 @@ const addMember = useChannelAddMember()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
 const deleteChannel = useChannelDelete()
+const leaveChannel = useChannelLeave()
 
 const postMessageState = reactive({ message: '' })
 const allChannels = computed(() => state.allChannels)
@@ -55,6 +57,13 @@ const handleJoinToChannel = (name: string) => {
   joinChannel.state.name = name
   joinChannel.submit()
 }
+
+const isMobileMessages = computed(() => {
+  if (!mobileStore.isMobile) {
+    return 1
+  }
+  return mobileStore.state.searchOrInfo === 'search' ? 1 : 2
+})
 </script>
 
 <template>
@@ -63,6 +72,7 @@ const handleJoinToChannel = (name: string) => {
       @search="onSearch"
       @show-members="authorizeMember.state.dialog = true"
       @delete-channel="deleteChannel.submit(state.channelAddr)"
+      @leave-channel="leaveChannel.submit(state.channelAddr)"
       @add-member="addMember.state.dialog = true"
       @show-device-key="showDeviceKeyDialog = true"
     />
@@ -75,6 +85,7 @@ const handleJoinToChannel = (name: string) => {
               :key="ch.name"
               :pubkey="ch.pubkey"
               :channel="ch.data"
+              active-class="select-channel"
               :is-active="`${state.channelAddr}` === `${ch.pubkey}`"
               @select="loadChannel(ch.pubkey)"
             />
@@ -92,6 +103,7 @@ const handleJoinToChannel = (name: string) => {
         />
       </q-card>
       <channel-wrapper
+        :style="{ 'z-index': isMobileMessages }"
         :post-message-state="postMessageState"
         @send-message="sendMessage"
       />
@@ -141,7 +153,7 @@ const handleJoinToChannel = (name: string) => {
 
 <style lang="scss">
 .messenger-wrapper {
-  max-width: 800px;
+  max-width: 750px;
   margin: 0 auto;
 
   .messenger-main {
@@ -149,6 +161,10 @@ const handleJoinToChannel = (name: string) => {
     display: flex;
     flex-direction: row;
     height: 400px;
+
+    @media (max-width: $breakpoint-xs) {
+      min-height: 444px;;
+    }
 
     .messenger-card {
       flex: 1;
@@ -162,18 +178,19 @@ const handleJoinToChannel = (name: string) => {
 
 .messenger-card {
   margin: 0 auto;
+
+  @media (max-width: $breakpoint-xs) {
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
 }
 .messenger-channels-empty {
   flex: 1;
   height: 100%;
-}
-.messenger-messages {
-  width: 100%;
-  max-width: 600px;
-  max-height: 342px;
-  padding: 20px 30px;
-  overflow-y: auto;
-  min-height: 200px;
 }
 
 .messenger-empty {
@@ -199,11 +216,21 @@ const handleJoinToChannel = (name: string) => {
   position: relative;
   padding: 0;
   border-radius: 0;
-  width: 170px;
+  width: 220px;
   display: flex;
   flex-direction: column;
   background: #fdfcfc !important;
   border-right: 0.5px solid #cecece;
+
+  @media (max-width: $breakpoint-xs) {
+    width: 100%;
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
 
   .channels-list {
     flex: 1;
@@ -326,5 +353,20 @@ const handleJoinToChannel = (name: string) => {
     font-size: 11px;
     text-transform: capitalize;
   }
+}
+
+.select-channel {
+  background: $primary;
+
+  .chat-name {
+    color: #fff;
+  }
+
+  .q-spinner {
+    color: #fff !important;
+  }
+}
+.owner {
+  background: #e0f2f1;
 }
 </style>

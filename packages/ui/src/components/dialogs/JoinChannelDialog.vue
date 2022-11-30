@@ -1,9 +1,15 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
+import { CheckIcon, RefreshIcon, TransferInIcon } from 'vue-tabler-icons'
+import type { PublicKey } from '@solana/web3.js'
 import type { Channel } from '@app/sdk'
-import { RefreshIcon, TransferInIcon } from 'vue-tabler-icons'
 import type { AllChannels } from '../../store/messenger'
 import { getBadgeColor } from '@/utils'
+
+interface OwnChannel {
+  pubkey: PublicKey
+  data: Channel
+}
 
 const props = defineProps({
   loading: { type: Boolean },
@@ -14,7 +20,12 @@ const joinEmit = defineEmits(['submit', 'reset'])
 
 const state = ref(props.defaultState)
 
-const { state: channelState, selectChannel, refreshList } = useMessengerStore()
+const {
+  state: messengerStore,
+  selectChannel,
+  refreshList,
+} = useMessengerStore()
+const channelStore = useChannelStore()
 
 const isModal = ref(false)
 
@@ -22,12 +33,12 @@ const searchWord = ref('')
 const searchChannels = ref<AllChannels[]>([])
 
 const privateChannels = computed(() =>
-  channelState.allChannels.filter(
+  messengerStore.allChannels.filter(
     ch => ch.data.flags === 0 || ch.data.flags === 2,
   ),
 )
 
-const isLoading = computed(() => channelState.loading)
+const isLoading = computed(() => messengerStore.loading)
 
 const initials = (channel: Channel) => channel.name.slice(0, 2)
 
@@ -69,6 +80,10 @@ watch(
     }
   },
 )
+
+const isInChat = (ch: OwnChannel) => {
+  return channelStore.ownChannels.find((c: OwnChannel) => String(c.pubkey) === String(ch.pubkey))
+}
 </script>
 
 <template>
@@ -103,7 +118,7 @@ watch(
             v-ripple
             active-class="bg-blue-grey-8 text-white"
             class="privat-channels-item"
-            :active="`${channelState.channelAddr}` === `${ch.pubkey}`"
+            :active="`${messengerStore.channelAddr}` === `${ch.pubkey}`"
             clickable
             @click="selectChannel(ch.pubkey)"
           >
@@ -111,13 +126,17 @@ watch(
               <span>{{ initials(ch.data) }}</span>
             </div>
             <q-item-section>
-              <span class="channel-info">
+              <span class="channel-info text-weight-medium">
                 {{ ch.data.name }}
               </span>
               <span class="channel-info">
                 {{ ch.pubkey }}
               </span>
             </q-item-section>
+            <div v-if="isInChat(ch)" class="already-in-chat">
+              <custom-tooltip text="already in channel" />
+              <check-icon size="18" />
+            </div>
           </q-item>
         </q-list>
         <q-item
@@ -135,18 +154,18 @@ watch(
           class="control-button"
           square
           flat
-          :disable="!channelState.channelAddr"
+          :disable="!messengerStore.channelAddr"
           :class="{ 'refresh-btn': isLoading }"
           @click="refreshList"
         >
           <refresh-icon style="color: #fff" />
-          <custom-tooltip text="Request to join" />
+          <custom-tooltip text="Refresh channels" />
         </q-btn>
         <q-btn
           class="control-button"
           square
           flat
-          :disable="!channelState.channelAddr"
+          :disable="!messengerStore.channelAddr"
           @click="isModal = true"
         >
           <transfer-in-icon style="color: #fff" />
@@ -185,6 +204,7 @@ watch(
     display: flex;
     align-items: center;
     min-height: 20px;
+    position: relative;
   }
 }
 
@@ -207,7 +227,7 @@ watch(
 
 .channel-info {
   line-height: 14px;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .control-button {
@@ -230,5 +250,11 @@ watch(
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.already-in-chat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

@@ -15,7 +15,7 @@ export default defineComponent({
 
 <template>
   <q-tooltip
-    class="bg-white text-primary  shadow-1 custom-tooltip"
+    class="bg-white text-primary shadow-1 custom-tooltip"
     style="border-radius: 0"
     anchor="top middle"
     self="bottom middle"
