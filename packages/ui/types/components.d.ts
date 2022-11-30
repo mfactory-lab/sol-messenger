@@ -18,6 +18,7 @@ declare module '@vue/runtime-core' {
     ChannelWrapperSkeleton: typeof import('./../src/components/ChannelWrapperSkeleton.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
+    CustomComponent: typeof import('./../src/components/CustomComponent.vue')['default']
     CustomTooltip: typeof import('./../src/components/CustomTooltip.vue')['default']
     DebugBtn: typeof import('./../src/components/DebugBtn.vue')['default']
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']

@@ -3,7 +3,8 @@ import { MessengerClient } from '@app/sdk'
 import type { Address } from '@project-serum/anchor'
 import { AnchorProvider } from '@project-serum/anchor'
 import type { Keypair } from '@solana/web3.js'
-import { PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
@@ -176,10 +177,9 @@ export const useMessengerStore = defineStore('messenger', () => {
       state.creating = true
       const { channel } = await client.initChannel({
         name,
-        maxMessages: opts.maxMessages ?? 15,
+        maxMessages: Number(opts.maxMessages),
         public: opts.public,
         permissionless: opts.permissionless,
-        opts: { commitment: opts.commitment ?? 'confirmed' },
       })
 
       // await init()
@@ -197,20 +197,20 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function deleteChannel(addr: Address) {
     const channel = new PublicKey(addr)
-    await client.deleteChannel({ channel, opts: { commitment: 'confirmed' } })
+    await client.deleteChannel({ channel })
     deleteChannelFromChannels(addr)
   }
 
   async function leaveChannel(channel: PublicKey) {
     console.log('leaveChannel channel === ', channel.toBase58())
-    await client.leaveChannel({ channel, opts: { commitment: 'confirmed' } })
+    await client.leaveChannel({ channel })
     deleteChannelFromChannels(channel)
   }
 
   async function joinChannel(addr: Address, name: string) {
     const channel = new PublicKey(addr)
     try {
-      await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
+      await client.joinChannel({ channel, name })
       await loadChannel(addr)
       const joinedChannel = { pubkey: addr.toString(), status: 'Pending' }
       state.ownChannels.push(joinedChannel)
@@ -341,7 +341,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       key: key ? new PublicKey(key) : undefined,
       name,
       flags,
-      opts: { commitment: 'confirmed' },
     })
   }
 
@@ -388,7 +387,13 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channel = undefined
   }
 
+  async function channelMessagesCost(messages: number) {
+    const cost = await client.channelSpace(messages)
+    return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(cost) / LAMPORTS_PER_SOL)
+  }
+
   return {
+    channelMessagesCost,
     state,
     client,
     leaveChannel,

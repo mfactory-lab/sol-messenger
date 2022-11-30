@@ -2,7 +2,7 @@ import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 
-const DEFAULT_MAX_MESSAGES = 15
+export const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()

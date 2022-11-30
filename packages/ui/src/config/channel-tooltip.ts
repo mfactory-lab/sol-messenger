@@ -5,4 +5,5 @@ export const CHANNEL_INFO = [
     owner/admin only, or by any authorized member of the channel.
     `,
     'Any authorized channel member can approve new requests to join',
+    'This setting determines how many messages will be available in chat until they are updated with new messages',
 ]

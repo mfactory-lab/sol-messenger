@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
 import { CHANNEL_INFO } from '@/config'
 
@@ -15,9 +16,26 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'reset'])
 
+const { channelMessagesCost } = useMessengerStore()
+
 const state = ref(props.defaultState)
 
 const createNewChannel = () => emit('submit', state)
+
+const messagesCost = ref(0)
+const messagesCostFormat = computed(() => `~${messagesCost.value.toFixed(3)} SOL`)
+
+watch(
+  () => state.value?.maxMessages,
+  async (m) => {
+    messagesCost.value = await channelMessagesCost(Number(m))
+  },
+)
+
+onMounted(async () => {
+  const maxMessages = DEFAULT_MAX_MESSAGES
+  messagesCost.value = await channelMessagesCost(Number(maxMessages))
+})
 </script>
 
 <template>
@@ -34,12 +52,23 @@ const createNewChannel = () => emit('submit', state)
               (val) => (val && val.length > 2) || 'Please type something',
             ]"
           />
-          <q-input
-            v-model="state.maxMessages"
-            label="Max messages"
-            lazy-rules
-            :rules="[(val) => +val > 0 || 'Invalid value']"
-          />
+          <div class="relative-position">
+            <q-input
+              v-model="state.maxMessages"
+              label="Max messages"
+              lazy-rules
+              type="number"
+              debounce="500"
+              :rules="[(val) => +val > 0 || 'Invalid value']"
+            />
+            <div class="messages-cost">
+              {{ messagesCostFormat }}
+            </div>
+            <div class="toggle-info max-messages-tooltip">
+              <custom-tooltip :text="CHANNEL_INFO[2]" padding="8px" />
+              <img src="@/assets/img/info.svg" alt="info">
+            </div>
+          </div>
           <div class="row q-mt-md relative-position" style="height: 42px">
             <div class="toggle-info">
               <custom-tooltip :text="CHANNEL_INFO[0]" padding="8px" />
@@ -109,5 +138,25 @@ const createNewChannel = () => emit('submit', state)
       line-height: 15px;
     }
   }
+}
+
+.messages-cost {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  opacity: .7;
+}
+
+.max-messages-tooltip {
+  top: 10px;
+  left: 90px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>
