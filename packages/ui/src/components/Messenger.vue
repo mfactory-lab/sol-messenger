@@ -7,6 +7,7 @@ const wallet = useWallet()
 
 const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
 const channel = useChannelStore()
+const mobileStore = useMobileStore()
 
 const newChannel = useChannelCreate()
 const joinChannel = useChannelJoin()
@@ -55,6 +56,13 @@ const handleJoinToChannel = (name: string) => {
   joinChannel.state.name = name
   joinChannel.submit()
 }
+
+const isMobileMessages = computed(() => {
+  if (!mobileStore.isMobile) {
+    return 1
+  }
+  return mobileStore.state.searchOrInfo === 'search' ? 1 : 2
+})
 </script>
 
 <template>
@@ -93,6 +101,7 @@ const handleJoinToChannel = (name: string) => {
         />
       </q-card>
       <channel-wrapper
+        :style="{ 'z-index': isMobileMessages }"
         :post-message-state="postMessageState"
         @send-message="sendMessage"
       />
@@ -151,6 +160,10 @@ const handleJoinToChannel = (name: string) => {
     flex-direction: row;
     height: 400px;
 
+    @media (max-width: $breakpoint-xs) {
+      min-height: 444px;;
+    }
+
     .messenger-card {
       flex: 1;
     }
@@ -163,6 +176,15 @@ const handleJoinToChannel = (name: string) => {
 
 .messenger-card {
   margin: 0 auto;
+
+  @media (max-width: $breakpoint-xs) {
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
 }
 .messenger-channels-empty {
   flex: 1;
@@ -197,6 +219,16 @@ const handleJoinToChannel = (name: string) => {
   flex-direction: column;
   background: #fdfcfc !important;
   border-right: 0.5px solid #cecece;
+
+  @media (max-width: $breakpoint-xs) {
+    width: 100%;
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
 
   .channels-list {
     flex: 1;

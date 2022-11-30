@@ -201,6 +201,7 @@ declare global {
   const useMemory: typeof import('@vueuse/core')['useMemory']
   const useMessengerStore: typeof import('../src/store/messenger')['useMessengerStore']
   const useMobileDetect: typeof import('../src/hooks/mobile')['useMobileDetect']
+  const useMobileStore: typeof import('../src/store/mobile')['useMobileStore']
   const useMonitorTransaction: typeof import('../src/hooks/monitor')['useMonitorTransaction']
   const useMounted: typeof import('@vueuse/core')['useMounted']
   const useMouse: typeof import('@vueuse/core')['useMouse']
@@ -499,6 +500,7 @@ declare module 'vue' {
     readonly useMemory: UnwrapRef<typeof import('@vueuse/core')['useMemory']>
     readonly useMessengerStore: UnwrapRef<typeof import('../src/store/messenger')['useMessengerStore']>
     readonly useMobileDetect: UnwrapRef<typeof import('../src/hooks/mobile')['useMobileDetect']>
+    readonly useMobileStore: UnwrapRef<typeof import('../src/store/mobile')['useMobileStore']>
     readonly useMonitorTransaction: UnwrapRef<typeof import('../src/hooks/monitor')['useMonitorTransaction']>
     readonly useMounted: UnwrapRef<typeof import('@vueuse/core')['useMounted']>
     readonly useMouse: UnwrapRef<typeof import('@vueuse/core')['useMouse']>
