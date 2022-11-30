@@ -111,7 +111,7 @@ export function useChannelAuthorizeMember() {
 }
 
 export function useChannelAddMember() {
-  const { state: messengerState, addMember } = useMessengerStore()
+  const { state: messengerState, addMember, loadChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
   const { userBalance } = useUserStore()
 
@@ -132,6 +132,7 @@ export function useChannelAddMember() {
         return
       }
       await addMember(data.wallet, data.key, data.name)
+      await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was added')
       return true
     } catch (e) {
