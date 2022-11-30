@@ -174,7 +174,7 @@ export const useMessengerStore = defineStore('messenger', () => {
   async function createChannel(name: string, opts: any) {
     try {
       state.creating = true
-      await client.initChannel({
+      const { channel } = await client.initChannel({
         name,
         maxMessages: opts.maxMessages ?? 15,
         public: opts.public,
@@ -182,14 +182,14 @@ export const useMessengerStore = defineStore('messenger', () => {
         opts: { commitment: opts.commitment ?? 'confirmed' },
       })
 
-      await init()
-      /*       await loadChannel(channel.publicKey)
+      // await init()
+      await loadChannel(channel.publicKey)
       if (state.channel) {
         state.allChannels.push({
           pubkey: channel.publicKey,
           data: state.channel,
         })
-      } */
+      }
     } finally {
       state.creating = false
     }
@@ -197,10 +197,9 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function deleteChannel(addr: Address) {
     const channel = new PublicKey(addr)
-    // const key = new PublicKey('2MF6T12ez4Wdzo9AggucE2659bGsrh6n39M8JR9afa6S')
-    // const [membership] = await client.getMembershipPDA(channel, key)
     await client.deleteChannel({ channel, opts: { commitment: 'confirmed' } })
-    await init()
+    const channelIdx = state.allChannels.findIndex(ch => ch.pubkey.toBase58() === addr.toString())
+    state.allChannels.splice(channelIdx, 1)
   }
 
   async function joinChannel(addr: Address, name: string) {
