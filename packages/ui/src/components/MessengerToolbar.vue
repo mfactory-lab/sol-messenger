@@ -114,7 +114,7 @@ watch(
       </div>
 
       <div>
-        <q-btn class="chat-menu" flat square :disable="!isWalletConnected">
+        <q-btn class="chat-menu" flat square :disable="!isWalletConnected || !channel">
           <dots-icon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 120px" bordered>
@@ -164,6 +164,7 @@ watch(
                 </q-item-section>
               </q-item>
               <q-item
+                v-if="channelStore.isOwner"
                 v-close-popup
                 class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
