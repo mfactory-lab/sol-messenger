@@ -1,26 +1,13 @@
 import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import type { PublicKey } from '@solana/web3.js'
-import { Connection, LAMPORTS_PER_SOL, clusterApiUrl } from '@solana/web3.js'
 
 const DEFAULT_MAX_MESSAGES = 15
-
-export async function userBalance() {
-  const wallet = useWallet()
-
-  const _wallet = wallet.publicKey.value as PublicKey
-
-  const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
-  const walletBalance = await connection.getBalance(_wallet)
-  const balance = await walletBalance / LAMPORTS_PER_SOL
-
-  return balance > 0.1
-}
 
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
   const { isWalletConnected, ok, error, noSol } = useHelper()
+  const { userBalance } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -81,7 +68,6 @@ export function useChannelDelete() {
       return
     }
     try {
-      console.log(await userBalance())
       state.loading = true
       await messenger.deleteChannel(
         messenger.state.channelAddr,
@@ -127,6 +113,7 @@ export function useChannelAuthorizeMember() {
 export function useChannelAddMember() {
   const { state: messengerState, addMember } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
+  const { userBalance } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -197,6 +184,7 @@ export function useChannelDeleteMember() {
 export function useChannelJoin() {
   const { state: messengerState, joinChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
+  const { userBalance } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -245,7 +233,7 @@ export function useChannelJoin() {
 export function useHelper() {
   const wallet = useWallet()
 
-  const { airdropSol } = useAirdropStore()
+  const { airdropSol } = useAirdrop()
 
   const { notify } = useQuasar()
   const info = (message: string) => notify({ type: 'info', message, timeout: 2000 })

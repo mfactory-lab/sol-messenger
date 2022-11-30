@@ -2,13 +2,13 @@ import type { PublicKey } from '@solana/web3.js'
 import {
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js'
-import { defineStore } from 'pinia'
+import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 
-export const useAirdropStore = defineStore('airdrop', () => {
+export function useAirdrop() {
   const { connection } = useConnectionStore()
-  const { ok } = useHelper()
   const wallet = useWallet()
+  const { notify } = useQuasar()
 
   const isAirdrop = ref(false)
 
@@ -16,7 +16,12 @@ export const useAirdropStore = defineStore('airdrop', () => {
     try {
       const airdrop = await connection.requestAirdrop(wallet.publicKey.value as PublicKey, 1 * LAMPORTS_PER_SOL)
       await connection.confirmTransaction(airdrop)
-      ok('you got 1 sol', 'top')
+      notify({
+        type: 'positive',
+        message: 'you got 1 sol',
+        timeout: 2000,
+        position: 'top',
+      })
       isAirdrop.value = true
     } catch (err) {
       console.log(err)
@@ -26,4 +31,4 @@ export const useAirdropStore = defineStore('airdrop', () => {
     isAirdrop,
     airdropSol,
   }
-})
+}
