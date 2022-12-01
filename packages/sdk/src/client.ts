@@ -521,7 +521,7 @@ export class MessengerClient {
    * Authorize member request
    */
   async authorizeMember(props: AuthorizeMemberProps, opts?: ConfirmOptions) {
-    const key = props.key ?? props.authority
+    const key = props.key ?? this.keypair?.publicKey
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
     const [authorityDevice] = await this.getDevicePDA(authorityMembership)
     const [membership] = await this.getMembershipPDA(props.channel, props.authority)
