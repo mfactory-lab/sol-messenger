@@ -51,7 +51,7 @@ const pendingUsersCount = computed(() => {
     return
   }
   return state.channelMembers.filter(
-    ch => ch.data.status.__kind === 'Pending',
+    ch => ch.data.status === 1,
   ).length
 })
 
