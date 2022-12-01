@@ -211,11 +211,15 @@ export class MessengerClient {
   /**
    * Load list of {@link ChannelDevice} for the {@link channel}
    */
-  async loadDevices(channel: PublicKey, authority?: PublicKey) {
+  async loadDevices(channel: PublicKey, authority?: PublicKey, emptyCek?: boolean) {
     const request = ChannelDevice.gpaBuilder()
       .addFilter('accountDiscriminator', channelDeviceDiscriminator)
       .addFilter('authority', authority ?? this.provider.publicKey)
       .addFilter('channel', channel)
+
+    if (emptyCek) {
+      request.addFilter('cek', [])
+    }
 
     const accounts = await request.run(this.provider.connection)
 
@@ -225,6 +229,20 @@ export class MessengerClient {
         data: ChannelDevice.fromAccountInfo(acc.account)[0],
       }
     })
+  }
+
+  /**
+   * Load pending device keys
+   */
+  async loadPendingDevices(channel: PublicKey, authority?: PublicKey) {
+    const request = ChannelDevice.gpaBuilder()
+      .addFilter('accountDiscriminator', channelDeviceDiscriminator)
+      .addFilter('authority', authority ?? this.provider.publicKey)
+      .addFilter('channel', channel)
+      .addFilter('cek', [])
+      .dataSize(0)
+    const accounts = await request.run(this.provider.connection)
+    return accounts.map(acc => acc.pubkey)
   }
 
   /**
@@ -521,7 +539,7 @@ export class MessengerClient {
    * Authorize member request
    */
   async authorizeMember(props: AuthorizeMemberProps, opts?: ConfirmOptions) {
-    const key = props.key ?? this.keypair?.publicKey
+    const key = props.key ?? props.authority
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
     const [authorityDevice] = await this.getDevicePDA(authorityMembership)
     const [membership] = await this.getMembershipPDA(props.channel, props.authority)
