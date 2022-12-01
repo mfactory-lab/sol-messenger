@@ -12,12 +12,12 @@ const emit = defineEmits(['submit', 'deleteMember'])
 const { state } = useMessengerStore()
 const channel = useChannelStore()
 
-const isCanAuthorizedMember = (status: string) =>
-  status === 'Pending' && channel.canAuthorizeMember
-
-function getStatusClass(status: any) {
-  return String(status).toLowerCase()
+const getStatusClass = (status: number) => {
+  return status > 0 ? 'pending' : 'authorized'
 }
+
+const isCanAuthorizedMember = (status: number) =>
+  getStatusClass(status) === 'pending' && channel.canAuthorizeMember
 
 const isOwner = (name: string) => state.channel?.creator.toBase58() === name
 </script>
@@ -42,10 +42,10 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 <span class="text-weight-medium wallet">
                   {{ formatMemberName(m.data) }}</span>
                 <q-badge
-                  :class="getStatusClass(m.data.status.__kind)"
+                  :class="getStatusClass(m.data.status)"
                   class="memberlist-status q-pa-xs q-ml-lg"
                 >
-                  {{ m.data.status.__kind }}
+                  {{ getStatusClass(m.data.status) }}
                 </q-badge>
               </q-item-label>
               <q-item-label caption lines="2">
@@ -53,22 +53,18 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                   <span>Authority:</span>
                   <span>{{ m.data.authority }}</span>
                 </div>
-                <div class="memberlist-info__details">
-                  <span>Key:</span>
-                  <span>{{ m.data.key }}</span>
-                </div>
               </q-item-label>
             </q-item-section>
             <div class="memberlist-btns">
               <q-btn
-                v-if="isCanAuthorizedMember(m.data.status.__kind)"
+                v-if="isCanAuthorizedMember(m.data.status)"
                 color="positive"
                 size="sm"
                 unelevated
                 class="full-width"
                 :loading="authorizeMemberState.loading"
                 :disabled="authorizeMemberState.loading"
-                @click="$emit('submit', m.data.key)"
+                @click="$emit('submit', m.data.authority)"
               >
                 Authorize
               </q-btn>
@@ -83,7 +79,7 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 class="full-width"
                 :loading="deleteMemberState.loading"
                 :disabled="deleteMemberState.loading"
-                @click="$emit('deleteMember', m.data.key)"
+                @click="$emit('deleteMember', m.data.authority)"
               >
                 Delete
               </q-btn>

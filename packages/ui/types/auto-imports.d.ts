@@ -9,6 +9,7 @@ declare global {
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
   const ACCOUNT_CHANGE_EVENT: typeof import('../src/hooks/wallet')['ACCOUNT_CHANGE_EVENT']
+  const DEFAULT_MAX_MESSAGES: typeof import('../src/hooks/messenger')['DEFAULT_MAX_MESSAGES']
   const EffectScope: typeof import('vue')['EffectScope']
   const WALLET_CONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']
   const WALLET_DISCONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_DISCONNECT_EVENT']
@@ -308,6 +309,7 @@ declare module 'vue' {
     readonly $shallowRef: UnwrapRef<typeof import('vue/macros')['$shallowRef']>
     readonly $toRef: UnwrapRef<typeof import('vue/macros')['$toRef']>
     readonly ACCOUNT_CHANGE_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['ACCOUNT_CHANGE_EVENT']>
+    readonly DEFAULT_MAX_MESSAGES: UnwrapRef<typeof import('../src/hooks/messenger')['DEFAULT_MAX_MESSAGES']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly WALLET_CONNECT_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']>
     readonly WALLET_DISCONNECT_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['WALLET_DISCONNECT_EVENT']>

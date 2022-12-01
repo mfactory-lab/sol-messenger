@@ -24,7 +24,7 @@ const memberStatus = computed(
     state.ownChannels.find(ch => ch.pubkey === props.pubkey.toString())
       ?.status,
 )
-const isPending = computed(() => memberStatus.value === 'Pending')
+const isPending = computed(() => memberStatus.value === 1)
 const initials = computed(() => props.channel.name.slice(0, 2))
 
 const isPublicChannel = computed(() => props.channel.flags === 1)
