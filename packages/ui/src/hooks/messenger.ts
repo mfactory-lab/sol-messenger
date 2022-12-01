@@ -1,3 +1,4 @@
+import type { PublicKey } from '@solana/web3.js'
 import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
@@ -93,10 +94,10 @@ export function useChannelAuthorizeMember() {
     dialog: false,
   })
 
-  async function submit(key: any) {
+  async function submit(authority: PublicKey) {
     try {
       state.loading = true
-      await authorizeMember(key)
+      await authorizeMember(authority)
       await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was authorized')
     } catch (e) {

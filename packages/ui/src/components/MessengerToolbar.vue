@@ -51,7 +51,7 @@ const pendingUsersCount = computed(() => {
     return
   }
   return state.channelMembers.filter(
-    ch => ch.data.status.__kind === 'Pending',
+    ch => ch.data.status === 1,
   ).length
 })
 
@@ -114,7 +114,7 @@ watch(
       </div>
 
       <div>
-        <q-btn class="chat-menu" flat square :disable="!isWalletConnected || !channel">
+        <q-btn class="chat-menu" flat square>
           <dots-icon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 120px" bordered>
@@ -206,6 +206,7 @@ watch(
                 v-close-popup
                 class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
+                :disable="!channel"
                 @click="$emit('leaveChannel')"
               >
                 <q-item-section>
