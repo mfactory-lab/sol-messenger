@@ -550,7 +550,6 @@ export class MessengerClient {
 
     let signature: string
 
-    console.log(tx)
     try {
       signature = await this.provider.sendAndConfirm(tx, undefined, opts)
     } catch (e: any) {
