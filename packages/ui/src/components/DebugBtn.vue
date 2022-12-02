@@ -11,13 +11,14 @@ const toggle = useToggle(dialog)
     Debug info
   </q-btn>
   <q-dialog v-model="dialog">
-    <q-card>
+    <q-card style="width: 800px; max-width: 80vw;">
       <q-card-section>
         <div
           v-for="row in [
             ['Authorized', isAuthorizedMember],
             ['Pending Access', isPendingMember],
             ['Channel Creator', isChannelCreator],
+            ['Channel Address', state.channelAddr],
             ['Channel', state.channel],
             ['Membership', state.channelMembership],
             ['Members', state.channelMembers],
