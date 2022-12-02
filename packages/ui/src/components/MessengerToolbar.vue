@@ -131,7 +131,7 @@ watch(
                     size="sm"
                     class="bg-blue-grey-7 text-white q-px-xs"
                   >
-                    Device key
+                    Devices
                   </q-btn>
                 </q-item-section>
               </q-item>
