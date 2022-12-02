@@ -75,7 +75,7 @@ const isDelete = computed(() => deleteMember.state.loading)
                     class="full-width"
                     :loading="isLoading"
                     :disabled="isLoading"
-                    @click="handleAuthorize(member.data.key, ch.channel.pubkey)"
+                    @click="handleAuthorize(member.data.authority, ch.channel.pubkey)"
                   >
                     Authorize
                   </q-btn>

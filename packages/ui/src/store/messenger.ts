@@ -383,12 +383,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(space) / LAMPORTS_PER_SOL)
   }
 
-  async function loadDevice() {
-    console.log(await client.loadDevice(state.channelAddr as PublicKey))
-  }
-
   return {
-    loadDevice,
     channelMessagesCost,
     state,
     client,
