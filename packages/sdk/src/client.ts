@@ -211,38 +211,18 @@ export class MessengerClient {
   /**
    * Load list of {@link ChannelDevice} for the {@link channel}
    */
-  async loadDevices(channel: PublicKey, authority?: PublicKey, emptyCek?: boolean) {
+  async loadDevices(channel: PublicKey, authority?: PublicKey) {
     const request = ChannelDevice.gpaBuilder()
       .addFilter('accountDiscriminator', channelDeviceDiscriminator)
       .addFilter('authority', authority ?? this.provider.publicKey)
       .addFilter('channel', channel)
 
-    if (emptyCek) {
-      request.addFilter('cek', [])
-    }
-
     const accounts = await request.run(this.provider.connection)
 
-    return accounts.map((acc) => {
-      return {
-        pubkey: acc.pubkey,
-        data: ChannelDevice.fromAccountInfo(acc.account)[0],
-      }
-    })
-  }
-
-  /**
-   * Load pending device keys
-   */
-  async loadPendingDevices(channel: PublicKey, authority?: PublicKey) {
-    const request = ChannelDevice.gpaBuilder()
-      .addFilter('accountDiscriminator', channelDeviceDiscriminator)
-      .addFilter('authority', authority ?? this.provider.publicKey)
-      .addFilter('channel', channel)
-      .addFilter('cek', [])
-      .dataSize(0)
-    const accounts = await request.run(this.provider.connection)
-    return accounts.map(acc => acc.pubkey)
+    return accounts.map(acc => ({
+      pubkey: acc.pubkey,
+      data: ChannelDevice.fromAccountInfo(acc.account)[0],
+    }))
   }
 
   /**
