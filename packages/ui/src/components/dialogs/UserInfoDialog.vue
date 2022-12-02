@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { evaClose, evaCopyOutline } from '@quasar/extras/eva-icons'
+import { FileDownloadIcon, FileImportIcon } from 'vue-tabler-icons'
 import { copyToClipboard } from 'quasar'
 
 defineEmits(['regenerate'])
@@ -60,15 +61,17 @@ const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
       <q-separator />
       <q-card-actions align="right">
         <div class="q-gutter-md row justify-between">
+          <!-- @click="userStore.generateKey" -->
           <q-btn
             class="disconnect-btn"
             text-color="black"
             square
             flat
-            @click="userStore.generateKey"
           >
-            Regenerate
+            add new
           </q-btn>
+          <file-import-icon />
+          <file-download-icon />
         </div>
       </q-card-actions>
     </q-card>
