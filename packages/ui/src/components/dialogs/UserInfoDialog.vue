@@ -6,6 +6,8 @@ defineEmits(['regenerate'])
 
 const userStore = useUserStore()
 
+const selectDevicekey = ref('')
+
 const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
 </script>
 
@@ -27,16 +29,44 @@ const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
       <q-separator />
       <q-card-section>
         <q-btn flat round dense :icon="evaCopyOutline" @click="copy">
-          <q-tooltip :delay="0" anchor="bottom middle" self="top middle" transition-duration="0">
+          <q-tooltip
+            :delay="0"
+            anchor="bottom middle"
+            self="top middle"
+            transition-duration="0"
+          >
             Copy to clipboard
           </q-tooltip>
         </q-btn>
         <span>{{ userStore.keypair?.publicKey }}</span>
       </q-card-section>
       <q-separator />
+      <q-card-section>
+        <div class="text-h6 text-left">
+          Devices
+        </div>
+        <q-list>
+          <q-item
+            active-class="bg-blue-grey-8 text-white"
+            class="devices-item"
+            clickable
+            :active="selectDevicekey === 1"
+            @click="selectDevicekey = 1"
+          >
+            {{ userStore.keypair?.publicKey }}
+          </q-item>
+        </q-list>
+      </q-card-section>
+      <q-separator />
       <q-card-actions align="right">
         <div class="q-gutter-md row justify-between">
-          <q-btn class="disconnect-btn" text-color="black" square flat @click="userStore.generateKey">
+          <q-btn
+            class="disconnect-btn"
+            text-color="black"
+            square
+            flat
+            @click="userStore.generateKey"
+          >
             Regenerate
           </q-btn>
         </div>
@@ -52,5 +82,11 @@ const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
 }
 .q-card__actions .q-btn.dialog-submit-btn {
   padding: 0 14px;
+}
+
+.devices-item {
+  align-items: center;
+  font-size: 12px;
+  min-height: 0;
 }
 </style>

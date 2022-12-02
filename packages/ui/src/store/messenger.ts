@@ -19,6 +19,7 @@ interface MessengerStoreState {
   channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
+  pendingDevices: PublicKey[]
   loading: boolean
   creating: boolean
   sending: boolean
@@ -46,6 +47,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     channelMembers: [],
     channelMessages: [], // decrypted messages list
     channelLoading: false,
+    pendingDevices: [],
     loading: false,
     creating: false,
     sending: false,
@@ -204,7 +206,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     try {
       await client.joinChannel({ channel, name })
       await loadChannel(addr)
-      const joinedChannel = { pubkey: addr.toString(), status: 'Pending' }
+      const joinedChannel = { pubkey: addr.toString(), status: 1 }
       state.ownChannels.push(joinedChannel)
     } catch (err) {
       console.log(err)
@@ -233,11 +235,17 @@ export const useMessengerStore = defineStore('messenger', () => {
       }
       await loadChannelMembers()
       await loadChannelMessages()
+      await loadPendingDevices()
     } catch (e) {
       console.log('Error', e)
     } finally {
       state.channelLoading = false
     }
+  }
+
+  async function loadPendingDevices() {
+    state.pendingDevices = await client.loadPendingDevices(state.channelAddr as PublicKey)
+    const device = await client.loadDevice(state.pendingDevices[0])
   }
 
   async function getCEK(): Promise<Uint8Array | undefined> {
@@ -269,16 +277,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       state.channel.messages.map(async (m) => {
         const isEncrypted = client.utils.message.isEncrypted(m)
         let content = isEncrypted ? mockEncrypted(m.content) : m.content
-        let senderDisplayName = shortenAddress(m.sender)
-        // show sender name only for authorized users
-        if (wallet.value?.publicKey) {
-          const membership = state.channelMembers.find(({ data }) =>
-            data.name !== '' && (`${data.authority}` === `${m.sender}` || `${data.key}` === `${m.sender}`),
-          )
-          if (membership && membership.data.name !== '') {
-            senderDisplayName = membership.data.name
-          }
-        }
+        const senderDisplayName = shortenAddress(m.sender)
         if (cek) {
           try {
             content = await client.decryptMessage(m.content, cek)
@@ -358,6 +357,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     await client.authorizeMember({
       channel: state.channelAddr,
       authority,
+      // key: state.pendingDevices[0],
     })
     await refreshMembers()
   }
@@ -386,7 +386,12 @@ export const useMessengerStore = defineStore('messenger', () => {
     return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(space) / LAMPORTS_PER_SOL)
   }
 
+  async function loadDevice() {
+    console.log(await client.loadDevice(state.channelAddr as PublicKey))
+  }
+
   return {
+    loadDevice,
     channelMessagesCost,
     state,
     client,
