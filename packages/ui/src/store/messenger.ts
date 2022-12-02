@@ -1,4 +1,4 @@
-import type { Channel, ChannelMembership, Message } from '@app/sdk'
+import type { Channel, ChannelDevice, ChannelMembership, Message } from '@app/sdk'
 import { MessengerClient } from '@app/sdk'
 import type { Address } from '@project-serum/anchor'
 import { AnchorProvider } from '@project-serum/anchor'
@@ -19,7 +19,7 @@ interface MessengerStoreState {
   channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
-  pendingDevices: PublicKey[]
+  pendingDevices: { pubkey: PublicKey; data: ChannelDevice }[]
   loading: boolean
   creating: boolean
   sending: boolean
@@ -244,8 +244,8 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function loadPendingDevices() {
-    state.pendingDevices = await client.loadPendingDevices(state.channelAddr as PublicKey)
-    const device = await client.loadDevice(state.pendingDevices[0])
+    state.pendingDevices = (await client.loadDevices(state.channelAddr as PublicKey)).filter(acc => acc.data.cek?.encryptedKey === '')
+    // const device = await client.loadDevice(state.pendingDevices[0])
   }
 
   async function getCEK(): Promise<Uint8Array | undefined> {
