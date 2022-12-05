@@ -39,7 +39,7 @@ channel.command('init')
 
 channel.command('delete-member')
   .argument('<CHANNEL>')
-  .argument('<MEMBERSHIP>')
+  .argument('<AUTHORITY>')
   .action(actions.channel.deleteChannelMember)
 
 cli.parseAsync(process.argv).then(

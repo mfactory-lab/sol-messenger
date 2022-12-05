@@ -5,67 +5,20 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import type * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
-import * as beetSolana from '@metaplex-foundation/beet-solana'
 /**
- * This type is used to derive the {@link ChannelMembershipStatus} type as well as the de/serializer.
- * However don't refer to it in your code but use the {@link ChannelMembershipStatus} type instead.
- *
- * @category userTypes
  * @category enums
  * @category generated
- * @private
  */
-export interface ChannelMembershipStatusRecord {
-  Authorized: { by: beet.COption<web3.PublicKey> }
-  Pending: { authority: beet.COption<web3.PublicKey> }
+export enum ChannelMembershipStatus {
+  Authorized,
+  Pending,
 }
 
 /**
- * Union type respresenting the ChannelMembershipStatus data enum defined in Rust.
- *
- * NOTE: that it includes a `__kind` property which allows to narrow types in
- * switch/if statements.
- * Additionally `isChannelMembershipStatus*` type guards are exposed below to narrow to a specific variant.
- *
- * @category userTypes
- * @category enums
- * @category generated
- */
-export type ChannelMembershipStatus =
-  beet.DataEnumKeyAsKind<ChannelMembershipStatusRecord>
-
-export const isChannelMembershipStatusAuthorized = (
-  x: ChannelMembershipStatus,
-): x is ChannelMembershipStatus & { __kind: 'Authorized' } =>
-  x.__kind === 'Authorized'
-export const isChannelMembershipStatusPending = (
-  x: ChannelMembershipStatus,
-): x is ChannelMembershipStatus & { __kind: 'Pending' } =>
-  x.__kind === 'Pending'
-
-/**
  * @category userTypes
  * @category generated
  */
-export const channelMembershipStatusBeet
-  = beet.dataEnum<ChannelMembershipStatusRecord>([
-    [
-      'Authorized',
-      new beet.FixableBeetArgsStruct<
-        ChannelMembershipStatusRecord['Authorized']
-      >(
-        [['by', beet.coption(beetSolana.publicKey)]],
-        'ChannelMembershipStatusRecord["Authorized"]',
-      ),
-    ],
-
-    [
-      'Pending',
-      new beet.FixableBeetArgsStruct<ChannelMembershipStatusRecord['Pending']>(
-        [['authority', beet.coption(beetSolana.publicKey)]],
-        'ChannelMembershipStatusRecord["Pending"]',
-      ),
-    ],
-  ]) as beet.FixableBeet<ChannelMembershipStatus>
+export const channelMembershipStatusBeet = beet.fixedScalarEnum(
+  ChannelMembershipStatus,
+) as beet.FixedSizeBeet<ChannelMembershipStatus, ChannelMembershipStatus>

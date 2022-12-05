@@ -11,11 +11,17 @@ pub enum MessengerError {
     #[msg("Invalid membership")]
     InvalidMembership,
 
+    #[msg("Invalid device")]
+    InvalidDevice,
+
     #[msg("Invalid message")]
     InvalidMessage,
 
     #[msg("Name too long")]
     NameTooLong,
+
+    #[msg("Workspace too long")]
+    WorkspaceTooLong,
 
     #[msg("Message too long")]
     MessageTooLong,

@@ -5,7 +5,8 @@ import type { AllChannels } from '@/store/messenger'
 
 const wallet = useWallet()
 
-const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
+const { state, postMessage, loadChannel, refreshList, channelAuthorityDevice }
+  = useMessengerStore()
 const channel = useChannelStore()
 const mobileStore = useMobileStore()
 
@@ -63,6 +64,14 @@ const isMobileMessages = computed(() => {
     return 1
   }
   return mobileStore.state.searchOrInfo === 'search' ? 1 : 2
+})
+
+const authorityDevice = ref<string | undefined>('')
+
+watch(() => state.memberDevices, async (d) => {
+  if (d.length > 0) {
+    authorityDevice.value = await channelAuthorityDevice()
+  }
 })
 </script>
 
@@ -144,7 +153,12 @@ const isMobileMessages = computed(() => {
     @delete-member="deleteMember.submit"
   />
 
-  <user-info-dialog v-model="showDeviceKeyDialog" />
+  <user-info-dialog
+    v-model="showDeviceKeyDialog"
+    :devices="state.memberDevices"
+    :authority-device="authorityDevice"
+    @load-channel="loadChannel(state.channelAddr)"
+  />
 
   <div v-if="state.channel" class="q-my-md q-px-lg">
     <debug-btn />
@@ -163,7 +177,7 @@ const isMobileMessages = computed(() => {
     height: 400px;
 
     @media (max-width: $breakpoint-xs) {
-      min-height: 444px;;
+      min-height: 444px;
     }
 
     .messenger-card {

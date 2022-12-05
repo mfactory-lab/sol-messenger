@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::AuthorizeMemberEvent, state::*, utils::validate_membership, MessengerError};
+use crate::{events::AuthorizeMemberEvent, state::*, utils::assert_valid_membership, MessengerError};
 
 pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Result<()> {
     let channel = &ctx.accounts.channel;
@@ -13,7 +13,7 @@ pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Resu
     let is_super_admin = channel.authorize(authority_key);
 
     if !is_super_admin {
-        let auth_membership = validate_membership(
+        let auth_membership = assert_valid_membership(
             &ctx.accounts.authority_membership.to_account_info(),
             &channel.key(),
             authority_key,
@@ -26,10 +26,10 @@ pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Resu
     let membership = &mut ctx.accounts.membership;
 
     match membership.status {
-        ChannelMembershipStatus::Pending { authority } => {
-            if let Some(authority) = authority {
-                if authority.key() != *authority_key {
-                    msg!("Error: Should be authorized by {}", authority.key());
+        ChannelMembershipStatus::Pending => {
+            if let Some(target_authority) = membership.status_target {
+                if target_authority.key() != *authority_key {
+                    msg!("Error: Should be authorized by {}", target_authority.key());
                     return Err(MessengerError::Unauthorized.into());
                 }
             }
@@ -40,12 +40,12 @@ pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Resu
         }
     }
 
-    // TODO: validate membership.key == data.cek.pubkey
+    membership.status_target = Some(*authority_key);
+    membership.status = ChannelMembershipStatus::Authorized;
+    // membership.cek = data.cek;
 
-    membership.cek = data.cek;
-    membership.status = ChannelMembershipStatus::Authorized {
-        by: Some(*authority_key),
-    };
+    let device = &mut ctx.accounts.device;
+    device.cek = data.cek;
 
     let timestamp = Clock::get()?.unix_timestamp;
 
@@ -70,6 +70,9 @@ pub struct AuthorizeMember<'info> {
 
     #[account(mut, has_one = channel)]
     pub membership: Box<Account<'info, ChannelMembership>>,
+
+    #[account(mut, has_one = channel, constraint = device.authority == membership.authority)]
+    pub device: Box<Account<'info, ChannelDevice>>,
 
     pub authority: Signer<'info>,
 

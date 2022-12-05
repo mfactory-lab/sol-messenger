@@ -38,7 +38,7 @@ export async function deleteChannel(key: string, _opts: any) {
     log.info('Deleting member...')
     const { signature } = await client.deleteMember({
       channel: channelKey,
-      membership: member.pubkey,
+      authority: member.data.authority,
     })
     log.info(`Sig: ${signature}`)
   }
@@ -62,7 +62,7 @@ export async function deleteAllChannels(_opts: any) {
       log.info('Deleting member...')
       const { signature } = await client.deleteMember({
         channel: channel.pubkey,
-        membership: member.pubkey,
+        authority: member.data.authority,
       })
       log.info(`Sig: ${signature}`)
     }
@@ -76,11 +76,11 @@ export async function deleteAllChannels(_opts: any) {
   log.info('Done')
 }
 
-export async function deleteChannelMember(channelAddr: string, membershipAddr: string, _opts: any) {
+export async function deleteChannelMember(channelAddr: string, authority: string, _opts: any) {
   const { client } = useContext()
   const { signature } = await client.deleteMember({
     channel: new PublicKey(channelAddr),
-    membership: new PublicKey(membershipAddr),
+    authority: new PublicKey(authority),
   })
   log.info(`Sig: ${signature}`)
 

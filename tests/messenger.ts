@@ -1,8 +1,8 @@
 import * as assert from 'assert'
-import { Keypair } from '@solana/web3.js'
-import type { ConfirmOptions, PublicKey } from '@solana/web3.js'
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor'
-import { MessengerClient } from '../packages/sdk'
+import type { ConfirmOptions, PublicKey } from '@solana/web3.js'
+import { Keypair } from '@solana/web3.js'
+import { ChannelMembershipStatus, MessengerClient } from '../packages/sdk'
 import adminKeypair from '../target/deploy/messenger-manager.json'
 
 // TODO: super admin tests
@@ -42,7 +42,7 @@ describe('messenger', () => {
     let channel: PublicKey
 
     it('can init a public channel', async () => {
-      const data = { name: 'General', public: true, maxMessages: 15 }
+      const data = { name: 'General', public: true, maxMessages: 100 }
       const { channel: _channel } = await client.initChannel(data)
       channel = _channel.publicKey
 
@@ -74,19 +74,25 @@ describe('messenger', () => {
     let channel: Keypair
 
     it('can init a private channel', async () => {
-      const data = { name: 'test', memberName: 'creator', maxMessages: 10 }
+      const data = { name: 'test', memberName: 'creator', maxMessages: 100, permissionless: true }
       const { cekEncrypted, channel: _channel } = await client.initChannel(data)
       channel = _channel
       const channelInfo = await client.loadChannel(channel.publicKey)
-      const membership = await client.loadMembership((await client.getMembershipPDA(channel.publicKey))[0])
+
       assert.equal(channelInfo.name, data.name)
       assert.equal(channelInfo.maxMessages, data.maxMessages)
-      assert.equal(channelInfo.creator.toBase58(), sender.publicKey.toBase58())
-      assert.equal(membership.channel.toBase58(), channel.publicKey.toBase58())
-      assert.equal(membership.authority.toBase58(), sender.publicKey.toBase58())
-      assert.equal(membership.key.toBase58(), sender.publicKey.toBase58())
+      assert.deepEqual(channelInfo.creator, sender.publicKey)
+
+      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
+
+      const membership = await client.loadMembership(membershipAddr)
+      assert.deepEqual(membership.channel, channel.publicKey)
+      assert.deepEqual(membership.authority, sender.publicKey)
       assert.equal(membership.name, data.memberName)
-      assert.equal(membership.cek.encryptedKey, cekEncrypted.encryptedKey)
+
+      const device = await client.loadDevice((await client.getDevicePDA(membershipAddr))[0])
+      assert.deepEqual(device.key, sender.publicKey)
+      assert.equal(device.cek.encryptedKey, cekEncrypted.encryptedKey)
     })
 
     it('can init channel with keypair', async () => {
@@ -108,19 +114,37 @@ describe('messenger', () => {
       }
     })
 
+    it('can add new device', async () => {
+      const kp = Keypair.generate()
+      await client.addDevice({ channel: channel.publicKey, key: kp.publicKey })
+
+      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr, kp.publicKey)
+      const device = await client.loadDevice(deviceAddr)
+      assert.deepEqual(device.authority, sender.publicKey)
+      assert.deepEqual(device.channel, channel.publicKey)
+      assert.deepEqual(device.key, kp.publicKey)
+
+      const cek = await client.decryptCEK(device.cek, kp.secretKey)
+      assert.ok(cek.length > 0)
+    })
+
     it('can post encrypted message', async () => {
       const message = 'hello world'
       await client.postMessage({ channel: channel.publicKey, message, encrypt: true })
-      const aca = await client.loadMembership((await client.getMembershipPDA(channel.publicKey))[0])
-      const cek = await client.decryptCEK(aca.cek)
-      const channelInfo = await client.loadChannel(channel.publicKey)
 
+      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr)
+      const device = await client.loadDevice(deviceAddr)
+
+      const cek = await client.decryptCEK(device.cek)
+      const channelInfo = await client.loadChannel(channel.publicKey)
       const msg = channelInfo.messages[0]
 
       assert.equal(await client.decryptMessage(msg.content, cek), message)
+      assert.equal(channelInfo.messageCount, 1)
       assert.equal(msg.flags, 1)
       assert.equal(msg.id, 1)
-      assert.equal(channelInfo.messageCount, 1)
     })
 
     it('can add member to the channel', async () => {
@@ -131,10 +155,13 @@ describe('messenger', () => {
       assert.equal(channelInfo.memberCount, 2)
 
       const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member1.publicKey)
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr, member1.publicKey)
       const membership = await client.loadMembership(membershipAddr)
-      assert.deepEqual(membership.authority, data.invitee)
-      assert.deepEqual(membership.key, data.key ?? data.invitee)
+      const device = await client.loadDevice(deviceAddr)
+
       assert.equal(membership.name, data.name)
+      assert.deepEqual(membership.authority, data.invitee)
+      assert.deepEqual(device.key, data.key ?? data.invitee)
     })
 
     it('can post encrypted message from invitee', async () => {
@@ -147,8 +174,10 @@ describe('messenger', () => {
 
     it('can read message from inviter', async () => {
       const channelInfo = await client.loadChannel(channel.publicKey)
-      const aca = await client.loadMembership((await client.getMembershipPDA(channel.publicKey))[0])
-      const cek = await client.decryptCEK(aca.cek, sender.secretKey)
+      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr)
+      const device = await client.loadDevice(deviceAddr)
+      const cek = await client.decryptCEK(device.cek, sender.secretKey)
       const message = await client.decryptMessage(channelInfo.messages[1].content, cek)
       assert.equal(message, 'hello from invitee')
     })
@@ -162,10 +191,13 @@ describe('messenger', () => {
       const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member2.publicKey)
       const membership = await client.loadMembership(membershipAddr)
 
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr, member2.publicKey)
+      const device = await client.loadDevice(deviceAddr)
+
       assert.deepEqual(membership.authority, member2.publicKey)
       assert.equal(membership.name, 'Alex')
-      assert.deepEqual(membership.cek, { encryptedKey: '', header: '' })
-      assert.equal(membership.status.__kind, 'Pending')
+      assert.deepEqual(device.cek, { encryptedKey: '', header: '' })
+      assert.equal(membership.status, ChannelMembershipStatus.Pending)
     })
 
     it('cannot post message if not authorized', async () => {
@@ -185,14 +217,18 @@ describe('messenger', () => {
 
       const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member3.publicKey)
       const membership = await client.loadMembership(membershipAddr)
-      assert.equal(membership.status.__kind, 'Pending')
-      if (membership.status.__kind !== 'Authorized') {
-        assert.equal(membership.status.authority?.toString(), member2.publicKey.toString())
+
+      // const [deviceAddr] = await client.getDevicePDA(membershipAddr, member3.publicKey)
+      // const device = await client.loadDevice(deviceAddr)
+
+      assert.equal(membership.status, ChannelMembershipStatus.Pending)
+      if (membership.status !== ChannelMembershipStatus.Authorized) {
+        assert.equal(membership.statusTarget, member2.publicKey.toString())
       }
     })
 
     it('cannot authorize new member if not authorized membership', async () => {
-      const data = { channel: channel.publicKey, key: member3.publicKey }
+      const data = { channel: channel.publicKey, authority: member3.publicKey }
       try {
         await getClient(member2).authorizeMember(data)
       } catch (e: any) {
@@ -210,16 +246,17 @@ describe('messenger', () => {
     })
 
     it('can member #1 authorize member #2', async () => {
-      const data = { channel: channel.publicKey, key: member2.publicKey }
+      const data = { channel: channel.publicKey, authority: member2.publicKey }
       await getClient(member1).authorizeMember(data)
 
       const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member2.publicKey)
       const membership = await client.loadMembership(membershipAddr)
-      assert.equal(membership.status.__kind, 'Authorized')
+
+      assert.equal(membership.status, ChannelMembershipStatus.Authorized)
     })
 
     it('cannot member #1 authorize a member #3', async () => {
-      const data = { channel: channel.publicKey, key: member3.publicKey }
+      const data = { channel: channel.publicKey, authority: member3.publicKey }
       try {
         await getClient(member1).authorizeMember(data)
         assert.ok(false)
@@ -269,12 +306,25 @@ describe('messenger', () => {
         assert.ok(e.message.startsWith('Unable to find Channel account'))
       }
     })
+  })
+
+  describe('admin', () => {
+    it('can admin delete a device', async () => {
+      const channels = await client.loadAllChannels()
+      const devices = await client.loadDevices(channels[0].pubkey)
+      const device = devices[0]
+      await getClient(admin).deleteDevice({
+        channel: device.data.channel,
+        authority: device.data.authority,
+        key: device.data.key,
+      })
+    })
 
     it('can admin delete a member', async () => {
       const channels = await client.loadAllChannels()
       const members = await client.loadChannelMembers(channels[0].pubkey)
       const member = members[0]
-      await getClient(admin).deleteMember({ channel: member.data.channel, membership: member.pubkey })
+      await getClient(admin).deleteMember({ channel: member.data.channel, authority: member.data.authority })
     })
 
     it('can admin delete a channel', async () => {

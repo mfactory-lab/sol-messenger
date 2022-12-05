@@ -24,8 +24,9 @@ export const deleteMemberStruct = new beet.BeetArgsStruct<{
  *
  * @property [_writable_] channel
  * @property [_writable_] membership
+ * @property [_writable_] membershipAuthority
  * @property [] authorityMembership
- * @property [_writable_, **signer**] authority
+ * @property [**signer**] authority
  * @category Instructions
  * @category DeleteMember
  * @category generated
@@ -33,6 +34,7 @@ export const deleteMemberStruct = new beet.BeetArgsStruct<{
 export interface DeleteMemberInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
+  membershipAuthority: web3.PublicKey
   authorityMembership: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -53,7 +55,7 @@ export const deleteMemberInstructionDiscriminator = [
  */
 export function createDeleteMemberInstruction(
   accounts: DeleteMemberInstructionAccounts,
-  programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
+  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
   const [data] = deleteMemberStruct.serialize({
     instructionDiscriminator: deleteMemberInstructionDiscriminator,
@@ -70,13 +72,18 @@ export function createDeleteMemberInstruction(
       isSigner: false,
     },
     {
+      pubkey: accounts.membershipAuthority,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
       pubkey: accounts.authorityMembership,
       isWritable: false,
       isSigner: false,
     },
     {
       pubkey: accounts.authority,
-      isWritable: true,
+      isWritable: false,
       isSigner: true,
     },
     {

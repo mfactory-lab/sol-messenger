@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 use crate::{
     events::DeleteChannelEvent,
     state::*,
-    utils::{close, validate_membership},
+    utils::{assert_valid_membership, close},
     MessengerError,
 };
 
@@ -13,7 +13,7 @@ pub fn handler(ctx: Context<DeleteChannel>) -> Result<()> {
     let is_super_admin = channel.authorize(authority_key);
 
     if !is_super_admin {
-        let auth_membership = validate_membership(
+        let auth_membership = assert_valid_membership(
             &ctx.accounts.authority_membership.to_account_info(),
             &channel.key(),
             authority_key,

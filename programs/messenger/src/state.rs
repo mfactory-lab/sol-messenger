@@ -6,21 +6,25 @@ use crate::{constants::*, MessengerError};
 
 #[account]
 pub struct Channel {
+    /// Workspace used to group channels
+    pub workspace: String,
     /// Name of the channel
     pub name: String,
     /// Channel creator
     pub creator: Pubkey,
     /// Creation date
     pub created_at: i64,
+    /// Last message date
+    pub last_message_at: i64,
     /// Channel flags
     pub flags: u8,
     /// Number of members
     pub member_count: u16,
     /// Message counter
-    pub message_count: u32,
+    pub message_count: u64,
     /// The maximum number of messages that are stored in [messages]
     pub max_messages: u16,
-    /// List of messages
+    /// List of latest messages
     pub messages: Vec<Message>,
 }
 
@@ -28,11 +32,12 @@ impl Channel {
     /// Calculate channel space
     pub fn space(max_messages: u16) -> usize {
         8 // discriminator
+        + (4 + MAX_WORKSPACE_LENGTH) // workspace
         + (4 + MAX_CHANNEL_NAME_LENGTH) // name
         + 32 // creator key
-        + 8 // creation date
+        + 8 + 8 // creation date + last message date
         + 1 // flags
-        + 2 + 4 // member_count + message_count
+        + 2 + 8 // member_count + message_count
         + 2 + (4 + (Message::SIZE * max_messages as usize)) // max_messages + messages
     }
 
@@ -47,17 +52,18 @@ impl Channel {
             return Err(MessengerError::MessageTooLong.into());
         }
 
+        self.last_message_at = Clock::get()?.unix_timestamp;
         self.message_count = self.message_count.saturating_add(1);
 
         let bytes = content.as_bytes();
 
         // first byte is represent message flags
-        if let [first, bytes @ ..] = bytes {
+        if let [flags, bytes @ ..] = bytes {
             let message = Message {
                 id: self.message_count,
                 sender: *sender,
-                created_at: Clock::get()?.unix_timestamp,
-                flags: *first,
+                created_at: self.last_message_at,
+                flags: *flags,
                 content: std::str::from_utf8(bytes).unwrap().to_string(),
             };
 
@@ -97,21 +103,39 @@ pub mod ChannelFlags {
 }
 
 #[account]
+pub struct ChannelDevice {
+    /// Associated [Channel] address
+    pub channel: Pubkey,
+    /// Authority of the [ChannelKey]
+    pub authority: Pubkey,
+    /// The device key used to encrypt the `cek`
+    pub key: Pubkey,
+    /// The content encryption key (CEK)
+    pub cek: CEKData,
+    /// Bump seed for deriving PDA seeds
+    pub bump: u8,
+}
+
+impl ChannelDevice {
+    pub fn space() -> usize {
+        8 + 32 + 32 + 32 + CEKData::SIZE + 1
+    }
+}
+
+#[account]
 pub struct ChannelMembership {
     /// Associated [Channel] address
     pub channel: Pubkey,
     /// Authority of membership
     pub authority: Pubkey,
-    /// The device key used to encrypt the `CEK`
-    pub key: Pubkey,
-    /// The content encryption key (CEK) of the channel
-    pub cek: CEKData,
     /// Status of membership
     pub status: ChannelMembershipStatus,
+    /// Status target key
+    pub status_target: Option<Pubkey>,
     /// Name of the channel member
     pub name: String,
-    /// Inviter address
-    pub invited_by: Option<Pubkey>,
+    /// The last read message id
+    pub last_read_message_id: u64,
     /// Creation date
     pub created_at: i64,
     /// Membership flags
@@ -123,14 +147,20 @@ pub struct ChannelMembership {
 impl ChannelMembership {
     pub fn space() -> usize {
         8 // discriminator
-        + 32 + 32 + 32 // channel + authority + cek_key
-        + CEKData::SIZE + ChannelMembershipStatus::SIZE
+        + 32 + 32 // channel + authority
+        // + 32 + CEKData::SIZE // key + cek
+        + ChannelMembershipStatus::SIZE + (1 + 32) // status + status_target
         + (4 + MAX_MEMBER_NAME_LENGTH) // name
-        + (1 + 32) + 8 + 1 + 1 // invited_by + created_at + flags + bump
+        + 8 + 8 // last_read_message_id + created_at
+        + 1 + 1 // flags + bump
+    }
+
+    pub fn is_pending(&self) -> bool {
+        self.status == ChannelMembershipStatus::Pending
     }
 
     pub fn is_authorized(&self) -> bool {
-        matches!(self.status, ChannelMembershipStatus::Authorized { .. })
+        self.status == ChannelMembershipStatus::Authorized
     }
 
     pub fn is_owner(&self) -> bool {
@@ -142,15 +172,15 @@ impl ChannelMembership {
     }
 
     pub fn can_add_member(&self, channel: &Channel) -> bool {
-        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::AddMember > 0
+        channel.is_permissionless() || self.flags & ChannelMembershipAccess::AddMember > 0
     }
 
     pub fn can_delete_member(&self, channel: &Channel) -> bool {
-        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::DeleteMember > 0
+        channel.is_permissionless() || self.flags & ChannelMembershipAccess::DeleteMember > 0
     }
 
     pub fn can_authorize_member(&self, channel: &Channel) -> bool {
-        !channel.is_permissionless() || self.flags & ChannelMembershipAccess::AuthorizeMember > 0
+        channel.is_permissionless() || self.flags & ChannelMembershipAccess::AuthorizeMember > 0
     }
 }
 
@@ -163,10 +193,10 @@ pub mod ChannelMembershipAccess {
     pub const Owner: u8 = 0xff;
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq)]
 pub enum ChannelMembershipStatus {
-    Authorized { by: Option<Pubkey> },
-    Pending { authority: Option<Pubkey> },
+    Authorized,
+    Pending,
 }
 
 impl ChannelMembershipStatus {
@@ -196,7 +226,7 @@ impl CEKData {
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
 pub struct Message {
     /// Uniq message id
-    pub id: u32,
+    pub id: u64,
     /// The message sender id
     pub sender: Pubkey,
     /// The unix timestamp at which the message was received
@@ -208,7 +238,7 @@ pub struct Message {
 }
 
 impl Message {
-    pub const SIZE: usize = 4 + 32 + 8 + 1 + (4 + MAX_MESSAGE_LENGTH);
+    pub const SIZE: usize = 8 + 32 + 8 + 1 + (4 + MAX_MESSAGE_LENGTH);
 
     pub fn is_encrypted(&self) -> bool {
         self.flags & MessageFlags::IsEncrypted > 0
@@ -226,8 +256,10 @@ mod tests {
 
     #[test]
     fn test() {
-        msg!("{:?}", ChannelMembershipAccess::AddMember);
-        msg!("{:?}", ChannelMembershipAccess::AuthorizeMember);
-        msg!("{:?}", ChannelMembershipAccess::Admin);
+        msg!("{:?}", Channel::space(0));
+        // msg!("{:?}", ChannelMembershipAccess::AddMember);
+        // msg!("{:?}", ChannelMembershipAccess::AuthorizeMember);
+        // msg!("{:?}", ChannelMembershipAccess::Admin);
+        // unimplemented!();
     }
 }

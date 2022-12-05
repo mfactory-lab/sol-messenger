@@ -17,12 +17,14 @@ import { messageBeet } from '../types/Message'
  * @category generated
  */
 export interface ChannelArgs {
+  workspace: string
   name: string
   creator: web3.PublicKey
   createdAt: beet.bignum
+  lastMessageAt: beet.bignum
   flags: number
   memberCount: number
-  messageCount: number
+  messageCount: beet.bignum
   maxMessages: number
   messages: Message[]
 }
@@ -37,12 +39,14 @@ export const channelDiscriminator = [49, 159, 99, 106, 220, 87, 219, 88]
  */
 export class Channel implements ChannelArgs {
   private constructor(
+    readonly workspace: string,
     readonly name: string,
     readonly creator: web3.PublicKey,
     readonly createdAt: beet.bignum,
+    readonly lastMessageAt: beet.bignum,
     readonly flags: number,
     readonly memberCount: number,
-    readonly messageCount: number,
+    readonly messageCount: beet.bignum,
     readonly maxMessages: number,
     readonly messages: Message[],
   ) {}
@@ -52,9 +56,11 @@ export class Channel implements ChannelArgs {
    */
   static fromArgs(args: ChannelArgs) {
     return new Channel(
+      args.workspace,
       args.name,
       args.creator,
       args.createdAt,
+      args.lastMessageAt,
       args.flags,
       args.memberCount,
       args.messageCount,
@@ -103,7 +109,7 @@ export class Channel implements ChannelArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      '6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm',
+      '4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw',
     ),
   ) {
     return beetSolana.GpaBuilder.fromStruct(programId, channelBeet)
@@ -168,6 +174,7 @@ export class Channel implements ChannelArgs {
    */
   pretty() {
     return {
+      workspace: this.workspace,
       name: this.name,
       creator: this.creator.toBase58(),
       createdAt: (() => {
@@ -181,9 +188,30 @@ export class Channel implements ChannelArgs {
         }
         return x
       })(),
+      lastMessageAt: (() => {
+        const x = <{ toNumber: () => number }> this.lastMessageAt
+        if (typeof x.toNumber === 'function') {
+          try {
+            return x.toNumber()
+          } catch (_) {
+            return x
+          }
+        }
+        return x
+      })(),
       flags: this.flags,
       memberCount: this.memberCount,
-      messageCount: this.messageCount,
+      messageCount: (() => {
+        const x = <{ toNumber: () => number }> this.messageCount
+        if (typeof x.toNumber === 'function') {
+          try {
+            return x.toNumber()
+          } catch (_) {
+            return x
+          }
+        }
+        return x
+      })(),
       maxMessages: this.maxMessages,
       messages: this.messages,
     }
@@ -202,12 +230,14 @@ export const channelBeet = new beet.FixableBeetStruct<
 >(
   [
     ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
+    ['workspace', beet.utf8String],
     ['name', beet.utf8String],
     ['creator', beetSolana.publicKey],
     ['createdAt', beet.i64],
+    ['lastMessageAt', beet.i64],
     ['flags', beet.u8],
     ['memberCount', beet.u16],
-    ['messageCount', beet.u32],
+    ['messageCount', beet.u64],
     ['maxMessages', beet.u16],
     ['messages', beet.array(messageBeet)],
   ],

@@ -40,6 +40,7 @@ export const addMemberStruct = new beet.FixableBeetArgsStruct<
  * @property [_writable_] channel
  * @property [] invitee
  * @property [_writable_] inviteeMembership
+ * @property [_writable_] inviteeDevice
  * @property [_writable_] authorityMembership
  * @property [_writable_, **signer**] authority
  * @category Instructions
@@ -50,6 +51,7 @@ export interface AddMemberInstructionAccounts {
   channel: web3.PublicKey
   invitee: web3.PublicKey
   inviteeMembership: web3.PublicKey
+  inviteeDevice: web3.PublicKey
   authorityMembership: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -73,7 +75,7 @@ export const addMemberInstructionDiscriminator = [
 export function createAddMemberInstruction(
   accounts: AddMemberInstructionAccounts,
   args: AddMemberInstructionArgs,
-  programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
+  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
   const [data] = addMemberStruct.serialize({
     instructionDiscriminator: addMemberInstructionDiscriminator,
@@ -92,6 +94,11 @@ export function createAddMemberInstruction(
     },
     {
       pubkey: accounts.inviteeMembership,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.inviteeDevice,
       isWritable: true,
       isSigner: false,
     },

@@ -1,8 +1,9 @@
+import type { PublicKey } from '@solana/web3.js'
 import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
 
-const DEFAULT_MAX_MESSAGES = 15
+export const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
@@ -93,10 +94,10 @@ export function useChannelAuthorizeMember() {
     dialog: false,
   })
 
-  async function submit(key: any) {
+  async function submit(authority: PublicKey) {
     try {
       state.loading = true
-      await authorizeMember(key)
+      await authorizeMember(authority)
       await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was authorized')
     } catch (e) {
@@ -250,6 +251,48 @@ export function useChannelLeave() {
     } catch (e) {
       console.log('Error', e)
       error('Something went wrong')
+    } finally {
+      state.loading = false
+    }
+  }
+
+  return { state, submit }
+}
+
+export function useAddDevice() {
+  const messenger = useMessengerStore()
+  const { ok } = useHelper()
+
+  const state = reactive({
+    loading: false,
+  })
+
+  async function submit(key: string) {
+    try {
+      state.loading = true
+      await messenger.addDevice(key)
+      ok('device added')
+    } finally {
+      state.loading = false
+    }
+  }
+
+  return { state, submit }
+}
+
+export function useDeleteDevice() {
+  const messenger = useMessengerStore()
+  const { ok } = useHelper()
+
+  const state = reactive({
+    loading: false,
+  })
+
+  async function submit(key: PublicKey) {
+    try {
+      state.loading = true
+      await messenger.deleteDevice(key)
+      ok('device removed')
     } finally {
       state.loading = false
     }

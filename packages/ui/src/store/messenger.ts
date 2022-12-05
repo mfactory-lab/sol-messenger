@@ -1,16 +1,17 @@
-import type { Channel, ChannelMembership, Message } from '@app/sdk'
+import type { Channel, ChannelDevice, ChannelMembership, Message } from '@app/sdk'
 import { MessengerClient } from '@app/sdk'
 import type { Address } from '@project-serum/anchor'
 import { AnchorProvider } from '@project-serum/anchor'
 import type { Keypair } from '@solana/web3.js'
-import { PublicKey } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
+
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
 
 interface MessengerStoreState {
   allChannels: AllChannels[]
-  ownChannels: { pubkey: string; status: string }[]
+  ownChannels: { pubkey: string; status: number }[]
   channel?: Channel
   channelAddr?: PublicKey
   channelMembershipAddr?: PublicKey
@@ -18,6 +19,7 @@ interface MessengerStoreState {
   channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
+  memberDevices: Array<{ data: ChannelDevice; pubkey: PublicKey }>
   loading: boolean
   creating: boolean
   sending: boolean
@@ -45,6 +47,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     channelMembers: [],
     channelMessages: [], // decrypted messages list
     channelLoading: false,
+    memberDevices: [],
     loading: false,
     creating: false,
     sending: false,
@@ -76,24 +79,16 @@ export const useMessengerStore = defineStore('messenger', () => {
   }, { immediate: true })
 
   async function initOwnChannels() {
-    const memberships = await client.loadMemberships(userStore.keypair?.publicKey)
+    const memberships = await client.loadMemberships()
     const channels: {
       pubkey: string
-      status: 'Authorized' | 'Pending' | 'Unauthorized'
+      status: number
     }[] = memberships.map(v => ({
-      pubkey: v.data[0].channel.toBase58(),
-      status: v.data[0].status.__kind,
+      pubkey: v.data.channel.toBase58(),
+      status: v.data.status,
     }))
-    /*     DEFAULT_CHANNELS.forEach((pk) => {
-      if (!channels.find(ch => ch.pubkey === pk)) {
-        channels.push({
-          pubkey: pk,
-          status: 'Unauthorized',
-        })
-      }
-    }) */
+
     state.ownChannels = channels
-    console.log('myChannels ====== ', state.ownChannels)
   }
 
   async function initEvents() {
@@ -176,10 +171,9 @@ export const useMessengerStore = defineStore('messenger', () => {
       state.creating = true
       const { channel } = await client.initChannel({
         name,
-        maxMessages: opts.maxMessages ?? 15,
+        maxMessages: Number(opts.maxMessages),
         public: opts.public,
         permissionless: opts.permissionless,
-        opts: { commitment: opts.commitment ?? 'confirmed' },
       })
 
       // await init()
@@ -197,22 +191,22 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function deleteChannel(addr: Address) {
     const channel = new PublicKey(addr)
-    await client.deleteChannel({ channel, opts: { commitment: 'confirmed' } })
+    await client.deleteChannel({ channel })
     deleteChannelFromChannels(addr)
   }
 
   async function leaveChannel(channel: PublicKey) {
     console.log('leaveChannel channel === ', channel.toBase58())
-    await client.leaveChannel({ channel, opts: { commitment: 'confirmed' } })
+    await client.leaveChannel({ channel })
     deleteChannelFromChannels(channel)
   }
 
   async function joinChannel(addr: Address, name: string) {
     const channel = new PublicKey(addr)
     try {
-      await client.joinChannel({ channel, name, opts: { commitment: 'confirmed' } })
+      await client.joinChannel({ channel, name })
       await loadChannel(addr)
-      const joinedChannel = { pubkey: addr.toString(), status: 'Pending' }
+      const joinedChannel = { pubkey: addr.toString(), status: 1 }
       state.ownChannels.push(joinedChannel)
     } catch (err) {
       console.log(err)
@@ -226,6 +220,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMembershipAddr = undefined
     state.channelMembership = state.channelMembership ?? undefined
     state.channelAddr = new PublicKey(addr)
+    state.memberDevices = []
 
     try {
       if (wallet.value?.publicKey) {
@@ -239,6 +234,7 @@ export const useMessengerStore = defineStore('messenger', () => {
           state.channelMembership = undefined
         }
       }
+      await loadMemberDevices()
       await loadChannelMembers()
       await loadChannelMessages()
     } catch (e) {
@@ -249,11 +245,14 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function getCEK(): Promise<Uint8Array | undefined> {
-    if (!state.channelMembership) {
+    if (!state.channelMembership || !deviceKey.value) {
       return
     }
     try {
-      return await client.decryptCEK(state.channelMembership.cek)
+      const [membershipAddr] = await client.getMembershipPDA(state.channelAddr as PublicKey)
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr, deviceKey.value.publicKey)
+      const device = await client.loadDevice(deviceAddr)
+      return await client.decryptCEK(device.cek, deviceKey.value.secretKey)
     } catch (e) {
       console.log(e)
     }
@@ -274,16 +273,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       state.channel.messages.map(async (m) => {
         const isEncrypted = client.utils.message.isEncrypted(m)
         let content = isEncrypted ? mockEncrypted(m.content) : m.content
-        let senderDisplayName = shortenAddress(m.sender)
-        // show sender name only for authorized users
-        if (wallet.value?.publicKey) {
-          const membership = state.channelMembers.find(({ data }) =>
-            data.name !== '' && (`${data.authority}` === `${m.sender}` || `${data.key}` === `${m.sender}`),
-          )
-          if (membership && membership.data.name !== '') {
-            senderDisplayName = membership.data.name
-          }
-        }
+        const senderDisplayName = shortenAddress(m.sender)
         if (cek) {
           try {
             content = await client.decryptMessage(m.content, cek)
@@ -341,7 +331,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       key: key ? new PublicKey(key) : undefined,
       name,
       flags,
-      opts: { commitment: 'confirmed' },
     })
   }
 
@@ -352,19 +341,54 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
     await client.deleteMember({
       channel: state.channelAddr,
-      key: new PublicKey(addr),
-      opts: { commitment: 'finalized' },
+      authority: new PublicKey(addr),
     })
   }
 
-  async function authorizeMember(key: Address) {
+  async function addDevice(key: string) {
     if (!state.channelAddr) {
       console.log('Invalid channel')
       return
     }
-    await client.authorizeMember({
+    await client.addDevice({
       channel: state.channelAddr,
       key: new PublicKey(key),
+    })
+    await loadMemberDevices()
+  }
+
+  async function deleteDevice(key: PublicKey) {
+    if (!state.channelAddr) {
+      console.log('Invalid channel')
+      return
+    }
+    await client.deleteDevice({
+      channel: state.channelAddr,
+      key,
+    })
+    await loadMemberDevices()
+  }
+
+  async function loadPendingDevices(authority: PublicKey) {
+    return (await client.loadDevices(state.channelAddr as PublicKey, authority)).filter(acc => acc.data.cek?.encryptedKey === '')[0]
+  }
+
+  async function loadMemberDevices() {
+    if (state.channelAddr && state.channelMembership) {
+      state.memberDevices = await client.loadDevices(state.channelAddr, state.channelMembership.authority)
+    }
+  }
+
+  async function authorizeMember(authority: PublicKey) {
+    if (!state.channelAddr) {
+      console.log('Invalid channel')
+      return
+    }
+    const device = await loadPendingDevices(authority)
+    await client.authorizeMember({
+      channel: state.channelAddr,
+      authority,
+      key: device.data.key,
     })
     await refreshMembers()
   }
@@ -388,7 +412,25 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channel = undefined
   }
 
+  async function channelMessagesCost(messages: number) {
+    const space = await client.channelSpace(messages)
+    return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(space) / LAMPORTS_PER_SOL)
+  }
+
+  async function channelAuthorityDevice() {
+    if (!state.channelAddr) {
+      return
+    }
+    const [authorityMembership] = await client.getMembershipPDA(state.channelAddr)
+    const [authorityDevice] = await client.getDevicePDA(authorityMembership)
+    return (await client.loadDevice(authorityDevice)).key.toBase58()
+  }
+
   return {
+    channelMessagesCost,
+    addDevice,
+    deleteDevice,
+    channelAuthorityDevice,
     state,
     client,
     leaveChannel,

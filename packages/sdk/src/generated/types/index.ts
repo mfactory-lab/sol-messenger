@@ -1,3 +1,4 @@
+export * from './AddDeviceData'
 export * from './AddMemberData'
 export * from './AuthorizeMemberData'
 export * from './CEKData'

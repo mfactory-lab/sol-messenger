@@ -3,8 +3,8 @@ use anchor_lang::prelude::*;
 use crate::{
     constants::MAX_CHANNEL_NAME_LENGTH,
     events::AddMemberEvent,
-    state::{CEKData, Channel, ChannelMembership, ChannelMembershipStatus},
-    utils::validate_membership,
+    state::{CEKData, Channel, ChannelDevice, ChannelMembership, ChannelMembershipStatus},
+    utils::assert_valid_membership,
     MessengerError,
 };
 
@@ -21,7 +21,7 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     let mut flags = data.flags;
 
     if !is_super_admin {
-        let auth_membership = validate_membership(
+        let auth_membership = assert_valid_membership(
             &ctx.accounts.authority_membership.to_account_info(),
             &channel.key(),
             authority_key,
@@ -36,22 +36,26 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     }
 
     let timestamp = Clock::get()?.unix_timestamp;
-    let authority_key = ctx.accounts.authority.key;
 
     let membership = &mut ctx.accounts.invitee_membership;
 
     membership.channel = channel.key();
     membership.authority = ctx.accounts.invitee.key();
-    membership.key = data.key.unwrap_or_else(|| ctx.accounts.invitee.key());
+    // membership.key = data.key.unwrap_or_else(|| ctx.accounts.invitee.key());
     membership.name = data.name;
-    membership.cek = data.cek;
+    // membership.cek = data.cek;
     membership.flags = flags;
-    membership.invited_by = Some(ctx.accounts.authority.key());
     membership.created_at = timestamp;
-    membership.status = ChannelMembershipStatus::Authorized {
-        by: Some(*authority_key),
-    };
+    membership.status = ChannelMembershipStatus::Authorized;
+    membership.status_target = Some(ctx.accounts.authority.key());
     membership.bump = ctx.bumps["invitee_membership"];
+
+    let device = &mut ctx.accounts.invitee_device;
+    device.channel = channel.key();
+    device.authority = ctx.accounts.invitee.key();
+    device.key = data.key;
+    device.cek = data.cek;
+    device.bump = ctx.bumps["invitee_device"];
 
     channel.member_count = channel.member_count.saturating_add(1);
 
@@ -74,7 +78,7 @@ pub struct AddMemberData {
     /// Content Encryption Key
     pub cek: CEKData,
     /// Device key
-    pub key: Option<Pubkey>,
+    pub key: Pubkey,
 }
 
 impl AddMemberData {
@@ -97,12 +101,21 @@ pub struct AddMember<'info> {
 
     #[account(
         init,
-        seeds = [channel.key().as_ref(), data.key.unwrap_or_else(|| invitee.key()).as_ref()],
+        seeds = [channel.key().as_ref(), invitee.key().as_ref()],
         bump,
         payer = authority,
         space = ChannelMembership::space()
     )]
     pub invitee_membership: Box<Account<'info, ChannelMembership>>,
+
+    #[account(
+        init,
+        seeds = [invitee_membership.key().as_ref(), data.key.as_ref()],
+        bump,
+        payer = authority,
+        space = ChannelDevice::space()
+    )]
+    pub invitee_device: Box<Account<'info, ChannelDevice>>,
 
     /// CHECK:
     #[account(mut)]

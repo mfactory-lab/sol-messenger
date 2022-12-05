@@ -5,11 +5,11 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import type * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
+import type * as web3 from '@solana/web3.js'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
 export interface Message {
-  id: number
+  id: beet.bignum
   sender: web3.PublicKey
   createdAt: beet.bignum
   flags: number
@@ -22,7 +22,7 @@ export interface Message {
  */
 export const messageBeet = new beet.FixableBeetArgsStruct<Message>(
   [
-    ['id', beet.u32],
+    ['id', beet.u64],
     ['sender', beetSolana.publicKey],
     ['createdAt', beet.i64],
     ['flags', beet.u8],

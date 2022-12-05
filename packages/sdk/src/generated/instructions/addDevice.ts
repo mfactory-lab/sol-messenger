@@ -7,82 +7,80 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { GrantAccessMemberData } from '../types/GrantAccessMemberData'
-import {
-  grantAccessMemberDataBeet,
-} from '../types/GrantAccessMemberData'
+import type { AddDeviceData } from '../types/AddDeviceData'
+import { addDeviceDataBeet } from '../types/AddDeviceData'
 
 /**
  * @category Instructions
- * @category GrantAccessMember
+ * @category AddDevice
  * @category generated
  */
-export interface GrantAccessMemberInstructionArgs {
-  data: GrantAccessMemberData
+export interface AddDeviceInstructionArgs {
+  data: AddDeviceData
 }
 /**
  * @category Instructions
- * @category GrantAccessMember
+ * @category AddDevice
  * @category generated
  */
-export const grantAccessMemberStruct = new beet.BeetArgsStruct<
-  GrantAccessMemberInstructionArgs & {
+export const addDeviceStruct = new beet.FixableBeetArgsStruct<
+  AddDeviceInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['data', grantAccessMemberDataBeet],
+    ['data', addDeviceDataBeet],
   ],
-  'GrantAccessMemberInstructionArgs',
+  'AddDeviceInstructionArgs',
 )
 /**
- * Accounts required by the _grantAccessMember_ instruction
+ * Accounts required by the _addDevice_ instruction
  *
- * @property [] channel
+ * @property [_writable_] channel
  * @property [_writable_] membership
- * @property [] authorityMembership
+ * @property [_writable_] device
  * @property [_writable_, **signer**] authority
  * @category Instructions
- * @category GrantAccessMember
+ * @category AddDevice
  * @category generated
  */
-export interface GrantAccessMemberInstructionAccounts {
+export interface AddDeviceInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
-  authorityMembership: web3.PublicKey
+  device: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const grantAccessMemberInstructionDiscriminator = [
-  236, 46, 184, 64, 57, 158, 80, 142,
+export const addDeviceInstructionDiscriminator = [
+  21, 27, 66, 42, 18, 30, 14, 18,
 ]
 
 /**
- * Creates a _GrantAccessMember_ instruction.
+ * Creates a _AddDevice_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category GrantAccessMember
+ * @category AddDevice
  * @category generated
  */
-export function createGrantAccessMemberInstruction(
-  accounts: GrantAccessMemberInstructionAccounts,
-  args: GrantAccessMemberInstructionArgs,
+export function createAddDeviceInstruction(
+  accounts: AddDeviceInstructionAccounts,
+  args: AddDeviceInstructionArgs,
   programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
-  const [data] = grantAccessMemberStruct.serialize({
-    instructionDiscriminator: grantAccessMemberInstructionDiscriminator,
+  const [data] = addDeviceStruct.serialize({
+    instructionDiscriminator: addDeviceInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.channel,
-      isWritable: false,
+      isWritable: true,
       isSigner: false,
     },
     {
@@ -91,8 +89,8 @@ export function createGrantAccessMemberInstruction(
       isSigner: false,
     },
     {
-      pubkey: accounts.authorityMembership,
-      isWritable: false,
+      pubkey: accounts.device,
+      isWritable: true,
       isSigner: false,
     },
     {

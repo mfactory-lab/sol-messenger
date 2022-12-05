@@ -32,6 +32,7 @@ pub struct JoinChannelEvent {
     pub channel: Pubkey,
     #[index]
     pub membership: Pubkey,
+    pub device: Pubkey,
     pub timestamp: i64,
 }
 
@@ -71,5 +72,25 @@ pub struct DeleteMemberEvent {
     #[index]
     pub membership: Pubkey,
     pub by: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct AddDeviceEvent {
+    #[index]
+    pub channel: Pubkey,
+    #[index]
+    pub device: Pubkey,
+    pub authority: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct DeleteDeviceEvent {
+    #[index]
+    pub channel: Pubkey,
+    #[index]
+    pub device: Pubkey,
+    pub authority: Pubkey,
     pub timestamp: i64,
 }

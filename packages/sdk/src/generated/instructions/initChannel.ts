@@ -37,8 +37,9 @@ export const initChannelStruct = new beet.FixableBeetArgsStruct<
 /**
  * Accounts required by the _initChannel_ instruction
  *
- * @property [_writable_, **signer**] channel
+ * @property [_writable_] channel
  * @property [_writable_] membership
+ * @property [_writable_] device
  * @property [_writable_, **signer**] authority
  * @property [**signer**] key
  * @category Instructions
@@ -48,6 +49,7 @@ export const initChannelStruct = new beet.FixableBeetArgsStruct<
 export interface InitChannelInstructionAccounts {
   channel: web3.PublicKey
   membership: web3.PublicKey
+  device: web3.PublicKey
   authority: web3.PublicKey
   key: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -71,7 +73,7 @@ export const initChannelInstructionDiscriminator = [
 export function createInitChannelInstruction(
   accounts: InitChannelInstructionAccounts,
   args: InitChannelInstructionArgs,
-  programId = new web3.PublicKey('6RSutwAoRcQPAMwyxZdNeG76fdAxzhgxkCJXpqKCBPdm'),
+  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
   const [data] = initChannelStruct.serialize({
     instructionDiscriminator: initChannelInstructionDiscriminator,
@@ -81,10 +83,15 @@ export function createInitChannelInstruction(
     {
       pubkey: accounts.channel,
       isWritable: true,
-      isSigner: true,
+      isSigner: false,
     },
     {
       pubkey: accounts.membership,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.device,
       isWritable: true,
       isSigner: false,
     },

@@ -10,51 +10,53 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category LeaveChannel
+ * @category DeleteDevice
  * @category generated
  */
-export const leaveChannelStruct = new beet.BeetArgsStruct<{
+export const deleteDeviceStruct = new beet.BeetArgsStruct<{
   instructionDiscriminator: number[] /* size: 8 */
 }>(
   [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
-  'LeaveChannelInstructionArgs',
+  'DeleteDeviceInstructionArgs',
 )
 /**
- * Accounts required by the _leaveChannel_ instruction
+ * Accounts required by the _deleteDevice_ instruction
  *
  * @property [_writable_] channel
- * @property [_writable_] membership
- * @property [_writable_, **signer**] authority
+ * @property [_writable_] device
+ * @property [_writable_] deviceAuthority
+ * @property [**signer**] authority
  * @category Instructions
- * @category LeaveChannel
+ * @category DeleteDevice
  * @category generated
  */
-export interface LeaveChannelInstructionAccounts {
+export interface DeleteDeviceInstructionAccounts {
   channel: web3.PublicKey
-  membership: web3.PublicKey
+  device: web3.PublicKey
+  deviceAuthority: web3.PublicKey
   authority: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const leaveChannelInstructionDiscriminator = [
-  104, 0, 75, 134, 95, 80, 68, 186,
+export const deleteDeviceInstructionDiscriminator = [
+  168, 96, 86, 82, 105, 2, 215, 144,
 ]
 
 /**
- * Creates a _LeaveChannel_ instruction.
+ * Creates a _DeleteDevice_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @category Instructions
- * @category LeaveChannel
+ * @category DeleteDevice
  * @category generated
  */
-export function createLeaveChannelInstruction(
-  accounts: LeaveChannelInstructionAccounts,
+export function createDeleteDeviceInstruction(
+  accounts: DeleteDeviceInstructionAccounts,
   programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
 ) {
-  const [data] = leaveChannelStruct.serialize({
-    instructionDiscriminator: leaveChannelInstructionDiscriminator,
+  const [data] = deleteDeviceStruct.serialize({
+    instructionDiscriminator: deleteDeviceInstructionDiscriminator,
   })
   const keys: web3.AccountMeta[] = [
     {
@@ -63,13 +65,18 @@ export function createLeaveChannelInstruction(
       isSigner: false,
     },
     {
-      pubkey: accounts.membership,
+      pubkey: accounts.device,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.deviceAuthority,
       isWritable: true,
       isSigner: false,
     },
     {
       pubkey: accounts.authority,
-      isWritable: true,
+      isWritable: false,
       isSigner: true,
     },
     {

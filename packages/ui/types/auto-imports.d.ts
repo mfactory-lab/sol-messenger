@@ -9,6 +9,7 @@ declare global {
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
   const ACCOUNT_CHANGE_EVENT: typeof import('../src/hooks/wallet')['ACCOUNT_CHANGE_EVENT']
+  const DEFAULT_MAX_MESSAGES: typeof import('../src/hooks/messenger')['DEFAULT_MAX_MESSAGES']
   const EffectScope: typeof import('vue')['EffectScope']
   const WALLET_CONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']
   const WALLET_DISCONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_DISCONNECT_EVENT']
@@ -110,6 +111,7 @@ declare global {
   const unrefElement: typeof import('@vueuse/core')['unrefElement']
   const until: typeof import('@vueuse/core')['until']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
+  const useAddDevice: typeof import('../src/hooks/messenger')['useAddDevice']
   const useAirdrop: typeof import('../src/hooks/airdrop')['useAirdrop']
   const useArrayEvery: typeof import('@vueuse/core')['useArrayEvery']
   const useArrayFilter: typeof import('@vueuse/core')['useArrayFilter']
@@ -154,6 +156,7 @@ declare global {
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
+  const useDeleteDevice: typeof import('../src/hooks/messenger')['useDeleteDevice']
   const useDeviceMotion: typeof import('@vueuse/core')['useDeviceMotion']
   const useDeviceOrientation: typeof import('@vueuse/core')['useDeviceOrientation']
   const useDevicePixelRatio: typeof import('@vueuse/core')['useDevicePixelRatio']
@@ -308,6 +311,7 @@ declare module 'vue' {
     readonly $shallowRef: UnwrapRef<typeof import('vue/macros')['$shallowRef']>
     readonly $toRef: UnwrapRef<typeof import('vue/macros')['$toRef']>
     readonly ACCOUNT_CHANGE_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['ACCOUNT_CHANGE_EVENT']>
+    readonly DEFAULT_MAX_MESSAGES: UnwrapRef<typeof import('../src/hooks/messenger')['DEFAULT_MAX_MESSAGES']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly WALLET_CONNECT_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']>
     readonly WALLET_DISCONNECT_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['WALLET_DISCONNECT_EVENT']>
@@ -409,6 +413,7 @@ declare module 'vue' {
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
+    readonly useAddDevice: UnwrapRef<typeof import('../src/hooks/messenger')['useAddDevice']>
     readonly useAirdrop: UnwrapRef<typeof import('../src/hooks/airdrop')['useAirdrop']>
     readonly useArrayEvery: UnwrapRef<typeof import('@vueuse/core')['useArrayEvery']>
     readonly useArrayFilter: UnwrapRef<typeof import('@vueuse/core')['useArrayFilter']>
@@ -453,6 +458,7 @@ declare module 'vue' {
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
+    readonly useDeleteDevice: UnwrapRef<typeof import('../src/hooks/messenger')['useDeleteDevice']>
     readonly useDeviceMotion: UnwrapRef<typeof import('@vueuse/core')['useDeviceMotion']>
     readonly useDeviceOrientation: UnwrapRef<typeof import('@vueuse/core')['useDeviceOrientation']>
     readonly useDevicePixelRatio: UnwrapRef<typeof import('@vueuse/core')['useDevicePixelRatio']>
