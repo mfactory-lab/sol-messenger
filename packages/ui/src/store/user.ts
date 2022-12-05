@@ -41,6 +41,20 @@ export const useUserStore = defineStore('user', () => {
     fromEncoded(secretKey.value = key)
   }
 
+  function exportKey() {
+    const pubkey = wallet.value?.publicKey
+    if (!pubkey) {
+      return
+    }
+    const secretKey = useLocalStorage(pubkey.toString(), '').value
+    const storageObj = { secretKey }
+    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(storageObj))}`
+    const dlAnchorElem = document.createElement('a')
+    dlAnchorElem.setAttribute('href', dataStr)
+    dlAnchorElem.setAttribute('download', 'secret_key.json')
+    dlAnchorElem.click()
+  }
+
   async function userBalance() {
     const _wallet = wallet.value?.publicKey
 
@@ -55,6 +69,7 @@ export const useUserStore = defineStore('user', () => {
     keypair,
     generateKey,
     importKey,
+    exportKey,
     userBalance,
   }
 })

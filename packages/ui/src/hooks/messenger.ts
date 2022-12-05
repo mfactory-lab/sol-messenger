@@ -259,6 +259,48 @@ export function useChannelLeave() {
   return { state, submit }
 }
 
+export function useAddDevice() {
+  const messenger = useMessengerStore()
+  const { ok } = useHelper()
+
+  const state = reactive({
+    loading: false,
+  })
+
+  async function submit(key: string) {
+    try {
+      state.loading = true
+      await messenger.addDevice(key)
+      ok('device added')
+    } finally {
+      state.loading = false
+    }
+  }
+
+  return { state, submit }
+}
+
+export function useDeleteDevice() {
+  const messenger = useMessengerStore()
+  const { ok } = useHelper()
+
+  const state = reactive({
+    loading: false,
+  })
+
+  async function submit(key: PublicKey) {
+    try {
+      state.loading = true
+      await messenger.deleteDevice(key)
+      ok('device removed')
+    } finally {
+      state.loading = false
+    }
+  }
+
+  return { state, submit }
+}
+
 /**
  * Private helper hook
  */

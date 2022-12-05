@@ -1,15 +1,49 @@
 <script setup lang="ts">
+import type { ChannelDevice } from '@app/sdk'
 import { evaClose, evaCopyOutline } from '@quasar/extras/eva-icons'
-import { FileDownloadIcon, FileImportIcon } from 'vue-tabler-icons'
+import type { PublicKey } from '@solana/web3.js'
+import type { PropType } from '@vue/runtime-core'
 import { copyToClipboard } from 'quasar'
 
-defineEmits(['regenerate'])
+const props = defineProps({
+  devices: Object as PropType<
+    { data: ChannelDevice; pubkey: PublicKey }[]
+  >,
+  authorityDevice: String,
+})
+
+const emit = defineEmits(['regenerate', 'channelAuthorityDevice', 'loadChannel'])
 
 const userStore = useUserStore()
+const { ok } = useHelper()
 
-const selectDevicekey = ref('')
+const addDevice = useAddDevice()
+const deleteDevice = useDeleteDevice()
+
+const selectDevicekey = ref()
+
+const isAuthorityDevice = computed(() => props.authorityDevice === selectDevicekey.value?.toBase58())
 
 const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
+
+const handleSelect = (val: PublicKey) => (selectDevicekey.value = val)
+
+const handleAddDevice = (key: string) => {
+  addDevice.submit(key)
+}
+
+const handleExport = () => {
+  userStore.exportKey()
+}
+
+const handleImport = (key: string) => {
+  userStore.importKey(key)
+  setTimeout(() => emit('loadChannel'), 1000)
+}
+
+const handleDelete = (key: PublicKey) => {
+  deleteDevice.submit(key)
+}
 </script>
 
 <template>
@@ -20,15 +54,14 @@ const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
     transition-hide="fade"
   >
     <q-card square flat>
-      <q-card-section class="row items-center">
-        <div class="text-h6 text-center">
-          Device Key
-        </div>
+      <q-card-section class="row items-center q-pa-xs">
         <q-space />
         <q-btn v-close-popup flat round dense :icon="evaClose" />
       </q-card-section>
-      <q-separator />
-      <q-card-section>
+      <q-card-section class="q-py-none">
+        <div class="text-body1 text-blue-grey-8 text-left">
+          Device Key
+        </div>
         <q-btn flat round dense :icon="evaCopyOutline" @click="copy">
           <q-tooltip
             :delay="0"
@@ -39,40 +72,30 @@ const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
             Copy to clipboard
           </q-tooltip>
         </q-btn>
-        <span>{{ userStore.keypair?.publicKey }}</span>
+        <span class="text-body2">{{ userStore.keypair?.publicKey }}</span>
       </q-card-section>
       <q-separator />
+
       <q-card-section>
-        <div class="text-h6 text-left">
-          Devices
-        </div>
-        <q-list>
-          <q-item
-            active-class="bg-blue-grey-8 text-white"
-            class="devices-item"
-            clickable
-            :active="selectDevicekey === 1"
-            @click="selectDevicekey = 1"
-          >
-            {{ userStore.keypair?.publicKey }}
-          </q-item>
-        </q-list>
+        <devices-list
+          :devices="devices"
+          :authority-device="authorityDevice"
+          :select-devicekey="selectDevicekey"
+          :delete-loading="deleteDevice.state.loading"
+          @handle-select="handleSelect"
+          @handle-delete="handleDelete"
+        />
       </q-card-section>
       <q-separator />
+
       <q-card-actions align="right">
-        <div class="q-gutter-md row justify-between">
-          <!-- @click="userStore.generateKey" -->
-          <q-btn
-            class="disconnect-btn"
-            text-color="black"
-            square
-            flat
-          >
-            add new
-          </q-btn>
-          <file-import-icon />
-          <file-download-icon />
-        </div>
+        <devices-control
+          :add-loading="addDevice.state.loading"
+          :is-authority-device="isAuthorityDevice"
+          @handle-export="handleExport"
+          @handle-add-device="handleAddDevice"
+          @handle-import="handleImport"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -87,9 +110,13 @@ const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
   padding: 0 14px;
 }
 
-.devices-item {
-  align-items: center;
-  font-size: 12px;
-  min-height: 0;
+.delete-device-btn {
+  display: none;
+}
+
+.active {
+  .delete-device-btn {
+    display: block;
+  }
 }
 </style>
