@@ -39,8 +39,16 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
           >
             <q-item-section class="memberlist-info">
               <q-item-label class="row justify-between memberlist-info__header">
-                <span class="text-weight-medium wallet">
-                  {{ formatMemberName(m.data) }}</span>
+                <span class="text-weight-medium row wallet">
+                  {{ formatMemberName(m.data) }}
+                  <div
+                    v-if="isOwner(m.data.authority.toBase58())"
+                    class="channel-owner"
+                  >
+                    <custom-tooltip text="Channel Owner" />
+                    <img src="@/assets/img/star.svg">
+                  </div>
+                </span>
                 <q-badge
                   :class="getStatusClass(m.data.status)"
                   class="memberlist-status q-pa-xs q-ml-lg"
@@ -74,7 +82,10 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 unelevated
                 class="full-width"
                 :loading="deleteMemberState.loading"
-                :disabled="deleteMemberState.loading || isOwner(m.data.authority.toBase58())"
+                :disabled="
+                  deleteMemberState.loading
+                    || isOwner(m.data.authority.toBase58())
+                "
                 @click="$emit('deleteMember', m.data.authority)"
               >
                 Delete
@@ -86,4 +97,3 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
     </q-card>
   </q-dialog>
 </template>
-

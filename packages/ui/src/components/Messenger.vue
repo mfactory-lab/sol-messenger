@@ -323,6 +323,16 @@ watch(() => state.memberDevices, async (d) => {
         }
       }
     }
+
+    .channel-owner {
+      height: 20px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        transform: translate(5px, -1px);
+      }
+    }
   }
 
   &-btns {
