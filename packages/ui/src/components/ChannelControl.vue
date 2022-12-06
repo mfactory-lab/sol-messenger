@@ -84,17 +84,16 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 
   @media (max-width: $breakpoint-xs) {
     justify-content: center;
-    gap: 15px;
+    gap: 10px;
   }
 
   .control-button {
-    width: 52px;
+    width: 58px;
     height: 42px;
     background: #516670;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8px;
     cursor: pointer;
 
     &:hover {

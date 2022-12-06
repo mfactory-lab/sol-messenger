@@ -38,7 +38,7 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
             class="memberlist-item"
           >
             <q-item-section class="memberlist-info">
-              <q-item-label class="row">
+              <q-item-label class="row justify-between memberlist-info__header">
                 <span class="text-weight-medium wallet">
                   {{ formatMemberName(m.data) }}</span>
                 <q-badge
@@ -55,7 +55,7 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 </div>
               </q-item-label>
             </q-item-section>
-            <div class="memberlist-btns">
+            <div v-if="channel.canDeleteMember" class="memberlist-btns">
               <q-btn
                 v-if="isCanAuthorizedMember(m.data.status)"
                 color="positive"
@@ -69,16 +69,12 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 Authorize
               </q-btn>
               <q-btn
-                v-if="
-                  channel.canDeleteMember
-                    && !isOwner(m.data.authority.toBase58())
-                "
                 color="negative"
                 size="sm"
                 unelevated
                 class="full-width"
                 :loading="deleteMemberState.loading"
-                :disabled="deleteMemberState.loading"
+                :disabled="deleteMemberState.loading || isOwner(m.data.authority.toBase58())"
                 @click="$emit('deleteMember', m.data.authority)"
               >
                 Delete

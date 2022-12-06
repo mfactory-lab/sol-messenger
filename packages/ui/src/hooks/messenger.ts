@@ -261,7 +261,7 @@ export function useChannelLeave() {
 
 export function useAddDevice() {
   const messenger = useMessengerStore()
-  const { ok } = useHelper()
+  const { ok, error } = useHelper()
 
   const state = reactive({
     loading: false,
@@ -272,6 +272,8 @@ export function useAddDevice() {
       state.loading = true
       await messenger.addDevice(key)
       ok('device added')
+    } catch (err) {
+      error('Invalid Device Key')
     } finally {
       state.loading = false
     }

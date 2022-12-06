@@ -114,7 +114,7 @@ watch(
       </div>
 
       <div>
-        <q-btn class="chat-menu" flat square :disabled="!channel">
+        <q-btn class="chat-menu" flat square>
           <dots-icon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 120px" bordered>

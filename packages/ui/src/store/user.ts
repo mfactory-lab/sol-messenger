@@ -46,12 +46,12 @@ export const useUserStore = defineStore('user', () => {
     if (!pubkey) {
       return
     }
-    const secretKey = useLocalStorage(pubkey.toString(), '').value
-    const storageObj = { secretKey }
+    const backupKey = useLocalStorage(pubkey.toString(), '').value
+    const storageObj = { backupKey }
     const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(storageObj))}`
     const dlAnchorElem = document.createElement('a')
     dlAnchorElem.setAttribute('href', dataStr)
-    dlAnchorElem.setAttribute('download', 'secret_key.json')
+    dlAnchorElem.setAttribute('download', 'backup_key.json')
     dlAnchorElem.click()
   }
 
