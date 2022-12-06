@@ -155,7 +155,6 @@ watch(() => state.memberDevices, async (d) => {
 
   <user-info-dialog
     v-model="showDeviceKeyDialog"
-    :devices="state.memberDevices"
     :authority-device="authorityDevice"
     @load-channel="loadChannel(state.channelAddr)"
   />
@@ -287,13 +286,20 @@ watch(() => state.memberDevices, async (d) => {
 
   &-status {
     text-transform: uppercase;
-    width: 66px;
+    width: 88px;
+    height: 18px;
     justify-content: center;
     margin-right: 15px;
+
+    @media (max-width: $breakpoint-xs) {
+      width: 70px;
+    }
   }
 
   &-info {
-    max-width: 85%;
+    &__header {
+      max-width: 406px !important;
+    }
 
     &__details {
       display: flex;
@@ -317,11 +323,21 @@ watch(() => state.memberDevices, async (d) => {
         }
       }
     }
+
+    .channel-owner {
+      height: 20px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        transform: translate(5px, -1px);
+      }
+    }
   }
 
   &-btns {
-    display: none;
     position: relative;
+    width: 90px;
 
     &::before {
       content: "";
@@ -357,15 +373,15 @@ watch(() => state.memberDevices, async (d) => {
 
   .authorized {
     background: #00a57d;
-    font-size: 11px;
-    text-transform: capitalize;
+    font-size: 8px;
+    text-transform: uppercase;
   }
 
   .pending {
-    background: $secondary;
-    color: #fff;
-    font-size: 11px;
-    text-transform: capitalize;
+    background: $gray-blue;
+    color: #000;
+    font-size: 8px;
+    text-transform: uppercase;
   }
 }
 

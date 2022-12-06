@@ -1,7 +1,7 @@
 import type { AnchorProvider } from '@project-serum/anchor'
 import { BorshCoder, EventManager } from '@project-serum/anchor'
-import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import type { Commitment, ConfirmOptions, Signer } from '@solana/web3.js'
+import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import idl from '../idl/messenger.json'
 import type { CEKData, Message } from './generated'
 import {
@@ -25,7 +25,8 @@ import {
   createLeaveChannelInstruction,
   createPostMessageInstruction,
   createReadMessageInstruction,
-  errorFromCode, errorFromName,
+  errorFromCode,
+  errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -727,7 +728,7 @@ export class MessengerClient {
   }
 
   /**
-   * Calculate channel space in bytes
+   * Get {@see Channel} account space in bytes
    */
   channelSpace(maxMessages = 1) {
     return Channel.byteSize({
@@ -747,6 +748,39 @@ export class MessengerClient {
         flags: 0,
         content: 'x'.repeat(this.constants.maxMessageLength),
       }),
+    })
+  }
+
+  /**
+   * Get {@see ChannelMembership} account space in bytes
+   */
+  channelMembershipSpace() {
+    return ChannelMembership.byteSize({
+      authority: PublicKey.default,
+      bump: 0,
+      channel: PublicKey.default,
+      createdAt: 0,
+      flags: 0,
+      lastReadMessageId: 0,
+      name: 'x'.repeat(this.constants.maxMemberNameLength),
+      status: ChannelMembershipStatus.Authorized,
+      statusTarget: PublicKey.default,
+    })
+  }
+
+  /**
+   * Get {@see ChannelDevice} account space in bytes
+   */
+  channelDeviceSpace() {
+    return ChannelDevice.byteSize({
+      authority: PublicKey.default,
+      channel: PublicKey.default,
+      key: PublicKey.default,
+      cek: {
+        encryptedKey: 'x'.repeat(this.constants.maxCEKLength),
+        header: 'x'.repeat(72), // iv + tag + key (24 + 16 + 32)
+      },
+      bump: 0,
     })
   }
 }

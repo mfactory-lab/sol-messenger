@@ -19,7 +19,7 @@ interface MessengerStoreState {
   channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
-  memberDevices: Array<{ data: ChannelDevice; pubkey: PublicKey }>
+  memberDevices: Array<ChannelDevices>
   loading: boolean
   creating: boolean
   sending: boolean
@@ -413,8 +413,11 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function channelMessagesCost(messages: number) {
-    const space = await client.channelSpace(messages)
-    return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(space) / LAMPORTS_PER_SOL)
+    const channelSpace = await client.channelSpace(messages)
+    const channelMembershipSpace = await client.channelMembershipSpace()
+    const channelDeviceSpace = await client.channelDeviceSpace()
+    const totalSpace = channelSpace + channelMembershipSpace + channelDeviceSpace
+    return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(totalSpace) / LAMPORTS_PER_SOL)
   }
 
   async function channelAuthorityDevice() {
@@ -451,4 +454,9 @@ export const useMessengerStore = defineStore('messenger', () => {
 export interface AllChannels {
   pubkey: PublicKey
   data: Channel
+}
+
+export interface ChannelDevices {
+  data: ChannelDevice
+  pubkey: PublicKey
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Channel } from '@app/sdk'
 import type { PropType } from 'vue'
+import { useWallet } from 'solana-wallets-vue'
 import { getBadgeColor } from '@/utils'
 
 const props = defineProps({
@@ -18,6 +19,7 @@ const props = defineProps({
 defineEmits(['select'])
 
 const { state } = useMessengerStore()
+const wallet = useWallet()
 
 const memberStatus = computed(
   () =>
@@ -28,6 +30,9 @@ const isPending = computed(() => memberStatus.value === 1)
 const initials = computed(() => props.channel.name.slice(0, 2))
 
 const isPublicChannel = computed(() => props.channel.flags === 1)
+
+const walletAddress = computed(() => wallet.publicKey.value?.toBase58() ?? '')
+const isChannelCreator = computed(() => props.channel.creator.toBase58() === walletAddress.value)
 </script>
 
 <template>
@@ -44,12 +49,16 @@ const isPublicChannel = computed(() => props.channel.flags === 1)
         {{ channel.name }}
       </div>
       <div v-if="isPublicChannel" class="message-public">
-        <custom-tooltip text="Public channel" />
+        <custom-tooltip text="Public Channel" />
         P
+      </div>
+      <div v-if="isChannelCreator" class="message-owner row">
+        <custom-tooltip text="Channel Owner" />
+        <img src="@/assets/img/star.svg">
       </div>
       <div v-if="isPending" class="pending-icon">
         <custom-tooltip
-          text="waiting for confirmation"
+          text="Waiting for confirmation"
         />
         <q-spinner-clock color="primary" size="16px" />
       </div>
@@ -100,5 +109,14 @@ const isPublicChannel = computed(() => props.channel.flags === 1)
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.message-owner {
+  width: 18px;
+  height: 18px;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

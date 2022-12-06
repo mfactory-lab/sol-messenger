@@ -3,18 +3,22 @@ import type { ChannelDevice } from '@app/sdk'
 import { evaClose, evaCopyOutline } from '@quasar/extras/eva-icons'
 import type { PublicKey } from '@solana/web3.js'
 import type { PropType } from '@vue/runtime-core'
-import { copyToClipboard } from 'quasar'
+import { Screen, copyToClipboard } from 'quasar'
+import { shortenAddress } from '@/utils'
 
 const props = defineProps({
-  devices: Object as PropType<
-    { data: ChannelDevice; pubkey: PublicKey }[]
-  >,
   authorityDevice: String,
 })
 
-const emit = defineEmits(['regenerate', 'channelAuthorityDevice', 'loadChannel'])
+const emit = defineEmits([
+  'regenerate',
+  'channelAuthorityDevice',
+  'loadChannel',
+])
 
 const userStore = useUserStore()
+const { state } = useMessengerStore()
+
 const { ok } = useHelper()
 
 const addDevice = useAddDevice()
@@ -22,9 +26,19 @@ const deleteDevice = useDeleteDevice()
 
 const selectDevicekey = ref()
 
-const isAuthorityDevice = computed(() => props.authorityDevice === selectDevicekey.value?.toBase58())
+const isAuthorityDevice = computed(
+  () => props.authorityDevice === selectDevicekey.value?.toBase58(),
+)
 
 const copy = () => copyToClipboard(String(userStore.keypair?.publicKey ?? ''))
+
+const devices = computed(() => state.memberDevices)
+
+const userDeviceKey = computed(() =>
+  Screen.xs
+    ? shortenAddress(userStore.keypair?.publicKey, 12)
+    : userStore.keypair?.publicKey,
+)
 
 const handleSelect = (val: PublicKey) => (selectDevicekey.value = val)
 
@@ -48,12 +62,11 @@ const handleDelete = (key: PublicKey) => {
 
 <template>
   <q-dialog
-    class="dialog-wrapper"
     transition-duration="150"
     transition-show="fade"
     transition-hide="fade"
   >
-    <q-card square flat>
+    <q-card square flat class="dialog-wrapper">
       <q-card-section class="row items-center q-pa-xs">
         <q-space />
         <q-btn v-close-popup flat round dense :icon="evaClose" />
@@ -62,17 +75,22 @@ const handleDelete = (key: PublicKey) => {
         <div class="text-body1 text-blue-grey-8 text-left">
           Device Key
         </div>
-        <q-btn flat round dense :icon="evaCopyOutline" @click="copy">
-          <q-tooltip
-            :delay="0"
-            anchor="bottom middle"
-            self="top middle"
-            transition-duration="0"
-          >
-            Copy to clipboard
-          </q-tooltip>
-        </q-btn>
-        <span class="text-body2">{{ userStore.keypair?.publicKey }}</span>
+        <div class="text-center">
+          <q-btn flat round dense :icon="evaCopyOutline" @click="copy">
+            <q-tooltip
+              :delay="0"
+              anchor="bottom middle"
+              self="top middle"
+              transition-duration="0"
+            >
+              Copy to clipboard
+            </q-tooltip>
+          </q-btn>
+          <span
+            class="text-body2 "
+            :title="userStore.keypair?.publicKey"
+          >{{ userDeviceKey }}</span>
+        </div>
       </q-card-section>
       <q-separator />
 
@@ -92,6 +110,7 @@ const handleDelete = (key: PublicKey) => {
         <devices-control
           :add-loading="addDevice.state.loading"
           :is-authority-device="isAuthorityDevice"
+          :devices="devices"
           @handle-export="handleExport"
           @handle-add-device="handleAddDevice"
           @handle-import="handleImport"
@@ -103,7 +122,7 @@ const handleDelete = (key: PublicKey) => {
 
 <style scoped lang="scss">
 .dialog-wrapper {
-  width: 500px;
+  width: 460px;
   max-width: 80vw;
 }
 .q-card__actions .q-btn.dialog-submit-btn {
@@ -118,5 +137,11 @@ const handleDelete = (key: PublicKey) => {
   .delete-device-btn {
     display: block;
   }
+}
+.short-addres {
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 5px;
+  text-overflow: ellipsis;
 }
 </style>

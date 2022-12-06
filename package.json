@@ -12,7 +12,8 @@
     "cli": "ts-node ./packages/cli/src/index.ts"
   },
   "dependencies": {
-    "@project-serum/anchor": "^0.25.0"
+    "@project-serum/anchor": "^0.25.0",
+    "@vueuse/head": "^0.9.8"
   },
   "devDependencies": {
     "@antfu/eslint-config-vue": "^0.27.0",
@@ -26,7 +27,11 @@
   },
   "pnpm": {
     "peerDependencyRules": {
-      "ignoreMissing": ["@babel/runtime", "react", "react-dom"]
+      "ignoreMissing": [
+        "@babel/runtime",
+        "react",
+        "react-dom"
+      ]
     }
   }
 }

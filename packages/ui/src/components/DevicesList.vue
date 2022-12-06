@@ -7,7 +7,7 @@ import type { PropType } from '@vue/runtime-core'
 const props = defineProps({
   selectDevicekey: Object as PropType<PublicKey>,
   deleteLoading: Boolean,
-  devices: Object as PropType<{ data: ChannelDevice; pubkey: PublicKey }[]>,
+  devices: Object as PropType<ChannelDevice[]>,
   authorityDevice: String,
 })
 
@@ -36,13 +36,12 @@ const isAuthorityDevice = (key: PublicKey) => {
       :active="selectDevicekey === d.data.key"
       @click="handleSelect(d.data.key)"
     >
-      <span>
+      <span class="devices-item__key">
         <custom-tooltip
           v-if="isAuthorityDevice(d.data.key)"
           text="Authority device"
         />
         {{ d.data.key }}
-
       </span>
       <q-space />
       <q-icon
@@ -71,6 +70,13 @@ const isAuthorityDevice = (key: PublicKey) => {
     align-items: center;
     font-size: 12px;
     min-height: 0;
+
+    &__key {
+      white-space: nowrap;
+      overflow: hidden;
+      padding: 5px;
+      text-overflow: ellipsis;
+    }
   }
 }
 

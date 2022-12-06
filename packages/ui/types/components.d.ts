@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AddDeviceDialog: typeof import('./../src/components/dialogs/AddDeviceDialog.vue')['default']
     AddMemberDialog: typeof import('./../src/components/dialogs/AddMemberDialog.vue')['default']
     AppFooter: typeof import('./../src/components/AppFooter.vue')['default']
     AppHeader: typeof import('./../src/components/AppHeader.vue')['default']
@@ -22,6 +23,7 @@ declare module '@vue/runtime-core' {
     ErrorContainer: typeof import('./../src/components/ErrorContainer.vue')['default']
     HowItWorks: typeof import('./../src/components/HowItWorks.vue')['default']
     IconBell: typeof import('./../src/components/iconBell.vue')['default']
+    ImportDeviceDialog: typeof import('./../src/components/dialogs/ImportDeviceDialog.vue')['default']
     JoinChannelDialog: typeof import('./../src/components/dialogs/JoinChannelDialog.vue')['default']
     JoinChennalModal: typeof import('./../src/components/dialogs/JoinChennalModal.vue')['default']
     MemberListDialog: typeof import('./../src/components/dialogs/MemberListDialog.vue')['default']
