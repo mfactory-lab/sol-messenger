@@ -23,7 +23,7 @@ const state = ref(props.defaultState)
 const createNewChannel = () => emit('submit', state)
 
 const messagesCost = ref(0)
-const messagesCostFormat = computed(() => `~${messagesCost.value.toFixed(3)} SOL`)
+const messagesCostFormat = computed(() => `~${messagesCost.value.toFixed(5)} SOL`)
 
 watch(
   () => state.value?.maxMessages,
@@ -58,7 +58,7 @@ onMounted(async () => {
               label="Max messages"
               lazy-rules
               type="number"
-              debounce="500"
+              debounce="100"
               :rules="[(val) => +val > 0 || 'Invalid value']"
             />
             <div class="messages-cost">

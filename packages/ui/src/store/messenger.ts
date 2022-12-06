@@ -413,8 +413,11 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function channelMessagesCost(messages: number) {
-    const space = await client.channelSpace(messages)
-    return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(space) / LAMPORTS_PER_SOL)
+    const channelSpace = await client.channelSpace(messages)
+    const channelMembershipSpace = await client.channelMembershipSpace()
+    const channelDeviceSpace = await client.channelDeviceSpace()
+    const totalSpace = channelSpace + channelMembershipSpace + channelDeviceSpace
+    return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(totalSpace) / LAMPORTS_PER_SOL)
   }
 
   async function channelAuthorityDevice() {
