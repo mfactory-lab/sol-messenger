@@ -37,7 +37,7 @@ export const useNotificationsStore = defineStore('notifications', () => {
             if (members.length === 0) {
               return
             }
-            const pendingMembers = members.filter(m => m.data.status.__kind === 'Pending')
+            const pendingMembers = members.filter(m => m.data.status === 1)
             return pendingMembers.length
               ? {
                   channel: ch,

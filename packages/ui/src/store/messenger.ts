@@ -19,7 +19,7 @@ interface MessengerStoreState {
   channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
-  pendingDevices: { pubkey: PublicKey; data: ChannelDevice }[]
+  memberDevices: Array<ChannelDevices>
   loading: boolean
   creating: boolean
   sending: boolean
@@ -47,7 +47,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     channelMembers: [],
     channelMessages: [], // decrypted messages list
     channelLoading: false,
-    pendingDevices: [],
+    memberDevices: [],
     loading: false,
     creating: false,
     sending: false,
@@ -220,6 +220,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelMembershipAddr = undefined
     state.channelMembership = state.channelMembership ?? undefined
     state.channelAddr = new PublicKey(addr)
+    state.memberDevices = []
 
     try {
       if (wallet.value?.publicKey) {
@@ -233,19 +234,14 @@ export const useMessengerStore = defineStore('messenger', () => {
           state.channelMembership = undefined
         }
       }
+      await loadMemberDevices()
       await loadChannelMembers()
       await loadChannelMessages()
-      await loadPendingDevices()
     } catch (e) {
       console.log('Error', e)
     } finally {
       state.channelLoading = false
     }
-  }
-
-  async function loadPendingDevices() {
-    state.pendingDevices = (await client.loadDevices(state.channelAddr as PublicKey)).filter(acc => acc.data.cek?.encryptedKey === '')
-    // const device = await client.loadDevice(state.pendingDevices[0])
   }
 
   async function getCEK(): Promise<Uint8Array | undefined> {
@@ -349,15 +345,50 @@ export const useMessengerStore = defineStore('messenger', () => {
     })
   }
 
+  async function addDevice(key: string) {
+    if (!state.channelAddr) {
+      console.log('Invalid channel')
+      return
+    }
+    await client.addDevice({
+      channel: state.channelAddr,
+      key: new PublicKey(key),
+    })
+    await loadMemberDevices()
+  }
+
+  async function deleteDevice(key: PublicKey) {
+    if (!state.channelAddr) {
+      console.log('Invalid channel')
+      return
+    }
+    await client.deleteDevice({
+      channel: state.channelAddr,
+      key,
+    })
+    await loadMemberDevices()
+  }
+
+  async function loadPendingDevices(authority: PublicKey) {
+    return (await client.loadDevices(state.channelAddr as PublicKey, authority)).filter(acc => acc.data.cek?.encryptedKey === '')[0]
+  }
+
+  async function loadMemberDevices() {
+    if (state.channelAddr && state.channelMembership) {
+      state.memberDevices = await client.loadDevices(state.channelAddr, state.channelMembership.authority)
+    }
+  }
+
   async function authorizeMember(authority: PublicKey) {
     if (!state.channelAddr) {
       console.log('Invalid channel')
       return
     }
+    const device = await loadPendingDevices(authority)
     await client.authorizeMember({
       channel: state.channelAddr,
       authority,
-      // key: state.pendingDevices[0],
+      key: device.data.key,
     })
     await refreshMembers()
   }
@@ -386,13 +417,20 @@ export const useMessengerStore = defineStore('messenger', () => {
     return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(space) / LAMPORTS_PER_SOL)
   }
 
-  async function loadDevice() {
-    console.log(await client.loadDevice(state.channelAddr as PublicKey))
+  async function channelAuthorityDevice() {
+    if (!state.channelAddr) {
+      return
+    }
+    const [authorityMembership] = await client.getMembershipPDA(state.channelAddr)
+    const [authorityDevice] = await client.getDevicePDA(authorityMembership)
+    return (await client.loadDevice(authorityDevice)).key.toBase58()
   }
 
   return {
-    loadDevice,
     channelMessagesCost,
+    addDevice,
+    deleteDevice,
+    channelAuthorityDevice,
     state,
     client,
     leaveChannel,
@@ -413,4 +451,9 @@ export const useMessengerStore = defineStore('messenger', () => {
 export interface AllChannels {
   pubkey: PublicKey
   data: Channel
+}
+
+export interface ChannelDevices {
+  data: ChannelDevice
+  pubkey: PublicKey
 }

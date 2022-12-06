@@ -5,7 +5,11 @@ import { useQuasar } from 'quasar'
 defineProps({
   isLoading: { type: Boolean },
 })
-const channelEmit = defineEmits(['createChannel', 'joinChannel', 'refreshList'])
+const channelEmit = defineEmits([
+  'createChannel',
+  'joinChannel',
+  'refreshList',
+])
 
 const channelStore = useChannelStore()
 const { isWalletConnected } = useHelper()
@@ -74,19 +78,22 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 
 .button-wrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-direction: row;
-  gap: 9px;
+
+  @media (max-width: $breakpoint-xs) {
+    justify-content: center;
+    gap: 10px;
+  }
 
   .control-button {
-    width: 44px;
-    height: 44px;
+    width: 58px;
+    height: 42px;
     background: #516670;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8px;
     cursor: pointer;
 
     &:hover {

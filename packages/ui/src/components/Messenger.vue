@@ -5,7 +5,8 @@ import type { AllChannels } from '@/store/messenger'
 
 const wallet = useWallet()
 
-const { state, postMessage, loadChannel, refreshList } = useMessengerStore()
+const { state, postMessage, loadChannel, refreshList, channelAuthorityDevice }
+  = useMessengerStore()
 const channel = useChannelStore()
 const mobileStore = useMobileStore()
 
@@ -63,6 +64,14 @@ const isMobileMessages = computed(() => {
     return 1
   }
   return mobileStore.state.searchOrInfo === 'search' ? 1 : 2
+})
+
+const authorityDevice = ref<string | undefined>('')
+
+watch(() => state.memberDevices, async (d) => {
+  if (d.length > 0) {
+    authorityDevice.value = await channelAuthorityDevice()
+  }
 })
 </script>
 
@@ -144,7 +153,11 @@ const isMobileMessages = computed(() => {
     @delete-member="deleteMember.submit"
   />
 
-  <user-info-dialog v-model="showDeviceKeyDialog" />
+  <user-info-dialog
+    v-model="showDeviceKeyDialog"
+    :authority-device="authorityDevice"
+    @load-channel="loadChannel(state.channelAddr)"
+  />
 
   <div v-if="state.channel" class="q-my-md q-px-lg">
     <debug-btn />
@@ -163,7 +176,7 @@ const isMobileMessages = computed(() => {
     height: 400px;
 
     @media (max-width: $breakpoint-xs) {
-      min-height: 444px;;
+      min-height: 444px;
     }
 
     .messenger-card {
@@ -273,13 +286,20 @@ const isMobileMessages = computed(() => {
 
   &-status {
     text-transform: uppercase;
-    width: 66px;
+    width: 88px;
+    height: 18px;
     justify-content: center;
     margin-right: 15px;
+
+    @media (max-width: $breakpoint-xs) {
+      width: 70px;
+    }
   }
 
   &-info {
-    max-width: 85%;
+    &__header {
+      max-width: 406px !important;
+    }
 
     &__details {
       display: flex;
@@ -306,8 +326,8 @@ const isMobileMessages = computed(() => {
   }
 
   &-btns {
-    display: none;
     position: relative;
+    width: 90px;
 
     &::before {
       content: "";
@@ -343,15 +363,15 @@ const isMobileMessages = computed(() => {
 
   .authorized {
     background: #00a57d;
-    font-size: 11px;
-    text-transform: capitalize;
+    font-size: 8px;
+    text-transform: uppercase;
   }
 
   .pending {
-    background: $secondary;
-    color: #fff;
-    font-size: 11px;
-    text-transform: capitalize;
+    background: $gray-blue;
+    color: #000;
+    font-size: 8px;
+    text-transform: uppercase;
   }
 }
 
