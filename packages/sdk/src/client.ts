@@ -762,14 +762,14 @@ export class MessengerClient {
   channelMembershipSpace() {
     return ChannelMembership.byteSize({
       authority: PublicKey.default,
-      bump: 0,
       channel: PublicKey.default,
-      createdAt: 0,
-      flags: 0,
-      lastReadMessageId: 0,
       name: 'x'.repeat(this.constants.maxMemberNameLength),
       status: ChannelMembershipStatus.Authorized,
       statusTarget: PublicKey.default,
+      lastReadMessageId: 0,
+      createdAt: 0,
+      flags: 0,
+      bump: 0,
     })
   }
 
