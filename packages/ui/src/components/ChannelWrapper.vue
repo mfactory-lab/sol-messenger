@@ -19,11 +19,20 @@ function isSomeoneMessage(sender: any) {
   return String(pubkey) !== String(sender)
 }
 
+const filterDuplicateMessages = computed(() => [
+  ...new Map(
+    state.channelMessages.map(item => [
+      (item.id = Number(item.id.toString())),
+      item,
+    ]),
+  ).values(),
+])
+
 const messages = computed(() => {
   const data = []
   let i = 0
   let prev
-  for (const msg of state.channelMessages) {
+  for (const msg of filterDuplicateMessages.value) {
     if (prev && `${msg.sender}` === `${prev}`) {
       data[i - 1].text.push(msg.content)
     } else {
@@ -62,7 +71,11 @@ watch(mes, (c) => {
         <q-spinner-hourglass color="primary" size="2em" />
       </div>
 
-      <div v-else-if="state.channel" ref="chat" class="row justify-center channel-wrapper">
+      <div
+        v-else-if="state.channel"
+        ref="chat"
+        class="row justify-center channel-wrapper"
+      >
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
             v-for="msg in messages"
