@@ -149,7 +149,7 @@ impl ChannelMembership {
         8 // discriminator
         + 32 + 32 // channel + authority
         // + 32 + CEKData::SIZE // key + cek
-        + ChannelMembershipStatus::SIZE + (1 + 32) // status + status_target
+        + 1 + (1 + 32) // status + status_target
         + (4 + MAX_MEMBER_NAME_LENGTH) // name
         + 8 + 8 // last_read_message_id + created_at
         + 1 + 1 // flags + bump
@@ -193,14 +193,11 @@ pub mod ChannelMembershipAccess {
     pub const Owner: u8 = 0xff;
 }
 
+#[repr(u8)]
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq)]
 pub enum ChannelMembershipStatus {
     Authorized,
     Pending,
-}
-
-impl ChannelMembershipStatus {
-    const SIZE: usize = 34;
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
@@ -256,7 +253,9 @@ mod tests {
 
     #[test]
     fn test() {
-        msg!("{:?}", Channel::space(0));
+        msg!("Channel {:?}", Channel::space(15));
+        msg!("Channel {:?}", ChannelDevice::space());
+        msg!("ChannelMembership {:?}", ChannelMembership::space());
         // msg!("{:?}", ChannelMembershipAccess::AddMember);
         // msg!("{:?}", ChannelMembershipAccess::AuthorizeMember);
         // msg!("{:?}", ChannelMembershipAccess::Admin);

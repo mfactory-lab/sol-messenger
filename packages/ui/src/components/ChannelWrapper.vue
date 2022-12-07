@@ -19,20 +19,11 @@ function isSomeoneMessage(sender: any) {
   return String(pubkey) !== String(sender)
 }
 
-const filterDuplicateMessages = computed(() => [
-  ...new Map(
-    state.channelMessages.map(item => [
-      (item.id = Number(item.id.toString())),
-      item,
-    ]),
-  ).values(),
-])
-
 const messages = computed(() => {
   const data = []
   let i = 0
   let prev
-  for (const msg of filterDuplicateMessages.value) {
+  for (const msg of state.channelMessages) {
     if (prev && `${msg.sender}` === `${prev}`) {
       data[i - 1].text.push(msg.content)
     } else {

@@ -108,7 +108,12 @@ export class MessengerClient {
     eventName: string,
     callback: (event: any, slot: number, signature: string) => void,
   ): number {
-    return this._events.addEventListener(eventName, callback)
+    return this._events.addEventListener(eventName, (event: any, slot: number, signature: string) => {
+      // skip simulation signature
+      if (signature !== '1111111111111111111111111111111111111111111111111111111111111111') {
+        callback(event, slot, signature)
+      }
+    })
   }
 
   /**
@@ -757,14 +762,14 @@ export class MessengerClient {
   channelMembershipSpace() {
     return ChannelMembership.byteSize({
       authority: PublicKey.default,
-      bump: 0,
       channel: PublicKey.default,
-      createdAt: 0,
-      flags: 0,
-      lastReadMessageId: 0,
       name: 'x'.repeat(this.constants.maxMemberNameLength),
       status: ChannelMembershipStatus.Authorized,
       statusTarget: PublicKey.default,
+      lastReadMessageId: 0,
+      createdAt: 0,
+      flags: 0,
+      bump: 0,
     })
   }
 

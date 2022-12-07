@@ -96,7 +96,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     for (const listener of listeners) {
       await client.removeEventListener(listener)
     }
-    listeners.push(client.addEventListener('NewMessageEvent', async (e) => {
+    listeners.push(client.addEventListener('NewMessageEvent', async (e, slot, sig) => {
       console.log('[Event] NewMessageEvent', e)
       if (`${e.channel}` !== `${state.channelAddr}`) {
         return
@@ -104,10 +104,11 @@ export const useMessengerStore = defineStore('messenger', () => {
       let content = e.message.content
       const isEncrypted = client.utils.message.isEncrypted(e.message)
       if (isEncrypted) {
-        const cek = await getCEK()
-        if (cek) {
-          content = await client.decryptMessage(e.message.content, cek)
-        } else {
+        try {
+          const cek = await getCEK()
+          content = cek ? await client.decryptMessage(e.message.content, cek) : mockEncrypted(e.message.content)
+        } catch (err) {
+          console.log('Error:', err)
           content = mockEncrypted(e.message.content)
         }
       }
@@ -413,11 +414,15 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function channelMessagesCost(messages: number) {
-    const channelSpace = await client.channelSpace(messages)
-    const channelMembershipSpace = await client.channelMembershipSpace()
-    const channelDeviceSpace = await client.channelDeviceSpace()
-    const totalSpace = channelSpace + channelMembershipSpace + channelDeviceSpace
-    return Number(await connectionStore.connection.getMinimumBalanceForRentExemption(totalSpace) / LAMPORTS_PER_SOL)
+    const channelSpace = client.channelSpace(messages)
+    const channelMembershipSpace = client.channelMembershipSpace()
+    const channelDeviceSpace = client.channelDeviceSpace()
+    const rent = await connectionStore.connection.getMinimumBalanceForRentExemption(
+      channelSpace + channelMembershipSpace + channelDeviceSpace,
+    )
+    // empty accounts cost in lamports
+    const extra = 890880 * 2
+    return (rent + extra) / LAMPORTS_PER_SOL
   }
 
   async function channelAuthorityDevice() {
