@@ -27,13 +27,13 @@
     "file": "assets/star.073c274c.svg",
     "src": "src/assets/img/star.svg"
   },
-  "src/assets/img/solana-logo.svg": {
-    "file": "assets/solana-logo.3caace62.svg",
-    "src": "src/assets/img/solana-logo.svg"
-  },
   "src/assets/img/info.svg": {
     "file": "assets/info.bfade5eb.svg",
     "src": "src/assets/img/info.svg"
+  },
+  "src/assets/img/solana-logo.svg": {
+    "file": "assets/solana-logo.3caace62.svg",
+    "src": "src/assets/img/solana-logo.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -47,33 +47,33 @@
     "file": "assets/discord.4c88a6e4.svg",
     "src": "src/assets/img/discord.svg"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOkCnqEu92Fr1MmgVxIIzQ.woff": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOkCnqEu92Fr1MmgVxIIzQ.woff": {
     "file": "assets/KFOkCnqEu92Fr1MmgVxIIzQ.34e9582c.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOkCnqEu92Fr1MmgVxIIzQ.woff"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOkCnqEu92Fr1MmgVxIIzQ.woff"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmSU5fBBc-.woff": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmSU5fBBc-.woff": {
     "file": "assets/KFOlCnqEu92Fr1MmSU5fBBc-.bf14c7d7.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmSU5fBBc-.woff"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmSU5fBBc-.woff"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff": {
     "file": "assets/KFOmCnqEu92Fr1Mu4mxM.f2abf7fb.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOmCnqEu92Fr1Mu4mxM.woff"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff": {
     "file": "assets/KFOlCnqEu92Fr1MmEU9fBBc-.9ce7f3ac.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmEU9fBBc-.woff"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff": {
     "file": "assets/KFOlCnqEu92Fr1MmWUlfBBc-.e0fd57c0.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmWUlfBBc-.woff"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff": {
     "file": "assets/KFOlCnqEu92Fr1MmYUtfBBc-.f6537e32.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/roboto-font/web-font/KFOlCnqEu92Fr1MmYUtfBBc-.woff"
   },
   "src/assets/img/solana-logo-green.svg": {
     "file": "assets/solana-logo-green.771552f9.svg",
@@ -83,9 +83,9 @@
     "file": "assets/logo-bg.5bc3938a.svg",
     "src": "src/assets/img/logo-bg.svg"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff": {
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff": {
     "file": "assets/Eva-Icons.ba7db2a0.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.5/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "src/assets/img/instructions/add/step_2.png": {
     "file": "assets/step_2.80ee96fc.png",
@@ -100,18 +100,18 @@
     "src": "src/assets/img/instructions/add/step_5.png"
   },
   "index.html": {
-    "file": "assets/index.8875f5a8.js",
+    "file": "assets/index.b0444435.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.dcfe7168.js"
+      "_vendor.2d48e3a3.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.1946595a.css"
+      "assets/index.14673555.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -141,24 +141,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.dcfe7168.js": {
-    "file": "assets/vendor.dcfe7168.js"
+  "_vendor.2d48e3a3.js": {
+    "file": "assets/vendor.2d48e3a3.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.3394600e.js",
+    "file": "assets/empty.8d63cb83.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.dcfe7168.js"
+      "_vendor.2d48e3a3.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.3c06ed01.js",
+    "file": "assets/_...all_.ec69555b.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.dcfe7168.js",
+      "_vendor.2d48e3a3.js",
       "index.html"
     ],
     "css": [
@@ -170,7 +170,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.1946595a.css",
+    "file": "assets/index.14673555.css",
     "src": "index.css"
   }
 }
