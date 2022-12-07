@@ -104,10 +104,10 @@ export const useMessengerStore = defineStore('messenger', () => {
       let content = e.message.content
       const isEncrypted = client.utils.message.isEncrypted(e.message)
       if (isEncrypted) {
-        const cek = await getCEK()
-        if (cek) {
-          content = await client.decryptMessage(e.message.content, cek)
-        } else {
+        try {
+          const cek = await getCEK()
+          content = cek ? await client.decryptMessage(e.message.content, cek) : mockEncrypted(e.message.content)
+        } catch (err) {
           content = mockEncrypted(e.message.content)
         }
       }
