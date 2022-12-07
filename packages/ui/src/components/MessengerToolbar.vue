@@ -114,7 +114,7 @@ watch(
       </div>
 
       <div>
-        <q-btn class="chat-menu" flat square>
+        <q-btn class="chat-menu" flat square :disabled="!isWalletConnected">
           <dots-icon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 120px" bordered>
@@ -206,7 +206,7 @@ watch(
                 v-close-popup
                 class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable
-                :disable="!channel"
+                :disable="!channel || channelStore.isPublicChannel"
                 @click="$emit('leaveChannel')"
               >
                 <q-item-section>

@@ -83,6 +83,7 @@ watch(mes, (c) => {
             :name="msg.senderDisplayName"
             :text="msg.text"
             :sent="isSomeoneMessage(msg.sender)"
+            :class="!isSomeoneMessage(msg.sender) ? 'sender' : 'others'"
           />
         </div>
         <div v-else class="messenger-empty">
@@ -109,7 +110,7 @@ watch(mes, (c) => {
   </q-card>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .channel-wrapper {
   max-width: 600px;
   height: 342px;
@@ -121,16 +122,12 @@ watch(mes, (c) => {
 
   .messenger-content {
     flex: 1;
-
-    /*     .channel-wrapper {
-      height: 100%;
-    } */
   }
 
   .messenger-messages {
     width: 100%;
     max-width: 600px;
-    padding: 20px 10px 20px 15px;
+    padding: 20px;
     min-height: 200px;
   }
 
@@ -166,5 +163,30 @@ watch(mes, (c) => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.sender,
+.others {
+  .q-message-text {
+    padding: 10px 12px;
+  }
+}
+
+.sender {
+  .q-message-text {
+    padding: 10px 12px;
+  }
+  .q-message-text--received {
+    color: $primary;
+  }
+  .q-message-text-content--received {
+    color: #fff;
+  }
+}
+
+.others {
+  .q-message-text--sent {
+    color: $secondary;
+  }
 }
 </style>

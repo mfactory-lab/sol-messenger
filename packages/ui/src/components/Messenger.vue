@@ -153,7 +153,7 @@ watch(() => state.memberDevices, async (d) => {
     @delete-member="deleteMember.submit"
   />
 
-  <user-info-dialog
+  <devices-dialog
     v-model="showDeviceKeyDialog"
     :authority-device="authorityDevice"
     @load-channel="loadChannel(state.channelAddr)"

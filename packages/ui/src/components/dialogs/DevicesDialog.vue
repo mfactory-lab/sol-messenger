@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { ChannelDevice } from '@app/sdk'
-import { evaClose, evaCopyOutline } from '@quasar/extras/eva-icons'
+import {
+  evaClose,
+  evaCopyOutline,
+  evaQuestionMarkCircleOutline,
+} from '@quasar/extras/eva-icons'
 import type { PublicKey } from '@solana/web3.js'
 import type { PropType } from '@vue/runtime-core'
 import { Screen, copyToClipboard } from 'quasar'
@@ -58,6 +62,8 @@ const handleImport = (key: string) => {
 const handleDelete = (key: PublicKey) => {
   deleteDevice.submit(key)
 }
+
+const isInstructions = ref(false)
 </script>
 
 <template>
@@ -67,9 +73,22 @@ const handleDelete = (key: PublicKey) => {
     transition-hide="fade"
   >
     <q-card square flat class="dialog-wrapper">
-      <q-card-section class="row items-center q-pa-xs">
+      <q-card-section class="row items-center q-pb-none q-pr-sm q-pt-sm">
         <q-space />
-        <q-btn v-close-popup flat round dense :icon="evaClose" />
+
+        <q-btn
+          size="10px"
+          flat
+          round
+          dense
+          :icon="evaQuestionMarkCircleOutline"
+          @click="isInstructions = true"
+        >
+          <custom-tooltip text="Instructions" />
+        </q-btn>
+        <instructions-dialog v-model="isInstructions" />
+
+        <q-btn v-close-popup size="10px" flat round dense :icon="evaClose" />
       </q-card-section>
       <q-card-section class="q-py-none">
         <div class="text-body1 text-blue-grey-8 text-left">
@@ -86,10 +105,9 @@ const handleDelete = (key: PublicKey) => {
               Copy to clipboard
             </q-tooltip>
           </q-btn>
-          <span
-            class="text-body2 "
-            :title="userStore.keypair?.publicKey"
-          >{{ userDeviceKey }}</span>
+          <span class="text-body2" :title="userStore.keypair?.publicKey">{{
+            userDeviceKey
+          }}</span>
         </div>
       </q-card-section>
       <q-separator />
