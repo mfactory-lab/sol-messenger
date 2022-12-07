@@ -338,6 +338,7 @@ watch(() => state.memberDevices, async (d) => {
   &-btns {
     position: relative;
     width: 90px;
+    display: none;
 
     &::before {
       content: "";
