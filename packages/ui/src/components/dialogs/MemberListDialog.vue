@@ -16,8 +16,9 @@ const getStatusClass = (status: number) => {
   return status > 0 ? 'pending' : 'authorized'
 }
 
-const isCanAuthorizedMember = (status: number) =>
-  getStatusClass(status) === 'pending' && channel.canAuthorizeMember
+const canAuthorizeMember = computed(() => channel.canAuthorizeMember)
+const isAuthorizedMember = computed(() => channel.isAuthorizedMember)
+const isPermissionlessChannel = computed(() => channel.isPermissionlessChannel)
 
 const isOwner = (name: string) => state.channel?.creator.toBase58() === name
 </script>
@@ -63,9 +64,10 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 </div>
               </q-item-label>
             </q-item-section>
-            <div v-if="channel.canDeleteMember" class="memberlist-btns">
+            <div class="memberlist-btns">
               <q-btn
-                v-if="isCanAuthorizedMember(m.data.status)"
+                v-if="getStatusClass(m.data.status) === 'pending'
+                  && (canAuthorizeMember || (isAuthorizedMember && isPermissionlessChannel))"
                 color="positive"
                 size="sm"
                 unelevated
@@ -77,6 +79,7 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 Authorize
               </q-btn>
               <q-btn
+                v-if="channel.canDeleteMember"
                 color="negative"
                 size="sm"
                 unelevated

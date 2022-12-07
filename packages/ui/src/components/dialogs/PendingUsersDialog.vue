@@ -86,7 +86,7 @@ const isDelete = computed(() => deleteMember.state.loading)
                     class="full-width"
                     :loading="isDelete"
                     :disabled="isDelete"
-                    @click="handleDelete(member.data.key, ch.channel.pubkey)"
+                    @click="handleDelete(member.data.authority, ch.channel.pubkey)"
                   >
                     Delete
                   </q-btn>

@@ -153,7 +153,7 @@ watch(() => state.memberDevices, async (d) => {
     @delete-member="deleteMember.submit"
   />
 
-  <user-info-dialog
+  <devices-dialog
     v-model="showDeviceKeyDialog"
     :authority-device="authorityDevice"
     @load-channel="loadChannel(state.channelAddr)"
@@ -338,6 +338,7 @@ watch(() => state.memberDevices, async (d) => {
   &-btns {
     position: relative;
     width: 90px;
+    display: none;
 
     &::before {
       content: "";
