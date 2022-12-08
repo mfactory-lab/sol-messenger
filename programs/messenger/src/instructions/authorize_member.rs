@@ -52,6 +52,7 @@ pub fn handler(ctx: Context<AuthorizeMember>, data: AuthorizeMemberData) -> Resu
     emit!(AuthorizeMemberEvent {
         channel: channel.key(),
         membership: membership.key(),
+        authority: membership.authority,
         by: *authority_key,
         timestamp,
     });
