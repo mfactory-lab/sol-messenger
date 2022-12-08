@@ -4,12 +4,16 @@
       <div class="app-header__info">
         <div class="app-header__logo">
           <div class="logo-wrapper">
+            <div class="sol-icon" />
             <router-link to="/" />
           </div>
         </div>
 
         <div class="app-header__title">
-          <h1>BLOCKCHAIN <br> messenger <span class="marked">SOLANA</span> </h1>
+          <h1>
+            BLOCKCHAIN <br>
+            messenger <span class="marked">SOLANA</span>
+          </h1>
         </div>
       </div>
 

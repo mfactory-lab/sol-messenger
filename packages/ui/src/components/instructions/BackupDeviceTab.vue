@@ -10,7 +10,7 @@ import step4Image from '@/assets/img/instructions/backup/step_3.png'
     <q-list>
       <q-item v-ripple dense class="q-pa-none">
         <q-item-section>
-          <span class="add-title q-pb-sm">
+          <span class="add-title q-pb-md q-pt-sm">
             BackUp key is used to return admin rights in case of loss of access
             to channels
           </span>
@@ -19,7 +19,7 @@ import step4Image from '@/assets/img/instructions/backup/step_3.png'
       <q-separator />
       <q-item v-ripple dense class="q-py-md">
         <q-item-section class="q-pb-none">
-          <span class="q-pb-sm">
+          <span class="instructions-step q-pb-md">
             1. Press the menu and select the devices field
           </span>
           <img :src="step1Image" alt="step">
@@ -27,7 +27,7 @@ import step4Image from '@/assets/img/instructions/backup/step_3.png'
       </q-item>
       <q-item v-ripple dense class="q-py-sm">
         <q-item-section>
-          <span class="q-py-sm">2. Click the export button and save your "backup key" in a safe
+          <span class="instructions-step">2. Click the export button and save your "backup key" in a safe
             place
           </span>
           <img :src="step2Image" alt="step">
@@ -35,7 +35,7 @@ import step4Image from '@/assets/img/instructions/backup/step_3.png'
       </q-item>
       <q-item v-ripple dense class="q-py-sm">
         <q-item-section>
-          <span class="q-py-sm">3. To import your key in case of a necessary replacement, click on
+          <span class="instructions-step">3. To import your key in case of a necessary replacement, click on
             the import button</span>
           <img :src="step3Image" alt="step">
         </q-item-section>
@@ -43,7 +43,7 @@ import step4Image from '@/assets/img/instructions/backup/step_3.png'
 
       <q-item v-ripple dense class="q-py-sm">
         <q-item-section>
-          <span class="q-py-sm">4. In the area that opens, select your file and click "import
+          <span class="instructions-step">4. In the area that opens, select your file and click "import
             device key"
           </span>
           <img :src="step4Image" alt="step">
@@ -52,7 +52,7 @@ import step4Image from '@/assets/img/instructions/backup/step_3.png'
 
       <q-item v-ripple dense class="q-py-sm">
         <q-item-section>
-          <span class="q-py-sm">Done, your device key has been successfully replaced
+          <span class="instructions-step">Done, your device key has been successfully replaced
           </span>
         </q-item-section>
       </q-item>

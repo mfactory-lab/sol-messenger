@@ -73,6 +73,17 @@ watch(() => state.memberDevices, async (d) => {
     authorityDevice.value = await channelAuthorityDevice()
   }
 })
+
+const isDebugOpen = ref(false)
+
+const handleDebugBtn = () => isDebugOpen.value = !isDebugOpen.value
+
+onMounted(() => {
+  const secretBtn = document.querySelector('.sol-icon')
+  secretBtn?.addEventListener('dblclick', () => {
+    handleDebugBtn()
+  })
+})
 </script>
 
 <template>
@@ -159,9 +170,7 @@ watch(() => state.memberDevices, async (d) => {
     @load-channel="loadChannel(state.channelAddr)"
   />
 
-  <div v-if="state.channel" class="q-my-md q-px-lg">
-    <debug-btn />
-  </div>
+  <debug-btn :is-debug-open="isDebugOpen" @handle-debug-btn="handleDebugBtn" />
 </template>
 
 <style lang="scss">

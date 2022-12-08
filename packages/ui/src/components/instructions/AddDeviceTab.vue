@@ -11,7 +11,7 @@ import step5Image from '@/assets/img/instructions/add/step_5.png'
     <q-list>
       <q-item v-ripple dense class="q-pa-none">
         <q-item-section>
-          <span class="add-title q-pb-sm">
+          <span class="add-title q-pb-md q-pt-sm">
             For security purposes, you can view your channels from one device
             and if you access from another, all messages will be encrypted. To
             add a new device, follow the instructions
@@ -21,7 +21,7 @@ import step5Image from '@/assets/img/instructions/add/step_5.png'
       <q-separator />
       <q-item v-ripple dense class="q-py-md">
         <q-item-section>
-          <span class="q-pb-sm">
+          <span class="instructions-step">
             1. Log in to the new device, press the menu and select the devices
             field
           </span>
@@ -30,13 +30,13 @@ import step5Image from '@/assets/img/instructions/add/step_5.png'
       </q-item>
       <q-item v-ripple dense class="q-py-sm">
         <q-item-section>
-          <span class="q-py-sm">2. Click on the "copy" button</span>
+          <span class="instructions-step">2. Click on the "copy" button</span>
           <img :src="step2Image" alt="step">
         </q-item-section>
       </q-item>
-      <q-item v-ripple dense class="q-py-sm">
+      <q-item v-ripple dense class="instructions-step">
         <q-item-section>
-          <span class="q-py-sm">3. Go back to the main device and in the "devices" window click on the
+          <span class="instructions-step">3. Go back to the main device and in the "devices" window click on the
             "add device" button</span>
           <img :src="step3Image" alt="step">
         </q-item-section>
@@ -44,14 +44,14 @@ import step5Image from '@/assets/img/instructions/add/step_5.png'
 
       <q-item v-ripple dense class="q-py-sm">
         <q-item-section>
-          <span class="q-py-sm">4. Paste the previously copied new device key and click "add device"</span>
+          <span class="instructions-step">4. Paste the previously copied new device key and click "add device"</span>
           <img :src="step4Image" alt="step">
         </q-item-section>
       </q-item>
 
       <q-item v-ripple dense class="q-py-sm">
         <q-item-section>
-          <span class="q-py-sm">5. Confirm the transaction and your device will be added</span>
+          <span class="instructions-step">5. Confirm the transaction and your device will be added</span>
           <img :src="step5Image" alt="step">
         </q-item-section>
       </q-item>

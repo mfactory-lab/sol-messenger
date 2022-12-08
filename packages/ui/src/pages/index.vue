@@ -13,7 +13,7 @@
 
 <style lang="scss" scoped>
 .messenger-container {
-  margin-top: 2rem
+  margin-top: 2rem;
 }
 .q-page {
   position: relative;
@@ -28,9 +28,13 @@
     left: 0;
     content: "";
     z-index: -1;
+
+    @media (max-width: $breakpoint-xs) {
+      height: 540px;
+    }
   }
 
-  @media(max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-sm) {
     padding-top: 1px;
   }
 }
