@@ -91,27 +91,31 @@
     "file": "assets/step_2.80ee96fc.png",
     "src": "src/assets/img/instructions/add/step_2.png"
   },
-  "src/assets/img/instructions/add/step_4.png": {
-    "file": "assets/step_4.6d31bfa7.png",
-    "src": "src/assets/img/instructions/add/step_4.png"
+  "src/assets/img/instructions/add/step_3.png": {
+    "file": "assets/step_3.ab364468.png",
+    "src": "src/assets/img/instructions/add/step_3.png"
   },
   "src/assets/img/instructions/add/step_5.png": {
-    "file": "assets/step_5.2834efd1.png",
+    "file": "assets/step_5.6d31bfa7.png",
     "src": "src/assets/img/instructions/add/step_5.png"
   },
+  "src/assets/img/instructions/add/step_6.png": {
+    "file": "assets/step_6.2834efd1.png",
+    "src": "src/assets/img/instructions/add/step_6.png"
+  },
   "index.html": {
-    "file": "assets/index.b0444435.js",
+    "file": "assets/index.7de5436b.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.2d48e3a3.js"
+      "_vendor.71aaec67.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.14673555.css"
+      "assets/index.9f13d789.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -121,8 +125,9 @@
       "assets/transfer.796e9da5.svg",
       "assets/plus.ee413328.svg",
       "assets/step_2.80ee96fc.png",
-      "assets/step_4.6d31bfa7.png",
-      "assets/step_5.2834efd1.png",
+      "assets/step_3.ab364468.png",
+      "assets/step_5.6d31bfa7.png",
+      "assets/step_6.2834efd1.png",
       "assets/star.073c274c.svg",
       "assets/info.bfade5eb.svg",
       "assets/solana-logo.3caace62.svg",
@@ -141,24 +146,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.2d48e3a3.js": {
-    "file": "assets/vendor.2d48e3a3.js"
+  "_vendor.71aaec67.js": {
+    "file": "assets/vendor.71aaec67.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.8d63cb83.js",
+    "file": "assets/empty.d5d8f2e4.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.2d48e3a3.js"
+      "_vendor.71aaec67.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.ec69555b.js",
+    "file": "assets/_...all_.63edd448.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.2d48e3a3.js",
+      "_vendor.71aaec67.js",
       "index.html"
     ],
     "css": [
@@ -170,7 +175,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.14673555.css",
+    "file": "assets/index.9f13d789.css",
     "src": "index.css"
   }
 }
