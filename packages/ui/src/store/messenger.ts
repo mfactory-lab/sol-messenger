@@ -20,6 +20,7 @@ interface MessengerStoreState {
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
   memberDevices: Array<ChannelDevices>
+  deleteFromChannel?: { channel: String; address: String }
   loading: boolean
   creating: boolean
   sending: boolean
@@ -48,6 +49,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     channelMessages: [], // decrypted messages list
     channelLoading: false,
     memberDevices: [],
+    deleteFromChannel: undefined,
     loading: false,
     creating: false,
     sending: false,
@@ -96,6 +98,29 @@ export const useMessengerStore = defineStore('messenger', () => {
     for (const listener of listeners) {
       await client.removeEventListener(listener)
     }
+    listeners.push(client.addEventListener('DeleteMemberEvent', async (e) => {
+      if (`${e.authority}` !== `${wallet.value?.publicKey}`) {
+        return
+      }
+      const { channel } = e
+      const deleteFromThisChannel = state.allChannels.find(ch => ch.pubkey.toBase58() === channel.toBase58())
+      state.deleteFromChannel = { channel: deleteFromThisChannel!.data.name, address: channel.toBase58() }
+      await initOwnChannels()
+      if (`${state.channelAddr}` === `${channel}`) {
+        state.channelMessages = []
+        state.channel = undefined
+      }
+    }))
+    listeners.push(client.addEventListener('DeleteChannelEvent', async (e) => {
+      const { channel } = e
+
+      const channelIndex = state.ownChannels.findIndex(ch => ch.pubkey === channel.toBase58())
+      if (channelIndex !== 0) {
+        state.allChannels.splice(channelIndex, 1)
+        state.channelMessages = []
+        state.channel = undefined
+      }
+    }))
     listeners.push(client.addEventListener('NewMessageEvent', async (e, slot, sig) => {
       console.log('[Event] NewMessageEvent', e)
       if (`${e.channel}` !== `${state.channelAddr}`) {
@@ -119,6 +144,9 @@ export const useMessengerStore = defineStore('messenger', () => {
     }))
     listeners.push(client.addEventListener('AuthorizeMemberEvent', async (e) => {
       console.log('[Event] AuthorizeMemberEvent', e)
+      if (`${e.authority}` === `${wallet.value?.publicKey}`) {
+        initOwnChannels()
+      }
       if (state.channelAddr && `${e.channel}` !== `${state.channelAddr}`) {
         return
       }
