@@ -22,7 +22,7 @@ const isAuthorityDevice = (key: PublicKey) => {
 </script>
 
 <template>
-  <div class="text-body1 text-blue-grey-8 text-left">
+  <div class="text-body1 text-blue-grey-8 text-left device">
     Devices
   </div>
   <q-list bordered separator class="devices-list">
@@ -60,6 +60,9 @@ const isAuthorityDevice = (key: PublicKey) => {
 </template>
 
 <style lang="scss" scoped>
+.device {
+  margin-bottom: 10px;
+}
 .devices {
   &-list {
     height: 360px;

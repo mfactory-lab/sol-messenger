@@ -155,7 +155,7 @@ function ok() {
     transition-show="fade"
     transition-hide="fade"
   >
-    <q-card v-if="connected">
+    <q-card v-if="connected" flat square>
       <q-card-section class="relative-position">
         <div class="text-h6 text-center">
           Your wallet

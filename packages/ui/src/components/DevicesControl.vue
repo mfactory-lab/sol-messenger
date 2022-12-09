@@ -3,6 +3,7 @@ import type { PropType } from '@vue/runtime-core'
 import { FileDownloadIcon, FileImportIcon, PlusIcon } from 'vue-tabler-icons'
 import { evaQuestionMark } from '@quasar/extras/eva-icons'
 import type { ChannelDevices } from '../store/messenger'
+import helpIcon from '@/assets/img/help-btn.svg'
 
 const props = defineProps({
   addLoading: Boolean,
@@ -40,13 +41,13 @@ const saveJson = () => {
   <div class="q-gutter-md row justify-between q-px-sm" style="width: 100%">
     <q-btn
       class="q-mr-auto q-ml-none device-btn instructions-btn"
-      square
+      round
       flat
-      :icon="evaQuestionMark"
       size="16px"
       color="indigo-14"
       @click="isInstructions = true"
     >
+      <img :src="helpIcon" alt="help">
       <custom-tooltip text="Instructions" />
       <instructions-dialog v-model="isInstructions" />
     </q-btn>
@@ -60,7 +61,12 @@ const saveJson = () => {
       <custom-tooltip text="Add new device" />
       <plus-icon />
     </q-btn>
-    <q-btn class="control-btn device-btn" square flat @click="isImportModal = true">
+    <q-btn
+      class="control-btn device-btn"
+      square
+      flat
+      @click="isImportModal = true"
+    >
       <custom-tooltip text="Import device key" />
       <file-import-icon />
     </q-btn>
@@ -111,6 +117,10 @@ input {
 }
 
 .instructions-btn {
-  border: 5px solid $indigo-14;
+  padding: 0;
+  img {
+    width: 40px;
+    height: 40px;
+  }
 }
 </style>
