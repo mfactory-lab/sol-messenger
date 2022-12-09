@@ -21,8 +21,12 @@ const modalTitle = computed(() =>
     : 'You have been authorized',
 )
 
-const modalIcon = computed (() => isDeleteEvent.value ? AlertTriangleIcon : CheckIcon)
-const modalIconColor = computed(() => isDeleteEvent.value ? '#d32f2f' : '#00c853')
+const modalIcon = computed(() =>
+  isDeleteEvent.value ? AlertTriangleIcon : CheckIcon,
+)
+const modalIconColor = computed(() =>
+  isDeleteEvent.value ? '#d32f2f' : '#00c853',
+)
 
 watch(
   () => deleteMemberProps.channelEvent,
@@ -38,28 +42,41 @@ watch(
 <template>
   <q-dialog v-model="isModel">
     <q-card square flat class="row no-wrap items-center alert-card">
-      <q-card-section class="q-pr-none">
-        <component :is="modalIcon" size="80" :color="modalIconColor" class="alert-icon" />
+      <q-card-section class="q-pr-none event-icon">
+        <component
+          :is="modalIcon"
+          size="80"
+          :color="modalIconColor"
+          class="alert-icon"
+        />
       </q-card-section>
-      <q-card-section class="alert-info">
+      <q-card-section class="alert-info" :class="event">
         <div class="q-pb-sm">
-          <span class="text-blue-grey-10 text-h6 text-weight-regular">{{ modalTitle }}
+          <span
+            class="text-blue-grey-10 text-h6 text-weight-regular alert-title"
+          >{{ modalTitle }}
             <span class="text-weight-medium text-h6 text-grey-10" />
           </span>
         </div>
-        <div class="">
-          <span class="text-blue-grey-10 text-body2 text-weight-regular">Channel Name:
+        <div>
+          <span
+            class="text-blue-grey-10 text-body2 text-weight-regular"
+            name="name"
+          >Channel Name:
           </span>
           <span class="text-weight-medium text-body2 text-grey-10">{{
             deleteMemberProps.channelEvent.channel
           }}</span>
         </div>
         <div>
-          <span class="text-blue-grey-10 text-body2 text-weight-regular">Channel Address:
+          <span
+            class="text-blue-grey-10 text-body2 text-weight-regular"
+            name="name"
+          >Channel Address:
           </span>
-          <span class="text-weight-medium text-body2 text-grey-10">{{
-            deleteMemberProps.channelEvent.address
-          }}</span>
+          <span
+            class="text-weight-medium text-body2 text-grey-10 alert-address"
+          >{{ deleteMemberProps.channelEvent.address }}</span>
         </div>
       </q-card-section>
     </q-card>
@@ -71,10 +88,47 @@ watch(
   &-card {
     min-width: 600px;
     max-width: 800px;
-  }
 
-  &-icon {
-    transform: translateY(8px);
+    @media (max-width: $breakpoint-xs) {
+      min-width: 90vw;
+
+      .alert {
+        &-title {
+          font-size: 20px;
+        }
+
+        &-info {
+          width: 100%;
+          text-align: center;
+        }
+
+        &-address {
+          font-size: 11px;
+        }
+      }
+
+      .delete {
+        .alert-title {
+          font-size: 16px;
+        }
+      }
+
+      .event-icon {
+        position: absolute;
+        padding-left: 0;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        svg {
+          width: 100%;
+          opacity: 0.4;
+        }
+      }
+
+      span[name="name"] {
+        font-size: 16px;
+      }
+    }
   }
 }
 </style>

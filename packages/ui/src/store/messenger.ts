@@ -124,6 +124,24 @@ export const useMessengerStore = defineStore('messenger', () => {
         }
       }
     }))
+    listeners.push(client.addEventListener('AddDeviceEvent', async (e) => {
+      if (`${wallet.value?.publicKey}` === `${e.authority}`) {
+        console.log('[Event] AddDeviceEvent')
+        if (`${e.channel}` === `${state.channelAddr}`) {
+          loadChannel(state.channelAddr as PublicKey)
+          loadMemberDevices()
+        }
+      }
+    }))
+    listeners.push(client.addEventListener('DeleteDeviceEvent', async (e) => {
+      if (`${wallet.value?.publicKey}` === `${e.authority}`) {
+        console.log('[Event] DeleteDeviceEvent')
+        if (`${e.channel}` === `${state.channelAddr}`) {
+          loadChannel(state.channelAddr as PublicKey)
+          loadMemberDevices()
+        }
+      }
+    }))
     listeners.push(client.addEventListener('NewMessageEvent', async (e, slot, sig) => {
       console.log('[Event] NewMessageEvent', e)
       if (`${e.channel}` !== `${state.channelAddr}`) {
@@ -389,7 +407,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key: new PublicKey(key),
     })
-    await loadMemberDevices()
   }
 
   async function deleteDevice(key: PublicKey) {
@@ -401,7 +418,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key,
     })
-    await loadMemberDevices()
   }
 
   async function loadPendingDevices(authority: PublicKey) {
