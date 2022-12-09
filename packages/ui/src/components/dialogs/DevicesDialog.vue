@@ -3,7 +3,6 @@ import type { ChannelDevice } from '@app/sdk'
 import {
   evaClose,
   evaCopyOutline,
-  evaQuestionMarkCircleOutline,
 } from '@quasar/extras/eva-icons'
 import type { PublicKey } from '@solana/web3.js'
 import type { PropType } from '@vue/runtime-core'
@@ -62,8 +61,6 @@ const handleImport = (key: string) => {
 const handleDelete = (key: PublicKey) => {
   deleteDevice.submit(key)
 }
-
-const isInstructions = ref(false)
 </script>
 
 <template>
@@ -76,34 +73,15 @@ const isInstructions = ref(false)
       <q-card-section class="row items-center q-pb-none q-pr-sm q-pt-sm">
         <q-space />
 
-        <q-btn
-          size="10px"
-          flat
-          round
-          dense
-          :icon="evaQuestionMarkCircleOutline"
-          @click="isInstructions = true"
-        >
-          <custom-tooltip text="Instructions" />
-        </q-btn>
-        <instructions-dialog v-model="isInstructions" />
-
         <q-btn v-close-popup size="10px" flat round dense :icon="evaClose" />
       </q-card-section>
       <q-card-section class="q-py-none">
         <div class="text-body1 text-blue-grey-8 text-left">
           Device Key
         </div>
-        <div class="text-center">
-          <q-btn flat round dense :icon="evaCopyOutline" @click="copy">
-            <q-tooltip
-              :delay="0"
-              anchor="bottom middle"
-              self="top middle"
-              transition-duration="0"
-            >
-              Copy to clipboard
-            </q-tooltip>
+        <div class="text-left q-pb-xs">
+          <q-btn class="copy-btn" size="12px" flat round dense :icon="evaCopyOutline" @click="copy">
+            <custom-tooltip text="Copy to clipboard" />
           </q-btn>
           <span class="text-body2" :title="userStore.keypair?.publicKey">{{
             userDeviceKey
@@ -161,5 +139,9 @@ const isInstructions = ref(false)
   overflow: hidden;
   padding: 5px;
   text-overflow: ellipsis;
+}
+
+.copy-btn {
+  transform: translateX(-5px)
 }
 </style>

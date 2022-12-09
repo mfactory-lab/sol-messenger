@@ -20,6 +20,7 @@ interface MessengerStoreState {
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
   memberDevices: Array<ChannelDevices>
+  channelEvent?: { channel: String; address: String; event: String }
   loading: boolean
   creating: boolean
   sending: boolean
@@ -48,6 +49,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     channelMessages: [], // decrypted messages list
     channelLoading: false,
     memberDevices: [],
+    channelEvent: undefined,
     loading: false,
     creating: false,
     sending: false,
@@ -96,6 +98,50 @@ export const useMessengerStore = defineStore('messenger', () => {
     for (const listener of listeners) {
       await client.removeEventListener(listener)
     }
+    listeners.push(client.addEventListener('DeleteMemberEvent', async (e) => {
+      if (`${e.authority}` !== `${wallet.value?.publicKey}`) {
+        return
+      }
+      const { channel } = e
+      const deleteFromThisChannel = state.allChannels.find(ch => ch.pubkey.toBase58() === channel.toBase58())
+      state.channelEvent = { channel: deleteFromThisChannel!.data.name, address: channel.toBase58(), event: 'delete' }
+      await initOwnChannels()
+      if (`${state.channelAddr}` === `${channel}`) {
+        state.channelMessages = []
+        state.channel = undefined
+      }
+    }))
+    listeners.push(client.addEventListener('DeleteChannelEvent', async (e) => {
+      const { channel } = e
+
+      const channelIndex = state.ownChannels.findIndex(ch => ch.pubkey === channel.toBase58())
+
+      if (channelIndex !== -1) {
+        state.ownChannels.splice(channelIndex, 1)
+        if (`${e.channel}` === `${state.channelAddr}`) {
+          state.channelMessages = []
+          state.channel = undefined
+        }
+      }
+    }))
+    listeners.push(client.addEventListener('AddDeviceEvent', async (e) => {
+      if (`${wallet.value?.publicKey}` === `${e.authority}`) {
+        console.log('[Event] AddDeviceEvent')
+        if (`${e.channel}` === `${state.channelAddr}`) {
+          loadChannel(state.channelAddr as PublicKey)
+          loadMemberDevices()
+        }
+      }
+    }))
+    listeners.push(client.addEventListener('DeleteDeviceEvent', async (e) => {
+      if (`${wallet.value?.publicKey}` === `${e.authority}`) {
+        console.log('[Event] DeleteDeviceEvent')
+        if (`${e.channel}` === `${state.channelAddr}`) {
+          loadChannel(state.channelAddr as PublicKey)
+          loadMemberDevices()
+        }
+      }
+    }))
     listeners.push(client.addEventListener('NewMessageEvent', async (e, slot, sig) => {
       console.log('[Event] NewMessageEvent', e)
       if (`${e.channel}` !== `${state.channelAddr}`) {
@@ -119,6 +165,12 @@ export const useMessengerStore = defineStore('messenger', () => {
     }))
     listeners.push(client.addEventListener('AuthorizeMemberEvent', async (e) => {
       console.log('[Event] AuthorizeMemberEvent', e)
+      if (`${e.authority}` === `${wallet.value?.publicKey}`) {
+        initOwnChannels()
+        const channel = e.channel.toBase58()
+        const channelName = state.allChannels.find(ch => ch.pubkey.toBase58() === channel)?.data.name ?? ''
+        state.channelEvent = { channel: channelName, address: channel, event: 'authorize' }
+      }
       if (state.channelAddr && `${e.channel}` !== `${state.channelAddr}`) {
         return
       }
@@ -355,7 +407,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key: new PublicKey(key),
     })
-    await loadMemberDevices()
   }
 
   async function deleteDevice(key: PublicKey) {
@@ -367,7 +418,6 @@ export const useMessengerStore = defineStore('messenger', () => {
       channel: state.channelAddr,
       key,
     })
-    await loadMemberDevices()
   }
 
   async function loadPendingDevices(authority: PublicKey) {

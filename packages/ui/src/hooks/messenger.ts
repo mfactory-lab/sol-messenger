@@ -22,6 +22,7 @@ export function useChannelCreate() {
   async function submit() {
     if (isWalletConnected()) {
       try {
+        state.loading = true
         if (!await userBalance()) {
           noSol()
           return
@@ -36,6 +37,8 @@ export function useChannelCreate() {
       } catch (e) {
         error('Something went wrong')
         console.log(e)
+      } finally {
+        state.loading = false
       }
     }
   }

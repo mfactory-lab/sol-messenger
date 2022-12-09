@@ -1,16 +1,27 @@
 <script lang="ts" setup>
 import { useChannelStore } from '@/store/channel'
+const props = defineProps({
+  isDebugOpen: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+defineEmits(['handleDebugBtn'])
+
 const { state } = useMessengerStore()
 const { isAuthorizedMember, isPendingMember, isChannelCreator } = useChannelStore()
 const dialog = ref(false)
-const toggle = useToggle(dialog)
+
+watch(() => props.isDebugOpen, (d) => {
+  if (state.channel) {
+    dialog.value = d
+  }
+})
 </script>
 
 <template>
-  <q-btn flat class="text-blue-2" @click="toggle()">
-    Debug info
-  </q-btn>
-  <q-dialog v-model="dialog">
+  <q-dialog v-model="dialog" @hide="$emit('handleDebugBtn')">
     <q-card style="width: 800px; max-width: 80vw;">
       <q-card-section>
         <div

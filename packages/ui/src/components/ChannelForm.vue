@@ -28,7 +28,7 @@ const sendMessage = () => {
         autofocus
         :disable="disabled"
       />
-      <q-btn class="send-btn" square flat type="submit" :disable="disabled" :loading="sending">
+      <q-btn class="send-btn" square flat type="submit" :disable="disabled || !message.length" :loading="sending">
         Send
       </q-btn>
     </q-toolbar>

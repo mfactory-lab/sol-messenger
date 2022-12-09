@@ -7,7 +7,7 @@ const tab = ref('add')
 <template>
   <q-dialog>
     <q-card square flat class="instructions-card">
-      <q-card-section class="row items-center justify-between q-pb-sm ">
+      <q-card-section class="row items-center justify-between q-pb-sm">
         <span class="text-h6">Instructions</span>
         <q-btn v-close-popup size="10px" flat round dense :icon="evaClose" />
       </q-card-section>
@@ -34,19 +34,25 @@ const tab = ref('add')
 </template>
 
 <style lang="scss">
-.instructions-card {
+.instructions {
+  &-card {
     width: 560px;
+  }
+
+  &-step {
+    padding-bottom: 23px;
+    font-weight: 500;
+  }
 }
 
 .panels-height {
-    max-height: 800px;
-    height: 70vh;
+  max-height: 800px;
+  height: 70vh;
 }
 .add-device-instructions {
   .add-title {
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
   }
 
   img {

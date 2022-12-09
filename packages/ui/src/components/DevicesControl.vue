@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import type { PropType } from '@vue/runtime-core'
 import { FileDownloadIcon, FileImportIcon, PlusIcon } from 'vue-tabler-icons'
+import { evaQuestionMark } from '@quasar/extras/eva-icons'
 import type { ChannelDevices } from '../store/messenger'
 
 const props = defineProps({
@@ -13,6 +14,7 @@ const emit = defineEmits(['handleExport', 'handleAddDevice', 'handleImport'])
 
 const isAddModal = ref(false)
 const isImportModal = ref(false)
+const isInstructions = ref(false)
 
 const handleAddDevice = async (val: string) => {
   await emit('handleAddDevice', val)
@@ -35,17 +37,35 @@ const saveJson = () => {
 </script>
 
 <template>
-  <div class="q-gutter-md row justify-between q-px-sm">
-    <q-btn class="control-btn" square flat :disabled="!devices.length" @click="isAddModal = true">
+  <div class="q-gutter-md row justify-between q-px-sm" style="width: 100%">
+    <q-btn
+      class="q-mr-auto q-ml-none device-btn instructions-btn"
+      square
+      flat
+      :icon="evaQuestionMark"
+      size="16px"
+      color="indigo-14"
+      @click="isInstructions = true"
+    >
+      <custom-tooltip text="Instructions" />
+      <instructions-dialog v-model="isInstructions" />
+    </q-btn>
+    <q-btn
+      class="control-btn device-btn"
+      square
+      flat
+      :disabled="!devices.length"
+      @click="isAddModal = true"
+    >
       <custom-tooltip text="Add new device" />
       <plus-icon />
     </q-btn>
-    <q-btn class="control-btn" square flat @click="isImportModal = true">
+    <q-btn class="control-btn device-btn" square flat @click="isImportModal = true">
       <custom-tooltip text="Import device key" />
       <file-import-icon />
     </q-btn>
     <q-btn
-      class="control-btn"
+      class="control-btn device-btn"
       square
       flat
       :disabled="!isAuthorityDevice && devices.length"
@@ -80,11 +100,17 @@ input {
   text-align: center;
 }
 
-.control-btn {
-  background: $primary;
-  color: #fff;
+.device-btn {
   min-width: 0 !important;
   width: 44px;
   height: 44px;
+}
+.control-btn {
+  background: $primary;
+  color: #fff;
+}
+
+.instructions-btn {
+  border: 5px solid $indigo-14;
 }
 </style>

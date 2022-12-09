@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { PublicKey } from '@solana/web3.js'
 import { useWallet } from 'solana-wallets-vue'
 
 defineProps({
@@ -19,19 +20,30 @@ function isSomeoneMessage(sender: any) {
   return String(pubkey) !== String(sender)
 }
 
+// TODO refactory
+const filterDuplicateMessages = computed(() => [
+  ...new Map(
+    state.channelMessages.map(item => [
+      (item.id = Number(item.id.toString())),
+      item,
+    ]),
+  ).values(),
+])
+
 const messages = computed(() => {
   const data = []
   let i = 0
-  let prev
-  for (const msg of state.channelMessages) {
+  let prev: any
+  for (const msg of filterDuplicateMessages.value) {
     if (prev && `${msg.sender}` === `${prev}`) {
       data[i - 1].text.push(msg.content)
     } else {
       prev = msg.sender
+      const sender = state.channelMembers.find(m => m.data.authority.toBase58() === prev.toBase58())
       data.push({
         id: msg.id,
         sender: msg.sender,
-        senderDisplayName: msg.senderDisplayName,
+        senderDisplayName: sender?.data.name !== '' ? sender?.data.name : msg.senderDisplayName,
         text: [msg.content],
         date: msg.createdAt,
       })

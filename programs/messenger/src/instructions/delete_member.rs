@@ -46,6 +46,7 @@ pub fn handler<'info>(ctx: Context<'_, '_, '_, 'info, DeleteMember<'info>>) -> R
     emit!(DeleteMemberEvent {
         channel: channel.key(),
         membership: membership.key(),
+        authority: membership_authority.key(),
         by: authority.key(),
         timestamp,
     });
