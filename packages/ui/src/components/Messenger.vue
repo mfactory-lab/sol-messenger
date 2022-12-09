@@ -170,7 +170,7 @@ onMounted(() => {
     @load-channel="loadChannel(state.channelAddr)"
   />
 
-  <delete-from-channel-dialog :channel-info="state.deleteFromChannel" />
+  <event-channel-dialog :channel-event="state.channelEvent" />
 
   <debug-btn :is-debug-open="isDebugOpen" @handle-debug-btn="handleDebugBtn" />
 </template>

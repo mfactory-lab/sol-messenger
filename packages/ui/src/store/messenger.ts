@@ -20,7 +20,7 @@ interface MessengerStoreState {
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
   memberDevices: Array<ChannelDevices>
-  deleteFromChannel?: { channel: String; address: String }
+  channelEvent?: { channel: String; address: String; event: String }
   loading: boolean
   creating: boolean
   sending: boolean
@@ -49,7 +49,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     channelMessages: [], // decrypted messages list
     channelLoading: false,
     memberDevices: [],
-    deleteFromChannel: undefined,
+    channelEvent: undefined,
     loading: false,
     creating: false,
     sending: false,
@@ -104,7 +104,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       }
       const { channel } = e
       const deleteFromThisChannel = state.allChannels.find(ch => ch.pubkey.toBase58() === channel.toBase58())
-      state.deleteFromChannel = { channel: deleteFromThisChannel!.data.name, address: channel.toBase58() }
+      state.channelEvent = { channel: deleteFromThisChannel!.data.name, address: channel.toBase58(), event: 'delete' }
       await initOwnChannels()
       if (`${state.channelAddr}` === `${channel}`) {
         state.channelMessages = []
@@ -115,10 +115,13 @@ export const useMessengerStore = defineStore('messenger', () => {
       const { channel } = e
 
       const channelIndex = state.ownChannels.findIndex(ch => ch.pubkey === channel.toBase58())
-      if (channelIndex !== 0) {
-        state.allChannels.splice(channelIndex, 1)
-        state.channelMessages = []
-        state.channel = undefined
+
+      if (channelIndex !== -1) {
+        state.ownChannels.splice(channelIndex, 1)
+        if (`${e.channel}` === `${state.channelAddr}`) {
+          state.channelMessages = []
+          state.channel = undefined
+        }
       }
     }))
     listeners.push(client.addEventListener('NewMessageEvent', async (e, slot, sig) => {
@@ -146,6 +149,9 @@ export const useMessengerStore = defineStore('messenger', () => {
       console.log('[Event] AuthorizeMemberEvent', e)
       if (`${e.authority}` === `${wallet.value?.publicKey}`) {
         initOwnChannels()
+        const channel = e.channel.toBase58()
+        const channelName = state.allChannels.find(ch => ch.pubkey.toBase58() === channel)?.data.name ?? ''
+        state.channelEvent = { channel: channelName, address: channel, event: 'authorize' }
       }
       if (state.channelAddr && `${e.channel}` !== `${state.channelAddr}`) {
         return
