@@ -52,6 +52,15 @@ onMounted(async () => {
               (val) => (val && val.length > 2) || 'Please type something',
             ]"
           />
+          <q-input
+            v-model="state.memberName"
+            label="Member name"
+          >
+            <div class="toggle-info max-messages-tooltip">
+              <custom-tooltip :text="CHANNEL_INFO[3]" padding="8px" />
+              <img src="@/assets/img/info.svg" alt="info">
+            </div>
+          </q-input>
           <div class="relative-position">
             <q-input
               v-model="state.maxMessages"
@@ -150,7 +159,7 @@ onMounted(async () => {
 
 .max-messages-tooltip {
   top: 10px;
-  left: 90px;
+  left: 110px;
 }
 
 /* Chrome, Safari, Edge, Opera */
