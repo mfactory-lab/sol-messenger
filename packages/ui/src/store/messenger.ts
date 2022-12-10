@@ -32,6 +32,7 @@ export const useMessengerStore = defineStore('messenger', () => {
   const connectionStore = useConnectionStore()
   const userStore = useUserStore()
   const wallet = useAnchorWallet()
+  const { noSol } = useHelper()
 
   const deviceKey = computed(() => userStore.keypair)
 
@@ -219,11 +220,12 @@ export const useMessengerStore = defineStore('messenger', () => {
     Object.assign(state, defaultState)
   }
 
-  async function createChannel(name: string, opts: any) {
+  async function createChannel(name: string, memberName: string, opts: any) {
     try {
       state.creating = true
       const { channel } = await client.initChannel({
         name,
+        memberName,
         maxMessages: Number(opts.maxMessages),
         public: opts.public,
         permissionless: opts.permissionless,
@@ -357,6 +359,10 @@ export const useMessengerStore = defineStore('messenger', () => {
       return
     }
     try {
+      if (!await userStore.userBalance()) {
+        noSol()
+        return
+      }
       state.sending = true
       let isPublic: any
       if (state.channel) {

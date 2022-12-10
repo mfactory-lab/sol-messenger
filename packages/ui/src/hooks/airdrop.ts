@@ -25,6 +25,14 @@ export function useAirdrop() {
       isAirdrop.value = true
     } catch (err) {
       console.log(err)
+      notify({
+        type: 'negative',
+        message: String(err),
+        position: 'top',
+        actions: [
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } },
+        ],
+      })
     }
   }
   return {

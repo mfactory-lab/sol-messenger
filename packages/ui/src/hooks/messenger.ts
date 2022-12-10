@@ -13,6 +13,7 @@ export function useChannelCreate() {
   const state = reactive({
     dialog: false,
     name: '',
+    memberName: '',
     maxMessages: DEFAULT_MAX_MESSAGES,
     public: false,
     permissionless: false,
@@ -27,7 +28,7 @@ export function useChannelCreate() {
           noSol()
           return
         }
-        await createChannel(state.name, {
+        await createChannel(state.name, state.memberName, {
           maxMessages: state.maxMessages,
           public: state.public,
           permissionless: state.permissionless,
@@ -264,7 +265,8 @@ export function useChannelLeave() {
 
 export function useAddDevice() {
   const messenger = useMessengerStore()
-  const { ok, error } = useHelper()
+  const { ok, error, noSol } = useHelper()
+  const { userBalance } = useUserStore()
 
   const state = reactive({
     loading: false,
@@ -273,6 +275,10 @@ export function useAddDevice() {
   async function submit(key: string) {
     try {
       state.loading = true
+      if (!await userBalance()) {
+        noSol()
+        return
+      }
       await messenger.addDevice(key)
       ok('device added')
     } catch (err) {
