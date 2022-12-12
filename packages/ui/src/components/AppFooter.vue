@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { AppSize } from '../store/app-size'
 import {
   DISCORD_URL,
   JFACTORY_URL,
@@ -11,6 +12,7 @@ import {
 } from '@/config'
 
 const darkTheme = useDarkTheme()
+const { state } = useAppSizeStore()
 
 const socialLinks = [
   {
@@ -30,10 +32,17 @@ const socialLinks = [
     link: SVT_URL,
   },
 ]
+
+const isUpIcon = ref(true)
+
+const handleArrow = () => {
+  state.isFooter = !state.isFooter
+  setTimeout(() => (isUpIcon.value = !isUpIcon.value), 500)
+}
 </script>
 
 <template>
-  <footer>
+  <footer :class="{ 'show-footer': state.isFooter }">
     <div class="container">
       <div class="footer-section">
         <div class="footer-info">
@@ -97,6 +106,7 @@ const socialLinks = [
 footer {
   background: #455a64;
   padding: 19px 0;
+  position: relative;
 
   .footer {
     &-section {

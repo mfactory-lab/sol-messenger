@@ -78,13 +78,13 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 
 .channel-control-wrapper {
   @media (max-width: $breakpoint-xs) {
-    border-top: 1px solid $primary;
+    background: #f2f2f2;
   }
 }
 
 .button-wrapper {
   display: flex;
-  justify-content: space-around;
+  gap: 25px;
   align-items: center;
   flex-direction: row;
 

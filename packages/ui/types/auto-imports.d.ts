@@ -9,6 +9,7 @@ declare global {
   const $shallowRef: typeof import('vue/macros')['$shallowRef']
   const $toRef: typeof import('vue/macros')['$toRef']
   const ACCOUNT_CHANGE_EVENT: typeof import('../src/hooks/wallet')['ACCOUNT_CHANGE_EVENT']
+  const AppSize: typeof import('../src/store/app-size')['AppSize']
   const DEFAULT_MAX_MESSAGES: typeof import('../src/hooks/messenger')['DEFAULT_MAX_MESSAGES']
   const EffectScope: typeof import('vue')['EffectScope']
   const WALLET_CONNECT_EVENT: typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']
@@ -113,6 +114,7 @@ declare global {
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useAddDevice: typeof import('../src/hooks/messenger')['useAddDevice']
   const useAirdrop: typeof import('../src/hooks/airdrop')['useAirdrop']
+  const useAppSizeStore: typeof import('../src/store/app-size')['useAppSizeStore']
   const useArrayEvery: typeof import('@vueuse/core')['useArrayEvery']
   const useArrayFilter: typeof import('@vueuse/core')['useArrayFilter']
   const useArrayFind: typeof import('@vueuse/core')['useArrayFind']
@@ -311,6 +313,7 @@ declare module 'vue' {
     readonly $shallowRef: UnwrapRef<typeof import('vue/macros')['$shallowRef']>
     readonly $toRef: UnwrapRef<typeof import('vue/macros')['$toRef']>
     readonly ACCOUNT_CHANGE_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['ACCOUNT_CHANGE_EVENT']>
+    readonly AppSize: UnwrapRef<typeof import('../src/store/app-size')['AppSize']>
     readonly DEFAULT_MAX_MESSAGES: UnwrapRef<typeof import('../src/hooks/messenger')['DEFAULT_MAX_MESSAGES']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly WALLET_CONNECT_EVENT: UnwrapRef<typeof import('../src/hooks/wallet')['WALLET_CONNECT_EVENT']>
@@ -415,6 +418,7 @@ declare module 'vue' {
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useAddDevice: UnwrapRef<typeof import('../src/hooks/messenger')['useAddDevice']>
     readonly useAirdrop: UnwrapRef<typeof import('../src/hooks/airdrop')['useAirdrop']>
+    readonly useAppSizeStore: UnwrapRef<typeof import('../src/store/app-size')['useAppSizeStore']>
     readonly useArrayEvery: UnwrapRef<typeof import('@vueuse/core')['useArrayEvery']>
     readonly useArrayFilter: UnwrapRef<typeof import('@vueuse/core')['useArrayFilter']>
     readonly useArrayFind: UnwrapRef<typeof import('@vueuse/core')['useArrayFind']>
