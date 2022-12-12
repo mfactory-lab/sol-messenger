@@ -14,28 +14,12 @@
     }
     .panel-toolbar {
         background: $primary;
-        height: 6%;
-        @media (max-width: $breakpoint-sm) {
-            height: 4%;
-        }
-        @media (max-width: $breakpoint-xs) {
-            height: 5%;
-        }
-    }
-
-    .panel-info {
-        @media (max-width: $breakpoint-xs) {
-            min-height: auto;
-        }
     }
 
     .messenger-main {
-        min-height: 94%;
-        @media (max-width: $breakpoint-sm) {
-            height: 96%;
-        }
+        min-height: calc(100% - 36px);
         @media (max-width: $breakpoint-xs) {
-            height: 95%;
+            min-height: calc(100% - 44px);;
         }
     }
 
