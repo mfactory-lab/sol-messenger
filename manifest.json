@@ -23,13 +23,13 @@
     "file": "assets/mathwallet.1d763e81.svg",
     "src": "src/assets/img/wallets/mathwallet.svg"
   },
-  "src/assets/img/solana-logo.svg": {
-    "file": "assets/solana-logo.3caace62.svg",
-    "src": "src/assets/img/solana-logo.svg"
-  },
   "src/assets/img/star.svg": {
     "file": "assets/star.073c274c.svg",
     "src": "src/assets/img/star.svg"
+  },
+  "src/assets/img/solana-logo.svg": {
+    "file": "assets/solana-logo.3caace62.svg",
+    "src": "src/assets/img/solana-logo.svg"
   },
   "src/assets/img/info.svg": {
     "file": "assets/info.bfade5eb.svg",
@@ -83,13 +83,13 @@
     "file": "assets/logo-bg.5bc3938a.svg",
     "src": "src/assets/img/logo-bg.svg"
   },
-  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff": {
-    "file": "assets/Eva-Icons.ba7db2a0.woff",
-    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
-  },
   "src/assets/img/help-btn.svg": {
     "file": "assets/help-btn.06005d5c.svg",
     "src": "src/assets/img/help-btn.svg"
+  },
+  "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff": {
+    "file": "assets/Eva-Icons.ba7db2a0.woff",
+    "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
   "src/assets/img/instructions/add/step_2.png": {
     "file": "assets/step_2.80ee96fc.png",
@@ -108,18 +108,18 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.42194d0c.js",
+    "file": "assets/index.88fd71dd.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.d74d092b.js"
+      "_vendor.9df38daa.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.8c092407.css"
+      "assets/index.e05b1122.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.d74d092b.js": {
-    "file": "assets/vendor.d74d092b.js"
+  "_vendor.9df38daa.js": {
+    "file": "assets/vendor.9df38daa.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.600256dd.js",
+    "file": "assets/empty.a8b96189.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.d74d092b.js"
+      "_vendor.9df38daa.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.dc6a4819.js",
+    "file": "assets/_...all_.861834af.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.d74d092b.js",
+      "_vendor.9df38daa.js",
       "index.html"
     ],
     "css": [
@@ -180,7 +180,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.8c092407.css",
+    "file": "assets/index.e05b1122.css",
     "src": "index.css"
   }
 }
