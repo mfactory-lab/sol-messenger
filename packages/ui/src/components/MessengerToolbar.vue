@@ -296,7 +296,7 @@ $accent-color: #ffd140;
       display: flex;
       align-items: center;
       position: absolute;
-      right: 20px;
+      right: 12px;
     }
   }
 
