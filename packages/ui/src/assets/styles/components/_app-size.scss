@@ -1,0 +1,50 @@
+.FullScreen {
+    .messenger-container {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0 !important;
+        width: 100vw !important;
+        z-index: 2;
+    }
+    .messenger-wrapper {
+        height: 100vh;
+    }
+    .panel-toolbar {
+        background: $primary;
+        height: 6%;
+        @media (max-width: $breakpoint-sm) {
+            height: 4%;
+        }
+        @media (max-width: $breakpoint-xs) {
+            height: 5%;
+        }
+    }
+
+    .panel-info {
+        @media (max-width: $breakpoint-xs) {
+            min-height: auto;
+        }
+    }
+
+    .messenger-main {
+        min-height: 94%;
+        @media (max-width: $breakpoint-sm) {
+            height: 96%;
+        }
+        @media (max-width: $breakpoint-xs) {
+            height: 95%;
+        }
+    }
+
+    .panel-notifications {
+        bottom: -12px;
+        top: auto;
+
+        @media (max-width: $breakpoint-xs) {
+            display: none;
+        }
+    }
+}

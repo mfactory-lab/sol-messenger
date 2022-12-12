@@ -1,21 +1,21 @@
 <template>
-  <q-page class="page-wrapper">
-    <div class="container">
-      <div class="messenger-container">
-        <messenger />
-      </div>
+  <div class="page-wrapper">
+    <div class="messenger-container">
+      <messenger />
     </div>
     <div class="container">
       <how-it-works />
     </div>
-  </q-page>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .messenger-container {
-  margin-top: 2rem;
+  margin: 2rem auto 0;
+  width: 90vw;
 }
-.q-page {
+
+.page-wrapper {
   position: relative;
   padding-top: 40px;
 

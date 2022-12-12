@@ -38,7 +38,7 @@ const isChannelCreator = computed(() => props.channel.creator.toBase58() === wal
 <template>
   <q-item
     active-class="bg-blue-grey-8 text-white"
-    style="min-height: 42px"
+    style="min-height: 60px"
     :active="isActive"
   >
     <q-item-section class="chat-item cursor-pointer" @click="$emit('select')">
@@ -48,13 +48,14 @@ const isChannelCreator = computed(() => props.channel.creator.toBase58() === wal
       <div class="chat-name">
         {{ channel.name }}
       </div>
-      <div v-if="isPublicChannel" class="message-public">
-        <custom-tooltip text="Public Channel" />
-        P
-      </div>
+
       <div v-if="isChannelCreator" class="message-owner row">
         <custom-tooltip text="Channel Owner" />
         <img src="@/assets/img/star.svg">
+      </div>
+      <div v-if="isPublicChannel" class="message-public">
+        <custom-tooltip text="Public Channel" />
+        P
       </div>
       <div v-if="isPending" class="pending-icon">
         <custom-tooltip

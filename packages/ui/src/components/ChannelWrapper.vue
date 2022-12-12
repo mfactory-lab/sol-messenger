@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { PublicKey } from '@solana/web3.js'
+import { useDebounceFn } from '@vueuse/core'
 import { useWallet } from 'solana-wallets-vue'
 
 defineProps({
@@ -39,11 +40,14 @@ const messages = computed(() => {
       data[i - 1].text.push(msg.content)
     } else {
       prev = msg.sender
-      const sender = state.channelMembers.find(m => m.data.authority.toBase58() === prev.toBase58())
+      const sender = state.channelMembers.find(
+        m => m.data.authority.toBase58() === prev.toBase58(),
+      )
       data.push({
         id: msg.id,
         sender: msg.sender,
-        senderDisplayName: sender?.data.name !== '' ? sender?.data.name : msg.senderDisplayName,
+        senderDisplayName:
+          sender?.data.name !== '' && !channel.isPublicChannel ? sender?.data.name : msg.senderDisplayName,
         text: [msg.content],
         date: msg.createdAt,
       })
@@ -65,10 +69,38 @@ watch(mes, (c) => {
     chat.value!.scrollTop = c.scrollHeight
   }
 })
+
+let showScrollTimer: any
+
+const isScroll = ref(false)
+
+const debouncedFn = useDebounceFn(() => {
+  isScroll.value = false
+}, 2000)
+
+const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
+  if (hide) {
+    isScroll.value = false
+    return
+  }
+
+  if (scroll) {
+    isScroll.value = true
+    debouncedFn()
+    return
+  }
+  isScroll.value = true
+  debouncedFn()
+}
 </script>
 
 <template>
-  <q-card class="messenger-card" square flat>
+  <q-card
+    class="messenger-card"
+    :class="{ 'show-scroll': isScroll }"
+    square
+    flat
+  >
     <div class="messenger-content">
       <div v-if="channel.isChannelLoading" class="preloader">
         <q-spinner-hourglass color="primary" size="2em" />
@@ -78,6 +110,9 @@ watch(mes, (c) => {
         v-else-if="state.channel"
         ref="chat"
         class="row justify-center channel-wrapper"
+        @mouseenter="handleScrollbar"
+        @mouseleave="(e) => handleScrollbar(e, true)"
+        @scroll="(e) => handleScrollbar(e, false, true)"
       >
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
@@ -115,10 +150,10 @@ watch(mes, (c) => {
 
 <style lang="scss">
 .channel-wrapper {
-  max-width: 600px;
-  height: 342px;
-  overflow-y: auto;
+  height: 100%;
+  overflow: overlay;
 }
+
 .messenger-card {
   display: flex;
   flex-direction: column;
@@ -129,9 +164,25 @@ watch(mes, (c) => {
 
   .messenger-messages {
     width: 100%;
-    max-width: 600px;
     padding: 20px;
     min-height: 200px;
+  }
+
+  /*
+* SCROLLBAR
+*/
+  ::-webkit-scrollbar {
+    width: 0;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #e4edff63;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #6c6c6c29;
   }
 
   .messenger-empty {
@@ -157,6 +208,12 @@ watch(mes, (c) => {
       text-transform: uppercase;
       color: #ff5c5c;
     }
+  }
+}
+
+.messenger-card.show-scroll {
+  ::-webkit-scrollbar {
+    width: 3px;
   }
 }
 

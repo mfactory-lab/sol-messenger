@@ -68,15 +68,18 @@ const isMobileMessages = computed(() => {
 
 const authorityDevice = ref<string | undefined>('')
 
-watch(() => state.memberDevices, async (d) => {
-  if (d.length > 0) {
-    authorityDevice.value = await channelAuthorityDevice()
-  }
-})
+watch(
+  () => state.memberDevices,
+  async (d) => {
+    if (d.length > 0) {
+      authorityDevice.value = await channelAuthorityDevice()
+    }
+  },
+)
 
 const isDebugOpen = ref(false)
 
-const handleDebugBtn = () => isDebugOpen.value = !isDebugOpen.value
+const handleDebugBtn = () => (isDebugOpen.value = !isDebugOpen.value)
 
 onMounted(() => {
   const secretBtn = document.querySelector('.sol-icon')
@@ -177,14 +180,13 @@ onMounted(() => {
 
 <style lang="scss">
 .messenger-wrapper {
-  max-width: 750px;
   margin: 0 auto;
 
   .messenger-main {
     position: relative;
     display: flex;
     flex-direction: row;
-    height: 400px;
+    height: 70vh;
 
     @media (max-width: $breakpoint-xs) {
       min-height: 444px;
@@ -240,11 +242,12 @@ onMounted(() => {
   position: relative;
   padding: 0;
   border-radius: 0;
-  width: 220px;
+  width: 286px;
   display: flex;
   flex-direction: column;
   background: #fdfcfc !important;
   border-right: 0.5px solid #cecece;
+  transition: 0.4s;
 
   @media (max-width: $breakpoint-xs) {
     width: 100%;
@@ -258,8 +261,38 @@ onMounted(() => {
 
   .channels-list {
     flex: 1;
-    overflow-y: auto;
+    overflow: overlay;
   }
+
+  /*
+* SCROLLBAR
+ */
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: rgb(228 237 255 / 0);
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(108 108 108 / 0);
+  }
+
+  &:hover {
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: rgb(228 237 255 / 39%);
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: rgb(108 108 108 / 16%);
+    }
+  }
+
   &-empty {
     min-height: 100px;
     color: #aaa;
@@ -271,6 +304,9 @@ onMounted(() => {
   }
 }
 
+.messenger-content {
+  overflow: hidden;
+}
 .channel-name {
   text-align: right;
   font-size: 30px;

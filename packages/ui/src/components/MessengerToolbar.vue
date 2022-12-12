@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import { ArrowLeftIcon, DotsIcon } from 'vue-tabler-icons'
+import {
+  ArrowLeftIcon,
+  ArrowsMaximizeIcon,
+  ArrowsMinimizeIcon,
+  DotsIcon,
+} from 'vue-tabler-icons'
 
 const emit = defineEmits([
   'search',
@@ -16,6 +21,7 @@ const wallet = useWallet()
 const { state } = useMessengerStore()
 const channelStore = useChannelStore()
 const mobileStore = useMobileStore()
+const appSizeStore = useAppSizeStore()
 const { screen } = useQuasar()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
@@ -50,10 +56,10 @@ const pendingUsersCount = computed(() => {
   if (!channelStore.isOwner || !channelStore.isAdmin) {
     return
   }
-  return state.channelMembers.filter(
-    ch => ch.data.status === 1,
-  ).length
+  return state.channelMembers.filter(ch => ch.data.status === 1).length
 })
+
+const isFullScreen = computed(() => appSizeStore.state.mode === 'FullScreen')
 
 watch(searchText, (s) => {
   onSearch(String(s))
@@ -95,6 +101,22 @@ watch(
           borderless
           @clear="searchText = ''"
         />
+      </div>
+      <div
+        v-if="!isFullScreen"
+        class="size-icon"
+        @click="appSizeStore.state.mode = AppSize[0]"
+      >
+        <custom-tooltip text="full size " />
+        <arrows-maximize-icon />
+      </div>
+      <div
+        v-else
+        class="size-icon"
+        @click="appSizeStore.state.mode = AppSize[1]"
+      >
+        <custom-tooltip text="compact size " />
+        <arrows-minimize-icon />
       </div>
     </div>
 
@@ -242,12 +264,17 @@ $accent-color: #ffd140;
   position: relative;
 
   .panel-search {
-    width: 219px;
+    width: 286px;
     padding: 0 15px;
     display: flex;
     border-right: 1px solid #fff;
     align-items: center;
     height: 100%;
+    position: relative;
+
+    .search-wrapper {
+      width: 85%;
+    }
 
     input {
       font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial,
@@ -262,6 +289,14 @@ $accent-color: #ffd140;
       &::placeholder {
         color: $main-color;
       }
+    }
+
+    .size-icon {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      position: absolute;
+      right: 20px;
     }
   }
 
@@ -380,10 +415,7 @@ $accent-color: #ffd140;
       width: 100%;
       align-items: center;
     }
-    .search-wrapper {
-      width: 85%;
-      margin: 0 auto;
-    }
+
     .panel-info {
       border: none;
       border-top: 1px solid #fff;
