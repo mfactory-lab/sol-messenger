@@ -36,7 +36,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 </script>
 
 <template>
-  <q-item class="channel-control-wrapper">
+  <q-item class="channel-control-wrapper q-pa-none">
     <q-item-section class="button-wrapper">
       <q-btn
         class="control-button"
@@ -72,10 +72,6 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 </template>
 
 <style scoped lang="scss">
-.q-item {
-  padding: 8px;
-}
-
 .channel-control-wrapper {
   @media (max-width: $breakpoint-xs) {
     background: #f2f2f2;
@@ -84,17 +80,12 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 
 .button-wrapper {
   display: flex;
-  gap: 25px;
-  align-items: center;
+  gap: 1px;
+  align-items: flex-end;
   flex-direction: row;
 
-  @media (max-width: $breakpoint-xs) {
-    justify-content: center;
-    gap: 10px;
-  }
-
   .control-button {
-    width: 58px;
+    width: 33%;
     height: 42px;
     background: #516670;
     display: flex;
