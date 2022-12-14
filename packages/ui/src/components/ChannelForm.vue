@@ -28,7 +28,14 @@ const sendMessage = () => {
         autofocus
         :disable="disabled"
       />
-      <q-btn class="send-btn" square flat type="submit" :disable="disabled || !message.length" :loading="sending">
+      <q-btn
+        class="send-btn"
+        square
+        flat
+        type="submit"
+        :disable="disabled || !message.length"
+        :loading="sending"
+      >
         Send
       </q-btn>
     </q-toolbar>
@@ -37,19 +44,18 @@ const sendMessage = () => {
 
 <style lang="scss" scoped>
 .message-control {
-  background: #f2f2f2;
-  padding: 8px;
   align-items: stretch;
   gap: 8px;
+  min-height: 42px;
   .message-input {
-    border: 1px solid #DADADA;
+    border: 1px solid #dadada;
     background: #fff;
     padding: 0 8px;
   }
 
   .send-btn {
-    background: #FFD140;
-    color: #455A64;
+    background: #ffd140;
+    color: #455a64;
   }
 }
 </style>
