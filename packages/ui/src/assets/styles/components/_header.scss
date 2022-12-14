@@ -204,9 +204,6 @@ $app-header-marked-color: #00a57d;
 }
 
 @media (max-width: $breakpoint-sm) {
-  .q-toolbar {
-    padding: 1rem 0;
-  }
   .app-header {
     &__logo {
       top: 0;
@@ -233,12 +230,6 @@ $app-header-marked-color: #00a57d;
 }
 
 @media (max-width: $breakpoint-xs) {
-  .q-toolbar {
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
   .app-header {
 
     &__nav {
