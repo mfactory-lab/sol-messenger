@@ -47,10 +47,6 @@
     "file": "assets/discord.4c88a6e4.svg",
     "src": "src/assets/img/discord.svg"
   },
-  "src/assets/img/help-btn.svg": {
-    "file": "assets/help-btn.06005d5c.svg",
-    "src": "src/assets/img/help-btn.svg"
-  },
   "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2"
@@ -87,6 +83,10 @@
     "file": "assets/logo-bg.5bc3938a.svg",
     "src": "src/assets/img/logo-bg.svg"
   },
+  "src/assets/img/help-btn.svg": {
+    "file": "assets/help-btn.06005d5c.svg",
+    "src": "src/assets/img/help-btn.svg"
+  },
   "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff": {
     "file": "assets/Eva-Icons.ba7db2a0.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
@@ -108,11 +108,11 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.1db8c294.js",
+    "file": "assets/index.c944c2dc.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.5c7ff5bf.js"
+      "_vendor.18ce0884.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.5c7ff5bf.js": {
-    "file": "assets/vendor.5c7ff5bf.js"
+  "_vendor.18ce0884.js": {
+    "file": "assets/vendor.18ce0884.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.9c288582.js",
+    "file": "assets/empty.740ea1f3.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.5c7ff5bf.js"
+      "_vendor.18ce0884.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.03048a3a.js",
+    "file": "assets/_...all_.11ced795.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.5c7ff5bf.js",
+      "_vendor.18ce0884.js",
       "index.html"
     ],
     "css": [
