@@ -6,5 +6,5 @@ export const CHANNEL_INFO = [
     `,
     'Any authorized channel member can approve new requests to join',
     'This setting determines how many messages will be available in chat until they are updated with new messages',
-    'If you leave this field empty, then your wallet will be displayed instead of your nickname',
+    'Leave empty to use your wallet address instead of a nickname',
 ]

@@ -107,7 +107,7 @@ watch(
         class="size-icon"
         @click="appSizeStore.state.mode = AppSize[0]"
       >
-        <custom-tooltip text="full size " />
+        <custom-tooltip text="Full" />
         <arrows-maximize-icon />
       </div>
       <div

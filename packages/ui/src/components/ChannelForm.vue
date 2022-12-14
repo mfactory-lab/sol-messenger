@@ -47,10 +47,19 @@ const sendMessage = () => {
   align-items: stretch;
   gap: 8px;
   min-height: 42px;
+
+  @media (max-width: $breakpoint-xs) {
+    flex-direction: column;
+    padding: 0;
+  }
   .message-input {
     border: 1px solid #dadada;
     background: #fff;
     padding: 0 8px;
+
+    @media (max-width: $breakpoint-xs) {
+      margin: 0 8px;
+    }
   }
 
   .send-btn {
