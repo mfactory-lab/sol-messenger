@@ -115,7 +115,7 @@ watch(
         class="size-icon"
         @click="appSizeStore.state.mode = AppSize[1]"
       >
-        <custom-tooltip text="compact size " />
+        <custom-tooltip text="Compact" />
         <arrows-minimize-icon />
       </div>
     </div>
