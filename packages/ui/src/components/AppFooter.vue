@@ -108,6 +108,9 @@ footer {
   padding: 19px 0;
   position: relative;
 
+  .container {
+    min-width: 90%;
+  }
   .footer {
     &-section {
       display: flex;
