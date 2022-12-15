@@ -82,7 +82,9 @@ watch(
 )
 
 const isInChat = (ch: OwnChannel) => {
-  return channelStore.ownChannels.find((c: OwnChannel) => String(c.pubkey) === String(ch.pubkey))
+  return channelStore.ownChannels.find(
+    (c: OwnChannel) => String(c.pubkey) === String(ch.pubkey),
+  )
 }
 </script>
 
@@ -125,11 +127,11 @@ const isInChat = (ch: OwnChannel) => {
             <div class="chat-avatar" :style="getBadgeColor(`${ch.pubkey}`)">
               <span>{{ initials(ch.data) }}</span>
             </div>
-            <q-item-section>
+            <q-item-section class="channel-wrapper">
               <span class="channel-info text-weight-medium">
                 {{ ch.data.name }}
               </span>
-              <span class="channel-info">
+              <span class="channel-info mobile-text-short">
                 {{ ch.pubkey }}
               </span>
             </q-item-section>
@@ -200,6 +202,10 @@ const isInChat = (ch: OwnChannel) => {
   min-width: 410px;
   overflow-y: auto;
 
+  @media (max-width: $breakpoint-xs) {
+    min-width: 80vw;
+  }
+
   &-item {
     display: flex;
     align-items: center;
@@ -222,6 +228,15 @@ const isInChat = (ch: OwnChannel) => {
     font-size: 11px;
     line-height: 13px;
     color: #fff;
+  }
+}
+
+.mobile-text-short {
+  @media (max-width: $breakpoint-xs) {
+    width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

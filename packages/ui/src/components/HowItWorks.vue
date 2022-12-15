@@ -65,7 +65,7 @@ const create = [
 }
 .app-info {
   color: $primary;
-  padding: 24px 0 0;
+  padding: 38px 0 0;
   width: 100%;
 
   @media (max-width: $breakpoint-xs) {

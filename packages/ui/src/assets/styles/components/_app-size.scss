@@ -26,9 +26,17 @@
     .button-wrapper,
     .channel-form {
         padding-bottom: 10px;
+    }
 
+    .channel-form {
         @media (max-width: $breakpoint-xs) {
-            padding-bottom: 8px;
+            padding-bottom: 4px;
+        }
+    }
+
+    .button-wrapper {
+        @media (max-width: $breakpoint-xs) {
+            padding-bottom: 3px;
         }
     }
 
