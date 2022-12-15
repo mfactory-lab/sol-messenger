@@ -10,7 +10,7 @@
         z-index: 2;
     }
     .messenger-wrapper {
-        height: 100vh;
+        height: 100%;
     }
     .panel-toolbar {
         background: $primary;
@@ -19,7 +19,16 @@
     .messenger-main {
         min-height: calc(100% - 36px);
         @media (max-width: $breakpoint-xs) {
-            min-height: calc(100% - 44px);;
+            min-height: calc(100% - 44px);
+        }
+    }
+
+    .button-wrapper,
+    .channel-form {
+        padding-bottom: 10px;
+
+        @media (max-width: $breakpoint-xs) {
+            padding-bottom: 8px;
         }
     }
 
@@ -30,5 +39,12 @@
         @media (max-width: $breakpoint-xs) {
             display: none;
         }
+    }
+
+    
+    .how-it-works,
+    .page-wrapper::before,
+    footer {
+        display: none;
     }
 }

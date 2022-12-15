@@ -115,7 +115,7 @@ watch(
         class="size-icon"
         @click="appSizeStore.state.mode = AppSize[1]"
       >
-        <custom-tooltip text="compact size " />
+        <custom-tooltip text="Compact" />
         <arrows-minimize-icon />
       </div>
     </div>
@@ -363,6 +363,7 @@ $accent-color: #ffd140;
     width: auto;
     display: inline-flex;
     align-items: center;
+    z-index: 1;
 
     @media (max-width: $breakpoint-xs) {
       left: 50%;
