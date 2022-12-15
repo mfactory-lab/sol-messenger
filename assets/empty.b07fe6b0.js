@@ -1,0 +1,1 @@
+import{_ as o}from"./index.e996e5ef.js";import{a2 as r,o as t,A as c}from"./vendor.4f5f7372.js";const n={};function s(_,a){const e=r("router-view");return t(),c(e)}const f=o(n,[["render",s]]);export{f as default};
