@@ -363,6 +363,7 @@ $accent-color: #ffd140;
     width: auto;
     display: inline-flex;
     align-items: center;
+    z-index: 1;
 
     @media (max-width: $breakpoint-xs) {
       left: 50%;

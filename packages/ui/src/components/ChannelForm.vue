@@ -47,6 +47,7 @@ const sendMessage = () => {
   align-items: stretch;
   gap: 8px;
   min-height: 42px;
+  padding: 0 10px;
 
   @media (max-width: $breakpoint-xs) {
     flex-direction: column;
