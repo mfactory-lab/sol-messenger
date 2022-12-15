@@ -74,9 +74,13 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 <style scoped lang="scss">
 .button-wrapper {
   display: flex;
-  gap: 1px;
   align-items: flex-end;
+  justify-content: space-between;
   flex-direction: row;
+
+  @media (max-width: $breakpoint-xs) {
+    padding: 1px;
+  }
 
   .control-button {
     width: 33%;

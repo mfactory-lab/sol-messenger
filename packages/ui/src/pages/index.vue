@@ -30,7 +30,7 @@
     z-index: -1;
 
     @media (max-width: $breakpoint-xs) {
-      height: 540px;
+      height: 82vh;
     }
   }
 
