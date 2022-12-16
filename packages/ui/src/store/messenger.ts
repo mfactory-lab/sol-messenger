@@ -8,6 +8,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
+import { CHANNEL_MAX_MESSAGES } from '@/config'
 
 interface MessengerStoreState {
   allChannels: AllChannels[]
@@ -359,7 +360,7 @@ export const useMessengerStore = defineStore('messenger', () => {
       return
     }
     try {
-      if (!await userStore.userBalance()) {
+      if (!userStore.isUserHaveSol) {
         noSol()
         return
       }
@@ -470,6 +471,9 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function channelMessagesCost(messages: number) {
+    if (messages > CHANNEL_MAX_MESSAGES) {
+      return 'extra'
+    }
     const channelSpace = client.channelSpace(messages)
     const channelMembershipSpace = client.channelMembershipSpace()
     const channelDeviceSpace = client.channelDeviceSpace()

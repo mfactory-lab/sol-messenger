@@ -8,12 +8,14 @@ import { useAnchorWallet } from 'solana-wallets-vue'
 export const useUserStore = defineStore('user', () => {
   const wallet = useAnchorWallet()
   const keypair = ref<Keypair>()
+  const balance = ref()
 
-  watchEffect(() => {
+  watchEffect(async () => {
     const pubkey = wallet.value?.publicKey
     if (pubkey) {
       const secretKey = useLocalStorage(pubkey.toString(), () => bs58.encode(Keypair.generate().secretKey))
       fromEncoded(secretKey.value)
+      await userBalance()
     } else {
       keypair.value = undefined
     }
@@ -60,16 +62,18 @@ export const useUserStore = defineStore('user', () => {
 
     const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
     const walletBalance = await connection.getBalance(_wallet as PublicKey)
-    const balance = await walletBalance / LAMPORTS_PER_SOL
-
-    return balance > 0.1
+    balance.value = await walletBalance / LAMPORTS_PER_SOL
+    // return balance > 0.1
   }
+
+  const isUserHaveSol = computed(() => balance.value > 0.1)
 
   return {
     keypair,
+    balance,
     generateKey,
     importKey,
     exportKey,
-    userBalance,
+    isUserHaveSol,
   }
 })
