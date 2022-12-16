@@ -1,2 +1,2 @@
 export const CHANNEL_MAX_MESSAGES = 20000
-export const CHANNEL_INPUT_MAX_LENGTH = 25
+export const CHANNEL_INPUT_MAX_LENGTH = 26
