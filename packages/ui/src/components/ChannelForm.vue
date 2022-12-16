@@ -23,10 +23,12 @@ const sendMessage = () => {
         v-model="message"
         class="col-grow message-input"
         placeholder="Type a message"
+        maxlength="201"
         dense
         borderless
         autofocus
         :disable="disabled"
+        :rules="[val => val.length <= 200 || 'Please use maximum 200 characters']"
       />
       <q-btn
         class="send-btn"

@@ -7,8 +7,7 @@ export const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
-  const { isWalletConnected, ok, error, noSol } = useHelper()
-  const { userBalance } = useUserStore()
+  const { isWalletConnected, ok, error } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -24,10 +23,7 @@ export function useChannelCreate() {
     if (isWalletConnected()) {
       try {
         state.loading = true
-        if (!await userBalance()) {
-          noSol()
-          return
-        }
+
         await createChannel(state.name, state.memberName, {
           maxMessages: state.maxMessages,
           public: state.public,
@@ -36,7 +32,7 @@ export function useChannelCreate() {
         reset()
         ok('Channel was created!')
       } catch (e) {
-        error('Something went wrong')
+        error(`${e}`)
         console.log(e)
       } finally {
         state.loading = false
@@ -80,7 +76,7 @@ export function useChannelDelete() {
       ok('Channel was deleted!')
     } catch (e) {
       console.log('Error', e)
-      error('Something went wrong')
+      error(`Error: ${e}`)
     } finally {
       state.loading = false
     }
@@ -105,7 +101,7 @@ export function useChannelAuthorizeMember() {
       await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was authorized')
     } catch (e) {
-      error('Something went wrong')
+      error(`Error: ${e}`)
       console.log(e)
     } finally {
       state.loading = false
@@ -118,7 +114,7 @@ export function useChannelAuthorizeMember() {
 export function useChannelAddMember() {
   const { state: messengerState, addMember, loadChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
-  const { userBalance } = useUserStore()
+  const { isUserHaveSol } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -132,7 +128,7 @@ export function useChannelAddMember() {
       return
     }
     try {
-      if (!await userBalance()) {
+      if (!isUserHaveSol) {
         noSol()
         return
       }
@@ -141,7 +137,7 @@ export function useChannelAddMember() {
       ok('Member was added')
       return true
     } catch (e) {
-      error('Something went wrong')
+      error(`Error: ${e}`)
       console.log(e)
     } finally {
       state.loading = false
@@ -177,7 +173,7 @@ export function useChannelDeleteMember() {
       await loadChannel(messengerState.channelAddr ?? '')
       ok('Member was deleted')
     } catch (e) {
-      error('Something went wrong')
+      error(`Error: ${e}`)
       console.log(e)
     } finally {
       state.loading = false
@@ -190,7 +186,7 @@ export function useChannelDeleteMember() {
 export function useChannelJoin() {
   const { state: messengerState, joinChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
-  const { userBalance } = useUserStore()
+  const { isUserHaveSol } = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -205,7 +201,7 @@ export function useChannelJoin() {
     }
     state.loading = true
     try {
-      if (!await userBalance()) {
+      if (!isUserHaveSol) {
         noSol()
         return
       }
@@ -214,7 +210,7 @@ export function useChannelJoin() {
       ok('Request was sent')
     } catch (e) {
       console.log('Error', e)
-      error('Something went wrong')
+      error(`Error: ${e}`)
     } finally {
       state.loading = false
     }
@@ -254,7 +250,7 @@ export function useChannelLeave() {
       ok('Channel was abandoned!')
     } catch (e) {
       console.log('Error', e)
-      error('Something went wrong')
+      error(`Error: ${e}`)
     } finally {
       state.loading = false
     }
@@ -266,7 +262,7 @@ export function useChannelLeave() {
 export function useAddDevice() {
   const messenger = useMessengerStore()
   const { ok, error, noSol } = useHelper()
-  const { userBalance } = useUserStore()
+  const { isUserHaveSol } = useUserStore()
 
   const state = reactive({
     loading: false,
@@ -275,7 +271,7 @@ export function useAddDevice() {
   async function submit(key: string) {
     try {
       state.loading = true
-      if (!await userBalance()) {
+      if (!isUserHaveSol) {
         noSol()
         return
       }
@@ -321,12 +317,12 @@ export function useHelper() {
   const { airdropSol } = useAirdrop()
 
   const { notify } = useQuasar()
-  const info = (message: string) => notify({ type: 'info', message, timeout: 2000 })
-  const error = (message: string) => notify({ type: 'negative', message, timeout: 2000 })
+  const info = (message: string) => notify({ type: 'info', message, timeout: 4000 })
+  const error = (message: string) => notify({ type: 'negative', message, timeout: 4000 })
   const ok = (message: string, position = 'bottom' as keyof QNotifyCreateOptions['position']) => notify({
     type: 'positive',
     message,
-    timeout: 2000,
+    timeout: 4000,
     position,
   })
   const noSol = () => notify({

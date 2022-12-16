@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { useQuasar } from 'quasar'
 import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
-import { CHANNEL_INFO } from '@/config'
+import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH } from '@/config'
 
 type State = Omit<
   ReturnType<typeof useChannelCreate>['state'],
@@ -16,19 +17,37 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'reset'])
 
+const { notify } = useQuasar()
+const { error, noSol } = useHelper()
+
 const { channelMessagesCost } = useMessengerStore()
+const userStore = useUserStore()
 
 const state = ref(props.defaultState)
 
-const createNewChannel = () => emit('submit', state)
+const messagesCost = ref<string | number>(0)
 
-const messagesCost = ref(0)
-const messagesCostFormat = computed(() => `~${messagesCost.value.toFixed(5)} SOL`)
+const createNewChannel = () => {
+  if (messagesCost.value > userStore.balance) {
+    if (!userStore.isUserHaveSol) {
+      noSol()
+    }
+    return error('You don\'t have enough SOL')
+  }
+  emit('submit', state)
+}
+
+const messagesCostFormat = computed(() => {
+  return messagesCost.value !== 'extra'
+    ? `~${Number(messagesCost.value).toFixed(5)} SOL`
+    : 'impossible to count'
+})
 
 watch(
   () => state.value?.maxMessages,
   async (m) => {
-    messagesCost.value = await channelMessagesCost(Number(m))
+    const cost = await channelMessagesCost(Number(m))
+    messagesCost.value = cost
   },
 )
 
@@ -47,7 +66,7 @@ onMounted(async () => {
             v-model="state.name"
             label="Channel name *"
             lazy-rules
-            maxlength="32"
+            :maxlength="CHANNEL_INPUT_MAX_LENGTH"
             :rules="[
               (val) => (val && val.length > 2) || 'Please type something',
             ]"
@@ -55,6 +74,7 @@ onMounted(async () => {
           <q-input
             v-model="state.memberName"
             label="Member name"
+            :maxlength="CHANNEL_INPUT_MAX_LENGTH"
           >
             <div class="toggle-info max-messages-tooltip">
               <custom-tooltip :text="CHANNEL_INFO[3]" padding="8px" />
@@ -67,7 +87,7 @@ onMounted(async () => {
               label="Max messages"
               lazy-rules
               type="number"
-              debounce="100"
+              debounce="200"
               :rules="[(val) => +val > 0 || 'Invalid value']"
             />
             <div class="messages-cost">
@@ -154,7 +174,7 @@ onMounted(async () => {
   top: 50%;
   right: 20px;
   transform: translateY(-50%);
-  opacity: .7;
+  opacity: 0.7;
 }
 
 .max-messages-tooltip {

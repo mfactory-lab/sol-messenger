@@ -22,7 +22,7 @@ const { state } = useMessengerStore()
 const channelStore = useChannelStore()
 const mobileStore = useMobileStore()
 const appSizeStore = useAppSizeStore()
-const { screen } = useQuasar()
+const { screen, notify } = useQuasar()
 
 const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
@@ -34,6 +34,11 @@ const memberCount = computed(() => {
     || channel.value?.memberCount === undefined
   ) {
     return ''
+  }
+  if (channelStore.isPublicChannel) {
+    const senders = state.channelMessages.map(ch => ch.sender.toBase58())
+    const uniqueMembersCount = [...new Set(senders)].length
+    return `${uniqueMembersCount}\xA0members`
   }
   return `${channel.value?.memberCount}\xA0members`
 })
@@ -68,6 +73,17 @@ watch(searchText, (s) => {
 const isArrowBack = computed(
   () => mobileStore.isMobile && mobileStore.state.searchOrInfo === 'info',
 )
+
+const handleAppSize = () => {
+  if (!wallet.connected.value) {
+    return notify({
+      type: 'negative',
+      position: 'top',
+      message: 'Please connect your wallet',
+    })
+  }
+  appSizeStore.state.mode = AppSize[0]
+}
 
 watch(
   () => state.channelAddr,
@@ -105,7 +121,7 @@ watch(
       <div
         v-if="!isFullScreen"
         class="size-icon"
-        @click="appSizeStore.state.mode = AppSize[0]"
+        @click="handleAppSize"
       >
         <custom-tooltip text="Full" />
         <arrows-maximize-icon />
