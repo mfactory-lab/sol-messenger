@@ -23,6 +23,10 @@
     "file": "assets/mathwallet.1d763e81.svg",
     "src": "src/assets/img/wallets/mathwallet.svg"
   },
+  "src/assets/img/solana-logo.svg": {
+    "file": "assets/solana-logo.3caace62.svg",
+    "src": "src/assets/img/solana-logo.svg"
+  },
   "src/assets/img/star.svg": {
     "file": "assets/star.073c274c.svg",
     "src": "src/assets/img/star.svg"
@@ -30,10 +34,6 @@
   "src/assets/img/info.svg": {
     "file": "assets/info.bfade5eb.svg",
     "src": "src/assets/img/info.svg"
-  },
-  "src/assets/img/solana-logo.svg": {
-    "file": "assets/solana-logo.3caace62.svg",
-    "src": "src/assets/img/solana-logo.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -108,18 +108,18 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.4389244b.js",
+    "file": "assets/index.0c2a8051.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.1a066b4a.js"
+      "_vendor.3d51a490.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.386f8d29.css"
+      "assets/index.4df4f123.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.1a066b4a.js": {
-    "file": "assets/vendor.1a066b4a.js"
+  "_vendor.3d51a490.js": {
+    "file": "assets/vendor.3d51a490.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.91c1659f.js",
+    "file": "assets/empty.399edcc1.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.1a066b4a.js"
+      "_vendor.3d51a490.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.4a36d81c.js",
+    "file": "assets/_...all_.9e143163.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.1a066b4a.js",
+      "_vendor.3d51a490.js",
       "index.html"
     ],
     "css": [
@@ -180,7 +180,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.386f8d29.css",
+    "file": "assets/index.4df4f123.css",
     "src": "index.css"
   }
 }
