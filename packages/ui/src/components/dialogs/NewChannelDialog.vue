@@ -51,6 +51,13 @@ watch(
   },
 )
 
+const chechNicknameLength = (val: string) => {
+  if (val === '') {
+    return true
+  }
+  return val !== '' && val.length <= 25
+}
+
 onMounted(async () => {
   const maxMessages = DEFAULT_MAX_MESSAGES
   messagesCost.value = await channelMessagesCost(Number(maxMessages))
@@ -69,12 +76,17 @@ onMounted(async () => {
             :maxlength="CHANNEL_INPUT_MAX_LENGTH"
             :rules="[
               (val) => (val && val.length > 2) || 'Please type something',
+              (val) => (val && val.length <= 25) || 'Please use maximum 25 characters',
             ]"
           />
           <q-input
             v-model="state.memberName"
             label="Member name"
+            lazy-rules
             :maxlength="CHANNEL_INPUT_MAX_LENGTH"
+            :rules="[
+              (val) => (chechNicknameLength(val)) || 'Please use maximum 25 characters',
+            ]"
           >
             <div class="toggle-info max-messages-tooltip">
               <custom-tooltip :text="CHANNEL_INFO[3]" padding="8px" />
