@@ -35,6 +35,11 @@ const memberCount = computed(() => {
   ) {
     return ''
   }
+  if (channelStore.isPublicChannel) {
+    const senders = state.channelMessages.map(ch => ch.sender.toBase58())
+    const uniqueMembersCount = [...new Set(senders)].length
+    return `${uniqueMembersCount}\xA0members`
+  }
   return `${channel.value?.memberCount}\xA0members`
 })
 const messageCount = computed(() => {
