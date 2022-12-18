@@ -75,9 +75,9 @@ const isArrowBack = computed(
 )
 
 const handleAppSize = () => {
-  if (!wallet.connected.value) {
+  if (!channelStore.isWalletConnected) {
     return notify({
-      type: 'negative',
+      type: 'warning',
       position: 'top',
       message: 'Please connect your wallet',
     })
@@ -115,6 +115,7 @@ watch(
           clearable
           debounce="300"
           borderless
+          :disable="!channelStore.isWalletConnected"
           @clear="searchText = ''"
         />
       </div>
