@@ -2,14 +2,13 @@ import type { PublicKey } from '@solana/web3.js'
 import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
+import { ClockPauseIcon } from 'vue-tabler-icons'
 
 export const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
   const { createChannel, state: messengerState } = useMessengerStore()
-  const { isWalletConnected, ok, error, noSol } = useHelper()
-
-  const userStore = useUserStore()
+  const { isWalletConnected, ok, error } = useHelper()
 
   const state = reactive({
     dialog: false,
@@ -28,11 +27,6 @@ export function useChannelCreate() {
 
         if (messengerState.allChannels.find(ch => ch.data.name === state.name)) {
           error('A channel with the same name already exists')
-          return
-        }
-
-        if (!userStore.isUserHaveSol) {
-          noSol()
           return
         }
 
@@ -345,11 +339,19 @@ export function useHelper() {
     actions: [
       {
         label: 'GET SOL',
+        class: 'btn--no-hover q-mr-auto',
+        padding: '0 15px 0 10px',
+        size: '14px',
+        color: 'black',
+        noDismiss: true,
+        handler: () => airdropSol(),
+      },
+      {
+        label: 'Dismiss',
         class: 'btn--no-hover',
         padding: '0 15px 0 10px',
         size: '14px',
         color: 'black',
-        handler: () => airdropSol(),
       },
     ],
   })

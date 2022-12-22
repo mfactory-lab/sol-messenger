@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { useQuasar } from 'quasar'
 import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
 import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH, CHANNEL_MAX_MESSAGES } from '@/config'
@@ -20,17 +21,16 @@ const { error, noSol } = useHelper()
 
 const { channelMessagesCost } = useMessengerStore()
 const userStore = useUserStore()
+const { notify } = useQuasar()
 
 const state = ref(props.defaultState)
 
 const messagesCost = ref<string | number>(0)
 
-const createNewChannel = () => {
-  if (messagesCost.value > userStore.balance) {
-    if (!userStore.isUserHaveSol) {
-      noSol()
-    }
-    return error('You don\'t have enough SOL')
+const createNewChannel = async () => {
+  if (await messagesCost.value > userStore.balance) {
+    noSol()
+    return
   }
   emit('submit', state)
 }

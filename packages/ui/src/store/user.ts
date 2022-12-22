@@ -67,6 +67,7 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     keypair,
+    balance,
     userBalance,
     generateKey,
     importKey,

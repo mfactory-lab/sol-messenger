@@ -4,6 +4,7 @@ import {
 } from '@solana/web3.js'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
+import { AIRDROP_SOL } from '@/config/common'
 
 export function useAirdrop() {
   const { connection } = useConnectionStore()
@@ -15,11 +16,11 @@ export function useAirdrop() {
 
   const airdropSol = async () => {
     try {
-      const airdrop = await connection.requestAirdrop(wallet.publicKey.value as PublicKey, 1 * LAMPORTS_PER_SOL)
+      const airdrop = await connection.requestAirdrop(wallet.publicKey.value as PublicKey, AIRDROP_SOL * LAMPORTS_PER_SOL)
       await connection.confirmTransaction(airdrop)
       notify({
         type: 'positive',
-        message: 'you got 1 sol',
+        message: `you got ${AIRDROP_SOL} sol`,
         timeout: 2000,
         position: 'bottom',
       })
