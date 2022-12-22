@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { useQuasar } from 'quasar'
 import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
 import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH, CHANNEL_MAX_MESSAGES } from '@/config'
@@ -17,7 +16,6 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'reset'])
 
-const { notify } = useQuasar()
 const { error, noSol } = useHelper()
 
 const { channelMessagesCost } = useMessengerStore()

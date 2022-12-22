@@ -27,7 +27,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
     notify({
       message: 'Please connect wallet',
       color: 'negative',
-      position: 'top',
+      position: 'bottom',
     })
     return
   }

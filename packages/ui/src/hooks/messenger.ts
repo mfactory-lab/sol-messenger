@@ -6,7 +6,7 @@ import { useWallet } from 'solana-wallets-vue'
 export const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
-  const { createChannel } = useMessengerStore()
+  const { createChannel, state: messengerState } = useMessengerStore()
   const { isWalletConnected, ok, error, noSol } = useHelper()
 
   const userStore = useUserStore()
@@ -25,6 +25,11 @@ export function useChannelCreate() {
     if (isWalletConnected()) {
       try {
         state.loading = true
+
+        if (messengerState.allChannels.find(ch => ch.data.name === state.name)) {
+          error('A channel with the same name already exists')
+          return
+        }
 
         if (!userStore.isUserHaveSol) {
           noSol()
@@ -324,8 +329,8 @@ export function useHelper() {
   const { airdropSol } = useAirdrop()
 
   const { notify } = useQuasar()
-  const info = (message: string) => notify({ type: 'info', message, timeout: 4000 })
-  const error = (message: string) => notify({ type: 'negative', message, timeout: 4000 })
+  const info = (message: string) => notify({ type: 'info', position: 'bottom', message, timeout: 4000 })
+  const error = (message: string) => notify({ type: 'negative', position: 'bottom', message, timeout: 4000 })
   const ok = (message: string, position = 'bottom' as keyof QNotifyCreateOptions['position']) => notify({
     type: 'positive',
     message,
@@ -334,8 +339,8 @@ export function useHelper() {
   })
   const noSol = () => notify({
     type: 'warning',
-    message: 'You don\'t have enough SOL on your balance!',
-    position: 'top',
+    message: 'Your wallet has insufficient SOL balance',
+    position: 'bottom',
     timeout: 0,
     actions: [
       {

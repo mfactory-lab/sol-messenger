@@ -7,6 +7,7 @@ import { useWallet } from 'solana-wallets-vue'
 
 export function useAirdrop() {
   const { connection } = useConnectionStore()
+  const { userBalance } = useUserStore()
   const wallet = useWallet()
   const { notify } = useQuasar()
 
@@ -20,15 +21,16 @@ export function useAirdrop() {
         type: 'positive',
         message: 'you got 1 sol',
         timeout: 2000,
-        position: 'top',
+        position: 'bottom',
       })
       isAirdrop.value = true
+      await userBalance()
     } catch (err) {
       console.log(err)
       notify({
         type: 'negative',
         message: String(err),
-        position: 'top',
+        position: 'bottom',
         actions: [
           { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } },
         ],
