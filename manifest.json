@@ -23,17 +23,17 @@
     "file": "assets/mathwallet.1d763e81.svg",
     "src": "src/assets/img/wallets/mathwallet.svg"
   },
-  "src/assets/img/star.svg": {
-    "file": "assets/star.073c274c.svg",
-    "src": "src/assets/img/star.svg"
+  "src/assets/img/solana-logo.svg": {
+    "file": "assets/solana-logo.3caace62.svg",
+    "src": "src/assets/img/solana-logo.svg"
   },
   "src/assets/img/info.svg": {
     "file": "assets/info.bfade5eb.svg",
     "src": "src/assets/img/info.svg"
   },
-  "src/assets/img/solana-logo.svg": {
-    "file": "assets/solana-logo.3caace62.svg",
-    "src": "src/assets/img/solana-logo.svg"
+  "src/assets/img/star.svg": {
+    "file": "assets/star.073c274c.svg",
+    "src": "src/assets/img/star.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -108,18 +108,18 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.dc4fd135.js",
+    "file": "assets/index.dea271ed.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.6b2f048f.js"
+      "_vendor.48045b6f.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.4df4f123.css"
+      "assets/index.2086a53f.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.6b2f048f.js": {
-    "file": "assets/vendor.6b2f048f.js"
+  "_vendor.48045b6f.js": {
+    "file": "assets/vendor.48045b6f.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.3ff16a09.js",
+    "file": "assets/empty.0e4311ae.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.6b2f048f.js"
+      "_vendor.48045b6f.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.b8b594a5.js",
+    "file": "assets/_...all_.053e50fd.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6b2f048f.js",
+      "_vendor.48045b6f.js",
       "index.html"
     ],
     "css": [
@@ -180,7 +180,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.4df4f123.css",
+    "file": "assets/index.2086a53f.css",
     "src": "index.css"
   }
 }
