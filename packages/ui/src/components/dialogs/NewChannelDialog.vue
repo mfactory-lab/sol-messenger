@@ -3,7 +3,7 @@ import type { PropType } from 'vue'
 import { useQuasar } from 'quasar'
 import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
-import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH } from '@/config'
+import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH, CHANNEL_MAX_MESSAGES } from '@/config'
 
 type State = Omit<
   ReturnType<typeof useChannelCreate>['state'],
@@ -40,7 +40,7 @@ const createNewChannel = () => {
 const messagesCostFormat = computed(() => {
   return messagesCost.value !== 'extra'
     ? `~${Number(messagesCost.value).toFixed(5)} SOL`
-    : 'impossible to count'
+    : 'limit exceeded'
 })
 
 watch(
@@ -100,7 +100,8 @@ onMounted(async () => {
               lazy-rules
               type="number"
               debounce="200"
-              :rules="[(val) => +val > 0 || 'Invalid value']"
+              :rules="[(val) => +val > 0 || 'Invalid value',
+                       (val) => +val < CHANNEL_MAX_MESSAGES + 1 || 'Max messages 20000']"
             />
             <div class="messages-cost">
               {{ messagesCostFormat }}
