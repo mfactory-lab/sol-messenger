@@ -40,7 +40,7 @@ const createNewChannel = () => {
 const messagesCostFormat = computed(() => {
   return messagesCost.value !== 'extra'
     ? `~${Number(messagesCost.value).toFixed(5)} SOL`
-    : 'limit exceeded'
+    : 'Limit exceeded'
 })
 
 watch(

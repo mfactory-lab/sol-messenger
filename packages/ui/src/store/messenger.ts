@@ -1,7 +1,8 @@
 import type { Channel, ChannelDevice, ChannelMembership, Message } from '@app/sdk'
 import { MessengerClient } from '@app/sdk'
 import type { Address } from '@project-serum/anchor'
-import { AnchorProvider } from '@project-serum/anchor'
+import { AnchorProvider, workspace } from '@project-serum/anchor'
+
 import type { Keypair } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 
@@ -28,6 +29,7 @@ interface MessengerStoreState {
 }
 
 const mockEncrypted = (_msg: string) => '***** *** *** *** *******'
+const PROJECT_NAME = import.meta.env.VITE_PROJECT_NAME
 
 export const useMessengerStore = defineStore('messenger', () => {
   const connectionStore = useConnectionStore()
@@ -225,6 +227,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     try {
       state.creating = true
       const { channel } = await client.initChannel({
+        workspace: PROJECT_NAME,
         name,
         memberName,
         maxMessages: Number(opts.maxMessages),

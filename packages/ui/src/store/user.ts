@@ -15,7 +15,7 @@ export const useUserStore = defineStore('user', () => {
     if (pubkey) {
       const secretKey = useLocalStorage(pubkey.toString(), () => bs58.encode(Keypair.generate().secretKey))
       fromEncoded(secretKey.value)
-      await userBalance()
+      balance.value = await userBalance()
     } else {
       keypair.value = undefined
     }
@@ -62,11 +62,8 @@ export const useUserStore = defineStore('user', () => {
 
     const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
     const walletBalance = await connection.getBalance(_wallet as PublicKey)
-    balance.value = await walletBalance / LAMPORTS_PER_SOL
-    // return balance > 0.1
+    return await walletBalance / LAMPORTS_PER_SOL
   }
-
-  const isUserHaveSol = computed(() => balance.value > 0.1)
 
   return {
     keypair,
@@ -74,6 +71,7 @@ export const useUserStore = defineStore('user', () => {
     generateKey,
     importKey,
     exportKey,
-    isUserHaveSol,
+    isUserHaveSol: computed(() => balance.value > 0.1,
+    ),
   }
 })

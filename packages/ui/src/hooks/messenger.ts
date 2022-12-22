@@ -7,7 +7,9 @@ export const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
   const { createChannel } = useMessengerStore()
-  const { isWalletConnected, ok, error } = useHelper()
+  const { isWalletConnected, ok, error, noSol } = useHelper()
+
+  const userStore = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -23,6 +25,11 @@ export function useChannelCreate() {
     if (isWalletConnected()) {
       try {
         state.loading = true
+
+        if (!userStore.isUserHaveSol) {
+          noSol()
+          return
+        }
 
         await createChannel(state.name, state.memberName, {
           maxMessages: state.maxMessages,
@@ -114,7 +121,7 @@ export function useChannelAuthorizeMember() {
 export function useChannelAddMember() {
   const { state: messengerState, addMember, loadChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
-  const { isUserHaveSol } = useUserStore()
+  const userStore = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -128,7 +135,7 @@ export function useChannelAddMember() {
       return
     }
     try {
-      if (!isUserHaveSol) {
+      if (!userStore.isUserHaveSol) {
         noSol()
         return
       }
@@ -186,7 +193,7 @@ export function useChannelDeleteMember() {
 export function useChannelJoin() {
   const { state: messengerState, joinChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
-  const { isUserHaveSol } = useUserStore()
+  const userStore = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -201,7 +208,7 @@ export function useChannelJoin() {
     }
     state.loading = true
     try {
-      if (!isUserHaveSol) {
+      if (!userStore.isUserHaveSol) {
         noSol()
         return
       }
@@ -262,7 +269,7 @@ export function useChannelLeave() {
 export function useAddDevice() {
   const messenger = useMessengerStore()
   const { ok, error, noSol } = useHelper()
-  const { isUserHaveSol } = useUserStore()
+  const userStore = useUserStore()
 
   const state = reactive({
     loading: false,
@@ -271,7 +278,7 @@ export function useAddDevice() {
   async function submit(key: string) {
     try {
       state.loading = true
-      if (!isUserHaveSol) {
+      if (!userStore.isUserHaveSol) {
         noSol()
         return
       }
