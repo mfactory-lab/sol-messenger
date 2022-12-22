@@ -3,7 +3,7 @@ import type { PropType } from 'vue'
 import { useQuasar } from 'quasar'
 import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
-import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH } from '@/config'
+import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH, CHANNEL_MAX_MESSAGES } from '@/config'
 
 type State = Omit<
   ReturnType<typeof useChannelCreate>['state'],
@@ -17,22 +17,20 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'reset'])
 
-const { notify } = useQuasar()
 const { error, noSol } = useHelper()
 
 const { channelMessagesCost } = useMessengerStore()
 const userStore = useUserStore()
+const { notify } = useQuasar()
 
 const state = ref(props.defaultState)
 
 const messagesCost = ref<string | number>(0)
 
-const createNewChannel = () => {
-  if (messagesCost.value > userStore.balance) {
-    if (!userStore.isUserHaveSol) {
-      noSol()
-    }
-    return error('You don\'t have enough SOL')
+const createNewChannel = async () => {
+  if (await messagesCost.value > userStore.balance) {
+    noSol()
+    return
   }
   emit('submit', state)
 }
@@ -40,7 +38,7 @@ const createNewChannel = () => {
 const messagesCostFormat = computed(() => {
   return messagesCost.value !== 'extra'
     ? `~${Number(messagesCost.value).toFixed(5)} SOL`
-    : 'impossible to count'
+    : 'Limit exceeded'
 })
 
 watch(
@@ -100,7 +98,8 @@ onMounted(async () => {
               lazy-rules
               type="number"
               debounce="200"
-              :rules="[(val) => +val > 0 || 'Invalid value']"
+              :rules="[(val) => +val > 0 || 'Invalid value',
+                       (val) => +val < CHANNEL_MAX_MESSAGES + 1 || 'Max messages 20000']"
             />
             <div class="messages-cost">
               {{ messagesCostFormat }}

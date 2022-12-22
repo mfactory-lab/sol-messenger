@@ -63,17 +63,16 @@ export const useUserStore = defineStore('user', () => {
     const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
     const walletBalance = await connection.getBalance(_wallet as PublicKey)
     balance.value = await walletBalance / LAMPORTS_PER_SOL
-    // return balance > 0.1
   }
-
-  const isUserHaveSol = computed(() => balance.value > 0.1)
 
   return {
     keypair,
     balance,
+    userBalance,
     generateKey,
     importKey,
     exportKey,
-    isUserHaveSol,
+    isUserHaveSol: computed(() => balance.value > 0.1,
+    ),
   }
 })

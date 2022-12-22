@@ -156,7 +156,6 @@ const isInChat = (ch: OwnChannel) => {
           class="control-button"
           square
           flat
-          :disable="!messengerStore.channelAddr"
           :class="{ 'refresh-btn': isLoading }"
           @click="refreshList"
         >

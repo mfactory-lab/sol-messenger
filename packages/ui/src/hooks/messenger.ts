@@ -2,11 +2,12 @@ import type { PublicKey } from '@solana/web3.js'
 import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
+import { ClockPauseIcon } from 'vue-tabler-icons'
 
 export const DEFAULT_MAX_MESSAGES = 15
 
 export function useChannelCreate() {
-  const { createChannel } = useMessengerStore()
+  const { createChannel, state: messengerState } = useMessengerStore()
   const { isWalletConnected, ok, error } = useHelper()
 
   const state = reactive({
@@ -23,6 +24,11 @@ export function useChannelCreate() {
     if (isWalletConnected()) {
       try {
         state.loading = true
+
+        if (messengerState.allChannels.find(ch => ch.data.name === state.name)) {
+          error('A channel with the same name already exists')
+          return
+        }
 
         await createChannel(state.name, state.memberName, {
           maxMessages: state.maxMessages,
@@ -114,7 +120,7 @@ export function useChannelAuthorizeMember() {
 export function useChannelAddMember() {
   const { state: messengerState, addMember, loadChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
-  const { isUserHaveSol } = useUserStore()
+  const userStore = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -128,7 +134,7 @@ export function useChannelAddMember() {
       return
     }
     try {
-      if (!isUserHaveSol) {
+      if (!userStore.isUserHaveSol) {
         noSol()
         return
       }
@@ -186,7 +192,7 @@ export function useChannelDeleteMember() {
 export function useChannelJoin() {
   const { state: messengerState, joinChannel } = useMessengerStore()
   const { ok, info, error, noSol } = useHelper()
-  const { isUserHaveSol } = useUserStore()
+  const userStore = useUserStore()
 
   const state = reactive({
     dialog: false,
@@ -201,7 +207,7 @@ export function useChannelJoin() {
     }
     state.loading = true
     try {
-      if (!isUserHaveSol) {
+      if (!userStore.isUserHaveSol) {
         noSol()
         return
       }
@@ -262,7 +268,7 @@ export function useChannelLeave() {
 export function useAddDevice() {
   const messenger = useMessengerStore()
   const { ok, error, noSol } = useHelper()
-  const { isUserHaveSol } = useUserStore()
+  const userStore = useUserStore()
 
   const state = reactive({
     loading: false,
@@ -271,7 +277,7 @@ export function useAddDevice() {
   async function submit(key: string) {
     try {
       state.loading = true
-      if (!isUserHaveSol) {
+      if (!userStore.isUserHaveSol) {
         noSol()
         return
       }
@@ -317,8 +323,8 @@ export function useHelper() {
   const { airdropSol } = useAirdrop()
 
   const { notify } = useQuasar()
-  const info = (message: string) => notify({ type: 'info', message, timeout: 4000 })
-  const error = (message: string) => notify({ type: 'negative', message, timeout: 4000 })
+  const info = (message: string) => notify({ type: 'info', position: 'bottom', message, timeout: 4000 })
+  const error = (message: string) => notify({ type: 'negative', position: 'bottom', message, timeout: 4000 })
   const ok = (message: string, position = 'bottom' as keyof QNotifyCreateOptions['position']) => notify({
     type: 'positive',
     message,
@@ -327,17 +333,25 @@ export function useHelper() {
   })
   const noSol = () => notify({
     type: 'warning',
-    message: 'You don\'t have enough SOL on your balance!',
-    position: 'top',
+    message: 'Your wallet has insufficient SOL balance',
+    position: 'bottom',
     timeout: 0,
     actions: [
       {
         label: 'GET SOL',
+        class: 'btn--no-hover q-mr-auto',
+        padding: '0 15px 0 10px',
+        size: '14px',
+        color: 'black',
+        noDismiss: true,
+        handler: () => airdropSol(),
+      },
+      {
+        label: 'Dismiss',
         class: 'btn--no-hover',
         padding: '0 15px 0 10px',
         size: '14px',
         color: 'black',
-        handler: () => airdropSol(),
       },
     ],
   })
