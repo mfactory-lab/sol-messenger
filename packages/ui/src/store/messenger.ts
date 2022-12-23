@@ -1,7 +1,7 @@
 import type { Channel, ChannelDevice, ChannelMembership, Message } from '@app/sdk'
 import { MessengerClient } from '@app/sdk'
 import type { Address } from '@project-serum/anchor'
-import { AnchorProvider, workspace } from '@project-serum/anchor'
+import { AnchorProvider } from '@project-serum/anchor'
 
 import type { Keypair } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
@@ -203,6 +203,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     listeners = []
     state.loading = true
     const channels = await client.loadAllChannels()
+      .then(res => res.sort((a, b) => a.data.name.localeCompare(b.data.name)))
     // for (const channel of channels) {
     //   console.log(`Channel: ${channel.pubkey}`)
     //   console.log(channel.data.pretty())
@@ -242,6 +243,7 @@ export const useMessengerStore = defineStore('messenger', () => {
           pubkey: channel.publicKey,
           data: state.channel,
         })
+        state.allChannels.sort((a, b) => a.data.name.localeCompare(b.data.name))
       }
     } finally {
       state.creating = false
