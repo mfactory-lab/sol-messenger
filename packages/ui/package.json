@@ -9,6 +9,7 @@
     "build:staging": "vite build --mode staging",
     "build:testing": "vite build --mode testing",
     "build:report": "vite build --mode report",
+    "cypress:open": "cypress open",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "@solana/web3.js": "^1.66.1",
     "@vueuse/core": "^9.3.1",
     "@vueuse/head": "^0.9.8",
+    "cypress": "^12.2.0",
     "lodash-es": "^4.17.21",
     "mitt": "^3.0.0",
     "pinia": "^2.0.27",
