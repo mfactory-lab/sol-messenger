@@ -72,6 +72,7 @@ onMounted(async () => {
             label="Channel name *"
             lazy-rules
             :maxlength="CHANNEL_INPUT_MAX_LENGTH"
+            data-test-id="create-channel-name"
             :rules="[
               (val) => (val && val.length > 2) || 'Please type something',
               (val) => (val && val.length <= 25) || 'Please use maximum 25 characters',
@@ -81,6 +82,7 @@ onMounted(async () => {
             v-model="state.memberName"
             label="Member name"
             lazy-rules
+            data-test-id="create-channel-nickname"
             :maxlength="CHANNEL_INPUT_MAX_LENGTH"
             :rules="[
               (val) => (chechNicknameLength(val)) || 'Please use maximum 25 characters',
@@ -97,6 +99,7 @@ onMounted(async () => {
               label="Max messages"
               lazy-rules
               type="number"
+              data-test-id="create-channel-maxmessages"
               debounce="200"
               :rules="[(val) => +val > 0 || 'Invalid value',
                        (val) => +val < CHANNEL_MAX_MESSAGES + 1 || 'Max messages 20000']"

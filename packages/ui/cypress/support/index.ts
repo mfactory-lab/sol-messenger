@@ -13,18 +13,19 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Import commands.js using ES2015 syntax:
+import './commands'
+import './routes'
+
 import { Keypair } from '@solana/web3.js'
-import base58 from 'bs58'
-import { DEVNET, PhantomWalletMock } from 'phan-wallet-mock'
+import { PhantomWalletMock, initWalletMockProvider } from 'phan-wallet-mock'
 
 Cypress.on('window:before:load', (win) => {
-  // const payer = Keypair.generate();
-  const payer = Keypair.fromSecretKey(
-    base58.decode(
-      '5dV4QCXN6Sgny4ccMtfkaYUepsNe6aACQYvoruTTiXxsrtPTuqbMUedC8TsPxUCvTzMVcuL1SK1C7uAEehpzN9HU',
-    ),
-  )
-  // @ts-expect-error
-  win.solana = PhantomWalletMock.create(DEVNET, payer, 'confirmed')
+  initWalletMockProvider(win)
 })
 
+before(() => {})
+
+beforeEach(() => {
+  // Cypress commands you would like to run before every single Cypress test.
+})
