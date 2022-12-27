@@ -237,15 +237,14 @@ export const useMessengerStore = defineStore('messenger', () => {
       })
 
       // await init()
-      await loadChannel(channel.publicKey).then(() => {
-        if (state.channel) {
-          state.allChannels.push({
-            pubkey: channel.publicKey,
-            data: state.channel,
-          })
-          state.allChannels.sort((a, b) => a.data.name.localeCompare(b.data.name))
-        }
-      })
+      await loadChannel(channel.publicKey)
+      if (state.channel) {
+        state.allChannels.push({
+          pubkey: channel.publicKey,
+          data: state.channel,
+        })
+        state.allChannels.sort((a, b) => a.data.name.localeCompare(b.data.name))
+      }
     } finally {
       state.creating = false
     }
