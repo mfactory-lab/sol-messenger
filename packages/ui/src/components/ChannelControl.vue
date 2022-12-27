@@ -43,6 +43,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         :class="{ 'refresh-btn': isLoading }"
         square
         flat
+        data-test-id="create-channel-refresh-channels"
         @click="handleEmit('refreshList')"
       >
         <refresh-icon style="color: #fff" />

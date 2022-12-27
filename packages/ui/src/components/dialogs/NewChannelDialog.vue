@@ -3,7 +3,11 @@ import type { PropType } from 'vue'
 import { useQuasar } from 'quasar'
 import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
-import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH, CHANNEL_MAX_MESSAGES } from '@/config'
+import {
+  CHANNEL_INFO,
+  CHANNEL_INPUT_MAX_LENGTH,
+  CHANNEL_MAX_MESSAGES,
+} from '@/config'
 
 type State = Omit<
   ReturnType<typeof useChannelCreate>['state'],
@@ -28,7 +32,7 @@ const state = ref(props.defaultState)
 const messagesCost = ref<string | number>(0)
 
 const createNewChannel = async () => {
-  if (await messagesCost.value > userStore.balance) {
+  if ((await messagesCost.value) > userStore.balance) {
     noSol()
     return
   }
@@ -75,7 +79,8 @@ onMounted(async () => {
             data-test-id="create-channel-name"
             :rules="[
               (val) => (val && val.length > 2) || 'Please type something',
-              (val) => (val && val.length <= 25) || 'Please use maximum 25 characters',
+              (val) =>
+                (val && val.length <= 25) || 'Please use maximum 25 characters',
             ]"
           />
           <q-input
@@ -85,7 +90,8 @@ onMounted(async () => {
             data-test-id="create-channel-nickname"
             :maxlength="CHANNEL_INPUT_MAX_LENGTH"
             :rules="[
-              (val) => (chechNicknameLength(val)) || 'Please use maximum 25 characters',
+              (val) =>
+                chechNicknameLength(val) || 'Please use maximum 25 characters',
             ]"
           >
             <div class="toggle-info max-messages-tooltip">
@@ -101,8 +107,11 @@ onMounted(async () => {
               type="number"
               data-test-id="create-channel-maxmessages"
               debounce="200"
-              :rules="[(val) => +val > 0 || 'Invalid value',
-                       (val) => +val < CHANNEL_MAX_MESSAGES + 1 || 'Max messages 20000']"
+              :rules="[
+                (val) => +val > 0 || 'Invalid value',
+                (val) =>
+                  +val < CHANNEL_MAX_MESSAGES + 1 || 'Max messages 20000',
+              ]"
             />
             <div class="messages-cost">
               {{ messagesCostFormat }}
@@ -121,10 +130,14 @@ onMounted(async () => {
               class="col text-primary"
               :class="{ 'toggle-border': !state.public }"
             >
-              Private<q-toggle v-model="state.public" label="Public" />
+              Private<q-toggle
+                v-model="state.public"
+                label="Public"
+                data-test-id="create-channel-check"
+              />
             </div>
             <div v-if="!state.public" class="row text-primary toggle-approve">
-              <q-toggle v-model="state.permissionless" />
+              <q-toggle v-model="state.permissionless" data-test-id="create-channel-permissionless" />
               <span>
                 <div class="toggle-info">
                   <custom-tooltip :text="CHANNEL_INFO[1]" padding="8px" />
