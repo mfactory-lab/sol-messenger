@@ -4,7 +4,6 @@ import type { Wallet } from 'solana-wallets-vue'
 import { useWallet } from 'solana-wallets-vue'
 import { useQuasar } from 'quasar'
 import { evaClose } from '@quasar/extras/eva-icons'
-import { WalletReadyState } from '@solana/wallet-adapter-base'
 import { shortenAddress } from '@/utils'
 
 import cloverSvg from '@/assets/img/wallets/clover.svg'
@@ -47,7 +46,7 @@ const icons = {
 }
 
 const isActiveWallet = (w: Wallet) =>
-  [WalletReadyState.Installed, WalletReadyState.Loadable].includes(
+  ['Installed', 'Loadable'].includes(
     w.readyState,
   )
 
