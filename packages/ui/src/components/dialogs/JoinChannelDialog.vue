@@ -167,6 +167,7 @@ const isInChat = (ch: OwnChannel) => {
           square
           flat
           :disable="!messengerStore.channelAddr"
+          data-test-id="join-channel-btn"
           @click="isModal = true"
         >
           <transfer-in-icon style="color: #fff" />

@@ -64,6 +64,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         class="control-button"
         square
         flat
+        data-test-id="join-channel-join"
         @click="handleEmit('joinChannel')"
       >
         <search-icon style="color: #fff" />

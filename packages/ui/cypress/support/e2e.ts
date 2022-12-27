@@ -21,7 +21,7 @@ Cypress.on('window:before:load', (win) => {
   // const payer = Keypair.generate();
   const payer = Keypair.fromSecretKey(
     base58.decode(
-      '5dV4QCXN6Sgny4ccMtfkaYUepsNe6aACQYvoruTTiXxsrtPTuqbMUedC8TsPxUCvTzMVcuL1SK1C7uAEehpzN9HU',
+      'pnkjmtnqAHiYGEUfAQHAQYAUZPY8NhSskFMpy6tchGEXsR47LJb5jNbcHzyys5xTgV4XRD6YorLgyYKWP5GZioV',
     ),
   )
   // @ts-expect-error

@@ -10,7 +10,7 @@ describe('Messenger', () => {
     })
 
     it('create public channel', () => {
-      const channelName = 'new channel'
+      const channelName = '[TEST] Public'
       const nickname = 'Some nickname'
       const maxmessages = '15'
 
@@ -25,13 +25,12 @@ describe('Messenger', () => {
       })
       cy.get('[data-test-id="create-channel-check"]').click()
       cy.get('.toggle-approve').should('not.exist')
-      cy.get('.dialog-submit-btn').click().then(() => {
-        cy.get('.channels-list').contains('Channel was created!')
-      })
+      cy.get('.dialog-submit-btn').click()
+      cy.get('body').contains('Channel was created!')
     })
 
     it('create duplicate channel', () => {
-      const channelName = 'new channel'
+      const channelName = '[TEST] Public'
       const nickname = 'Some nickname'
       const maxmessages = '15'
 
@@ -46,13 +45,12 @@ describe('Messenger', () => {
       })
       cy.get('[data-test-id="create-channel-check"]').click()
       cy.get('.toggle-approve').should('not.exist')
-      cy.get('.dialog-submit-btn').click().then(() => {
-        cy.get('body').contains('A channel with the same name already exists')
-      })
+      cy.get('.dialog-submit-btn').click()
+      cy.get('body').contains('A channel with the same name already exists')
     })
 
     it('create private channel', () => {
-      const channelName = 'new privat channel'
+      const channelName = '[TEST] Privat'
       const nickname = 'Some nickname'
       const maxmessages = '15'
 
@@ -65,13 +63,20 @@ describe('Messenger', () => {
         // eslint-disable-next-line no-unused-expressions
         expect(val > 0 && val <= 20000).to.be.true
       })
-      cy.get('.dialog-submit-btn').click().then(() => {
-        cy.get('.channels-list').contains('Channel was created!')
+      cy.get('.dialog-submit-btn').click()
+      cy.get('body').contains('Channel was created!')
+
+      // test write message
+      cy.get('.send-btn').should('be.disabled')
+      cy.get('.channels-list').find('.chat-item').contains('[TEST] Privat').click().then(() => {
+        cy.get('.message-control').find('input').type('Test message').should('have.length.gt', 0)
+        cy.get('.send-btn').should('be.enabled').click()
+        cy.get('.messenger-messages').contains('Test message')
       })
     })
 
     it('create private channel with permissionless', () => {
-      const channelName = 'permissionless channel'
+      const channelName = '[TEST] Permissionless'
       const nickname = 'Some nickname'
       const maxmessages = '15'
 
@@ -86,7 +91,7 @@ describe('Messenger', () => {
       })
       cy.get('[data-test-id="create-channel-permissionless"]').click()
       cy.get('.dialog-submit-btn').click().then(() => {
-        cy.get('.channels-list').contains('Channel was created!')
+        cy.get('body').contains('Channel was created!')
       })
     })
   })

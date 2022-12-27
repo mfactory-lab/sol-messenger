@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import type { Channel } from '@app/sdk'
-import type { PropType } from '@vue/runtime-core'
-
 const emit = defineEmits(['join'])
 const name = ref('')
 </script>
@@ -18,6 +15,7 @@ const name = ref('')
             v-model="name"
             label="Member name *"
             lazy-rules
+            data-test-id="join-channel-input"
             :rules="[
               (val) => (val && val.length > 2) || 'Please type something',
             ]"
@@ -29,6 +27,7 @@ const name = ref('')
             text-color="black"
             :ripple="false"
             square
+            data-test-id="join-channel-btn"
           >
             Join Channel
           </q-btn>
