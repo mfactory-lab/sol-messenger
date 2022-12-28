@@ -197,6 +197,7 @@ watch(
                     square
                     size="sm"
                     class="bg-cyan-9 text-white q-px-xs"
+                    data-test-id="channel-menu-members"
                   >
                     Members
                   </q-btn>
@@ -216,6 +217,7 @@ watch(
                     square
                     size="sm"
                     class="bg-amber-7 text-white q-px-xs"
+                    data-test-id="channel-menu-addmember"
                   >
                     Add member
                   </q-btn>
@@ -254,6 +256,7 @@ watch(
                     square
                     size="sm"
                     class="bg-negative text-white q-px-xs"
+                    data-test-id="channel-menu-leave"
                   >
                     Leave
                   </q-btn>

@@ -21,6 +21,7 @@ const addMember = () => emit('submit', state.value)
             v-model="state.name"
             label="Member name *"
             hint="Min length 3 chars"
+            data-test-id="channel-addmember-name"
             lazy-rules
             :rules="[
               (val) => (val && val.length > 2) || 'Please type something',
@@ -29,6 +30,7 @@ const addMember = () => emit('submit', state.value)
           <q-input
             v-model="state.wallet"
             label="Member Wallet *"
+            data-test-id="channel-addmember-wallet"
             lazy-rules
             :rules="[(val) => (val && val.length > 32) || 'Invalid public key']"
           />
@@ -36,6 +38,7 @@ const addMember = () => emit('submit', state.value)
             v-model="state.key"
             label="Member Device Key"
             hint="Default: The same as member wallet"
+            data-test-id="channel-addmember-devicekey"
             lazy-rules
             :rules="[(val) => !val || val.length > 32 || 'Invalid public key']"
           />
@@ -44,6 +47,7 @@ const addMember = () => emit('submit', state.value)
             type="submit"
             class="dialog-submit-btn"
             text-color="black"
+            data-test-id="channel-addmember-btn"
             :ripple="false"
             square
             flat
