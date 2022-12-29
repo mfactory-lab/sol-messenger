@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress'
 
 export default defineConfig({
   e2e: {
+    baseUrl: 'http://127.0.0.1:3333/',
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
@@ -14,11 +15,14 @@ export default defineConfig({
       name: 'test user 1',
       wallet: 'AZWKKMm7bCiymbwcAoaSVvEeCSmbKx27AosJaUnDnuAJ',
       deviceKey: 'A2RWEFUn4gnW8UQnH9wnJUvd8Bq2DfmNDUpaHdguqGD9',
+      secretKey: '5dV4QCXN6Sgny4ccMtfkaYUepsNe6aACQYvoruTTiXxsrtPTuqbMUedC8TsPxUCvTzMVcuL1SK1C7uAEehpzN9HU',
     },
     member2: {
       name: 'test user 2',
       wallet: 'LfuTLsypNViujoitYcJYsd3vW4sg2S4WNKTeeDmdw5R',
       deviceKey: '58sLMkrqzGdA7EcpvAgU6FSGsKDpQkbMg8XfRqAdNZkg',
+      secretKey: '3eYn4xaGRhbpVL5znhsxSHzTSTF7bp8KoPV6qtV7WyxvCRp1PMz7sqon71UvRYSv1DNGfkcWxdHZ6CdqrRdmYoYb',
     },
   },
 })
+

@@ -1,6 +1,6 @@
 describe('Messenger', () => {
   beforeEach(() => {
-    cy.visit('http://127.0.0.1:3333/')
+    cy.visit('/')
     cy.contains('CONNECT WALLET').click()
     cy.contains('Phantom').click()
   })

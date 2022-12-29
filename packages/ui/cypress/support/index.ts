@@ -15,10 +15,8 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
-import './routes'
 
-import { Keypair } from '@solana/web3.js'
-import { PhantomWalletMock, initWalletMockProvider } from 'phan-wallet-mock'
+import { initWalletMockProvider } from 'phan-wallet-mock'
 
 Cypress.on('window:before:load', (win) => {
   initWalletMockProvider(win)

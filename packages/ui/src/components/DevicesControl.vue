@@ -56,6 +56,7 @@ const saveJson = () => {
       square
       flat
       :disabled="!devices.length"
+      data-test-id="channel-add-device"
       @click="isAddModal = true"
     >
       <custom-tooltip text="Add new device" />

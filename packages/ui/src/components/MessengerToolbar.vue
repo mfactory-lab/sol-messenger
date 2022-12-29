@@ -169,6 +169,7 @@ watch(
                     square
                     size="sm"
                     class="bg-blue-grey-7 text-white q-px-xs"
+                    data-test-id="channel-menu-devices"
                   >
                     Devices
                   </q-btn>
