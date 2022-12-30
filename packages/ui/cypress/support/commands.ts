@@ -39,4 +39,3 @@ import base58 from 'bs58'
 //     }
 //   }
 // }
-
