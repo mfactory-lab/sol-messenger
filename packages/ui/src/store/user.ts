@@ -62,7 +62,7 @@ export const useUserStore = defineStore('user', () => {
 
     const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
     const walletBalance = await connection.getBalance(_wallet as PublicKey)
-    balance.value = await walletBalance / LAMPORTS_PER_SOL
+    balance.value = walletBalance / LAMPORTS_PER_SOL
   }
 
   return {

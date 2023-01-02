@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useQuasar } from 'quasar'
+
 const props = defineProps({
   message: { type: String, default: '' },
   disabled: { type: Boolean, default: false },
@@ -7,12 +9,52 @@ const props = defineProps({
 
 const emit = defineEmits(['submit'])
 
+const { notify } = useQuasar()
+
 const message = ref(props.message)
 
 const sendMessage = () => {
   emit('submit', message)
   message.value = ''
 }
+
+let timer: any
+let countDowm = 59
+
+const stopInterval = () => {
+  clearInterval(timer)
+}
+
+watch(() => props.sending, (s) => {
+  if (s) {
+    timer = setInterval(() => {
+      if (countDowm === 0) {
+        stopInterval()
+        notify({
+          classes: 'expires-notofocation',
+          timeout: 3000,
+          message: 'Transaction expires',
+          type: 'negative',
+        })
+        countDowm = 59
+        return
+      }
+      if (countDowm === 10) {
+        notify({
+          classes: 'expires-notofocation',
+          progress: true,
+          timeout: 5000,
+          message: 'Transaction expires soon',
+          type: 'warning',
+        })
+      }
+      countDowm--
+    }, 1000)
+  } else {
+    stopInterval()
+    countDowm = 59
+  }
+})
 </script>
 
 <template>
@@ -71,3 +113,4 @@ const sendMessage = () => {
   }
 }
 </style>
+

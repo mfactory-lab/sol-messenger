@@ -205,7 +205,7 @@ watch(
                 </q-item-section>
               </q-item>
               <q-item
-                v-if="channelStore.isOwner"
+                v-if="channelStore.isOwner && !channelStore.isPublicChannel"
                 v-close-popup
                 class="q-my-sm q-mx-sm q-pa-none chat-menu__item"
                 clickable

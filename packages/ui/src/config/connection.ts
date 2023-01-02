@@ -1,5 +1,5 @@
 import type { Commitment } from '@solana/web3.js'
-import { clusterApiUrl } from '@solana/web3.js'
+// import { clusterApiUrl } from '@solana/web3.js'
 import type { Endpoint } from '@/store/connection'
 
 export const ENDPOINTS: Endpoint[] = [
