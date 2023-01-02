@@ -4,7 +4,7 @@ describe('Messenger', () => {
   })
 
   describe('Prepare', () => {
-    it('Fullsize app if not connect wallet', () => {
+    it('Disabled fullsize app if not connect wallet', () => {
       cy.get('.size-icon').click()
       cy.get('#app').should('not.have.class', 'FullScreen')
     })

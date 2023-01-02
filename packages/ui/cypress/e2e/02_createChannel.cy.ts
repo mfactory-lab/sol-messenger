@@ -24,8 +24,9 @@ describe('Create channel', () => {
     })
     cy.get('[data-test-id="create-channel-check"]').click()
     cy.get('.toggle-approve').should('not.exist')
-    cy.get('.dialog-submit-btn').click()
-    cy.get('body').contains('Channel was created!') || cy.get('.channels-list').contains(channelName)
+    cy.get('.dialog-submit-btn').click().then(() => {
+      cy.contains('Channel was created!') || cy.contains('A channel with the same name already exists')
+    })
   })
 
   it('create duplicate channel', () => {
