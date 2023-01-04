@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{events::UpdateMessageEvent, state::*, utils::assert_valid_membership, MessengerError};
 
-pub fn handler(ctx: Context<UpdateMessage>, data: UpdateMessageData) -> Result<()> {
+pub fn handler(ctx: Context<UpdateMessage>, id: u64, content: String) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
 
     if channel.to_account_info().data_is_empty() {
@@ -22,7 +22,7 @@ pub fn handler(ctx: Context<UpdateMessage>, data: UpdateMessageData) -> Result<(
         }
     }
 
-    let message = channel.update_message(data.id, *authority_key, data.content)?;
+    let message = channel.update_message(id, *authority_key, content)?;
 
     emit!(UpdateMessageEvent {
         channel: channel.key(),

@@ -51,7 +51,7 @@ impl Channel {
                 .messages
                 .iter()
                 .position(|m| m.id == id && m.sender == sender)
-                .ok_or(MessengerError::InvalidMessage)?;
+                .ok_or(MessengerError::Unauthorized)?;
 
             let msg = self.messages.get_mut(idx).ok_or(MessengerError::InvalidMessage)?;
 

@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{events::DeleteMessageEvent, state::*, MessengerError};
+use crate::{events::DeleteMessageEvent, state::*, utils::assert_valid_membership, MessengerError};
 
 pub fn handler(ctx: Context<DeleteMessage>, id: u64) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
@@ -9,29 +9,31 @@ pub fn handler(ctx: Context<DeleteMessage>, id: u64) -> Result<()> {
         return Err(MessengerError::InvalidChannel.into());
     }
 
-    let membership = &mut ctx.accounts.membership;
+    let authority_key = ctx.accounts.authority.key;
 
-    if !membership.is_authorized() {
-        return Err(MessengerError::Unauthorized.into());
+    if !channel.is_public() {
+        let membership = assert_valid_membership(
+            &ctx.accounts.membership.to_account_info(),
+            &channel.key(),
+            authority_key,
+        )?;
+        if !membership.is_authorized() {
+            msg!("Error: Not a member");
+            return Err(MessengerError::Unauthorized.into());
+        }
     }
 
     let idx = channel
         .messages
         .iter()
-        .position(|m| m.id == id && m.sender == membership.authority);
+        .position(|m| m.id == id && m.sender == *authority_key)
+        .ok_or(MessengerError::Unauthorized)?;
 
-    match idx {
-        None => {
-            return Err(MessengerError::Unauthorized.into());
-        }
-        Some(idx) => {
-            channel.messages.remove(idx);
-        }
-    }
+    channel.messages.remove(idx);
 
     emit!(DeleteMessageEvent {
         channel: channel.key(),
-        authority: membership.authority,
+        authority: *authority_key,
         id,
     });
 
@@ -42,10 +44,8 @@ pub fn handler(ctx: Context<DeleteMessage>, id: u64) -> Result<()> {
 pub struct DeleteMessage<'info> {
     #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
-
-    #[account(mut, has_one = channel, has_one = authority)]
-    pub membership: Box<Account<'info, ChannelMembership>>,
-
+    /// CHECK:
+    pub membership: AccountInfo<'info>,
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
