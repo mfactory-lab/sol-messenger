@@ -19,14 +19,14 @@ import {
   createDeleteChannelInstruction,
   createDeleteDeviceInstruction,
   createDeleteMemberInstruction,
+  createDeleteMessageInstruction,
   createGrantAccessMemberInstruction,
   createInitChannelInstruction,
   createJoinChannelInstruction,
   createLeaveChannelInstruction,
   createPostMessageInstruction,
   createReadMessageInstruction,
-  errorFromCode,
-  errorFromName,
+  createUpdateMessageInstruction, errorFromCode, errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -61,7 +61,7 @@ const constants = {
 export class MessengerClient {
   programId = PROGRAM_ID
   constants = constants
-  workspace = import.meta.env.VITE_PROJECT_NAME
+  workspace = '' // import.meta.env.VITE_PROJECT_NAME
 
   _coder: BorshCoder
   _events: EventManager
@@ -666,11 +666,11 @@ export class MessengerClient {
    */
   async postMessage(props: PostMessageProps, opts?: ConfirmOptions) {
     const [authorityMembership] = await this.getMembershipPDA(props.channel)
-    const [authorityDevice] = await this.getDevicePDA(authorityMembership)
 
     let message
     let flags = 0
     if (props.encrypt) {
+      const [authorityDevice] = await this.getDevicePDA(authorityMembership)
       const device = await this.loadDevice(authorityDevice)
       if (!device.cek.header) {
         throw errorFromName('Unauthorized')
@@ -690,6 +690,78 @@ export class MessengerClient {
         membership: authorityMembership,
         authority: this.provider.publicKey,
       }, { message: String.fromCharCode(flags) + message }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Update message by id
+   */
+  async updateMessage(props: UpdateMessageProps, opts?: ConfirmOptions) {
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+
+    let message
+    let flags = 0
+    if (props.encrypt) {
+      const [authorityDevice] = await this.getDevicePDA(authorityMembership)
+      const device = await this.loadDevice(authorityDevice)
+      if (!device.cek.header) {
+        throw errorFromName('Unauthorized')
+      }
+      const cek = await this.decryptCEK(device.cek)
+      message = await this.encryptMessage(props.newMessage, cek)
+      flags |= 0b001
+    } else {
+      message = props.newMessage
+    }
+
+    const tx = new Transaction()
+
+    tx.add(
+      createUpdateMessageInstruction({
+        channel: props.channel,
+        membership: authorityMembership,
+        authority: this.provider.publicKey,
+      }, {
+        id: props.messageId,
+        message: String.fromCharCode(flags) + message,
+      }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Delete message by id
+   */
+  async deleteMessage(props: DeleteMessageProps, opts?: ConfirmOptions) {
+    const [authorityMembership] = await this.getMembershipPDA(props.channel)
+
+    const tx = new Transaction()
+
+    tx.add(
+      createDeleteMessageInstruction({
+        channel: props.channel,
+        membership: authorityMembership,
+        authority: this.provider.publicKey,
+      }, { id: props.messageId }),
     )
 
     let signature: string
@@ -857,7 +929,19 @@ interface PostMessageProps {
   encrypt?: boolean
 }
 
+interface UpdateMessageProps {
+  channel: PublicKey
+  messageId: number
+  newMessage: string
+  encrypt?: boolean
+}
+
 interface ReadMessageProps {
+  channel: PublicKey
+  messageId: number
+}
+
+interface DeleteMessageProps {
   channel: PublicKey
   messageId: number
 }

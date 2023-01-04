@@ -1,5 +1,5 @@
 {
-  "version": "0.0.12",
+  "version": "0.0.13",
   "name": "messenger",
   "instructions": [
     {
@@ -435,6 +435,72 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "updateMessage",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "u64"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "deleteMessage",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "membership",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "id",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -781,6 +847,22 @@
       }
     },
     {
+      "name": "UpdateMessageData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "content",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "name": "CEKData",
       "type": {
         "kind": "struct",
@@ -831,6 +913,7 @@
           {
             "name": "flags",
             "docs": [
+              "The unix timestamp at which the message was updated",
               "Message flags"
             ],
             "type": "u8"
@@ -919,6 +1002,43 @@
           "type": {
             "defined": "Message"
           },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "UpdateMessageEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "message",
+          "type": {
+            "defined": "Message"
+          },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DeleteMessageEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "id",
+          "type": "u64",
           "index": false
         }
       ]
