@@ -147,6 +147,24 @@ describe('messenger', () => {
       assert.equal(msg.id, 1)
     })
 
+    it('can update a message', async () => {
+      const messageId = 1
+      const newMessage = 'hello world v2'
+      await client.updateMessage({ channel: channel.publicKey, messageId, newMessage, encrypt: true })
+
+      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = await client.getDevicePDA(membershipAddr)
+      const device = await client.loadDevice(deviceAddr)
+
+      const cek = await client.decryptCEK(device.cek)
+      const channelInfo = await client.loadChannel(channel.publicKey)
+      const msg = channelInfo.messages[0]
+
+      assert.equal(await client.decryptMessage(msg.content, cek), newMessage)
+      assert.equal(msg.flags, 1)
+      assert.equal(msg.id, 1)
+    })
+
     it('can add member to the channel', async () => {
       const data = { channel: channel.publicKey, invitee: member1.publicKey, key: undefined, name: 'Alice' }
       await client.addMember(data)
@@ -180,6 +198,24 @@ describe('messenger', () => {
       const cek = await client.decryptCEK(device.cek, sender.secretKey)
       const message = await client.decryptMessage(channelInfo.messages[1].content, cek)
       assert.equal(message, 'hello from invitee')
+    })
+
+    it('cannot update another message', async () => {
+      const data = { channel: channel.publicKey, messageId: 2, newMessage: 'test', encrypt: true }
+      try {
+        await client.updateMessage(data)
+      } catch (e: any) {
+        assert.ok(String(e).includes('0x1770')) // Unauthorized
+      }
+    })
+
+    it('cannot delete another message', async () => {
+      const data = { channel: channel.publicKey, messageId: 2 }
+      try {
+        await client.deleteMessage(data)
+      } catch (e: any) {
+        assert.ok(String(e).includes('0x1770')) // Unauthorized
+      }
     })
 
     it('can member #2 join channel', async () => {
