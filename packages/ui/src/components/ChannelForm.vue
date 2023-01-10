@@ -19,7 +19,7 @@ const sendMessage = () => {
 }
 
 let timer: any
-let countDowm = 12
+let countDowm = 59
 
 const stopInterval = () => {
   clearInterval(timer)
@@ -62,7 +62,7 @@ watch(
             message: 'Transaction expires',
             type: 'negative',
           })
-          countDowm = 12
+          countDowm = 59
           return
         }
         if (countDowm === 10) {
@@ -72,7 +72,7 @@ watch(
       }, 1000)
     } else {
       stopInterval()
-      countDowm = 12
+      countDowm = 59
     }
   },
 )
