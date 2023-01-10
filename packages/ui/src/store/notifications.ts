@@ -51,8 +51,8 @@ export const useNotificationsStore = defineStore('notifications', () => {
 
       if (state.pendingChannels.length > 0) {
         /**
-             * show details animation
-             */
+         * show details animation
+         */
         setTimeout(() => (state.showInfo = true), 2000)
         setTimeout(() => (state.showInfo = false), 7000)
       } else {

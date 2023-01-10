@@ -20,8 +20,6 @@ declare module '@vue/runtime-core' {
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
     CustomTooltip: typeof import('./../src/components/CustomTooltip.vue')['default']
     DebugBtn: typeof import('./../src/components/DebugBtn.vue')['default']
-    DeleteFromChannel: typeof import('./../src/components/dialogs/DeleteFromChannel.vue')['default']
-    DeleteFromChannelDialog: typeof import('../src/components/dialogs/EventChannelDialog.vue')['default']
     DevicesControl: typeof import('./../src/components/DevicesControl.vue')['default']
     DevicesDialog: typeof import('./../src/components/dialogs/DevicesDialog.vue')['default']
     DevicesList: typeof import('./../src/components/DevicesList.vue')['default']
@@ -42,6 +40,5 @@ declare module '@vue/runtime-core' {
     PendingUsersDialog: typeof import('./../src/components/dialogs/PendingUsersDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    UserInfoDialog: typeof import('../src/components/dialogs/DevicesDialog.vue')['default']
   }
 }

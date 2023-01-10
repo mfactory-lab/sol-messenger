@@ -64,4 +64,12 @@ pub mod messenger {
     pub fn read_message(ctx: Context<ReadMessage>, message_id: u64) -> Result<()> {
         read_message::handler(ctx, message_id)
     }
+
+    pub fn update_message(ctx: Context<UpdateMessage>, id: u64, message: String) -> Result<()> {
+        update_message::handler(ctx, id, message)
+    }
+
+    pub fn delete_message(ctx: Context<DeleteMessage>, id: u64) -> Result<()> {
+        delete_message::handler(ctx, id)
+    }
 }

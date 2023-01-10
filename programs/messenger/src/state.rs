@@ -41,17 +41,34 @@ impl Channel {
         + 2 + (4 + (Message::SIZE * max_messages as usize)) // max_messages + messages
     }
 
+    /// Update channel message by [id]
+    pub fn update_message(&mut self, id: u64, sender: Pubkey, content: String) -> Result<Message> {
+        let bytes = content.as_bytes();
+
+        // first byte is represent message flags
+        if let [flags, bytes @ ..] = bytes {
+            let idx = self
+                .messages
+                .iter()
+                .position(|m| m.id == id && m.sender == sender)
+                .ok_or(MessengerError::Unauthorized)?;
+
+            let msg = self.messages.get_mut(idx).ok_or(MessengerError::InvalidMessage)?;
+
+            msg.flags = *flags;
+            msg.content = std::str::from_utf8(bytes).unwrap().to_string();
+            // msg.updated_at = self.last_message_at;
+
+            msg.validate()?;
+
+            Ok(msg.clone())
+        } else {
+            Err(MessengerError::InvalidMessage.into())
+        }
+    }
+
     /// Post a message to the channel
     pub fn add_message(&mut self, content: String, sender: &Pubkey) -> Result<Message> {
-        if content.len() > MAX_MESSAGE_LENGTH {
-            msg!(
-                "Error: Message too long (size: {}, max: {})",
-                content.len(),
-                MAX_MESSAGE_LENGTH
-            );
-            return Err(MessengerError::MessageTooLong.into());
-        }
-
         self.last_message_at = Clock::get()?.unix_timestamp;
         self.message_count = self.message_count.saturating_add(1);
 
@@ -59,7 +76,7 @@ impl Channel {
 
         // first byte is represent message flags
         if let [flags, bytes @ ..] = bytes {
-            let message = Message {
+            let msg = Message {
                 id: self.message_count,
                 sender: *sender,
                 created_at: self.last_message_at,
@@ -67,15 +84,17 @@ impl Channel {
                 content: std::str::from_utf8(bytes).unwrap().to_string(),
             };
 
+            msg.validate()?;
+
             let mut deque = VecDeque::from(self.messages.to_owned());
-            deque.push_back(message.to_owned());
+            deque.push_back(msg.to_owned());
             if deque.len() > self.max_messages as usize {
                 deque.pop_front();
             }
 
             self.messages = deque.into();
 
-            Ok(message)
+            Ok(msg)
         } else {
             Err(MessengerError::InvalidMessage.into())
         }
@@ -228,6 +247,8 @@ pub struct Message {
     pub sender: Pubkey,
     /// The unix timestamp at which the message was received
     pub created_at: i64,
+    /// The unix timestamp at which the message was updated
+    // pub updated_at: i64, // TODO:
     /// Message flags
     pub flags: u8,
     /// The (typically encrypted) message content
@@ -239,6 +260,18 @@ impl Message {
 
     pub fn is_encrypted(&self) -> bool {
         self.flags & MessageFlags::IsEncrypted > 0
+    }
+
+    pub fn validate(&self) -> Result<()> {
+        if self.content.len() > MAX_MESSAGE_LENGTH {
+            msg!(
+                "Error: Message too long (size: {}, max: {})",
+                self.content.len(),
+                MAX_MESSAGE_LENGTH
+            );
+            return Err(MessengerError::MessageTooLong.into());
+        }
+        Ok(())
     }
 }
 

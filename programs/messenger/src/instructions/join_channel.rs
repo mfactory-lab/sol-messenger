@@ -45,6 +45,7 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct JoinChannelData {
     pub name: String,
+    // TODO: rename -> target
     pub authority: Option<Pubkey>,
 }
 
