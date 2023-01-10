@@ -61,7 +61,7 @@ const constants = {
 export class MessengerClient {
   programId = PROGRAM_ID
   constants = constants
-  workspace = '' // import.meta.env.VITE_PROJECT_NAME
+  workspace = import.meta.env.VITE_PROJECT_NAME // import.meta.env.VITE_PROJECT_NAME
 
   _coder: BorshCoder
   _events: EventManager
