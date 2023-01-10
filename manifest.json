@@ -27,13 +27,13 @@
     "file": "assets/star.073c274c.svg",
     "src": "src/assets/img/star.svg"
   },
-  "src/assets/img/solana-logo.svg": {
-    "file": "assets/solana-logo.3caace62.svg",
-    "src": "src/assets/img/solana-logo.svg"
-  },
   "src/assets/img/info.svg": {
     "file": "assets/info.bfade5eb.svg",
     "src": "src/assets/img/info.svg"
+  },
+  "src/assets/img/solana-logo.svg": {
+    "file": "assets/solana-logo.3caace62.svg",
+    "src": "src/assets/img/solana-logo.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -108,11 +108,11 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.955b1ad8.js",
+    "file": "assets/index.2e21bc85.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.61c5642a.js"
+      "_vendor.0fff6ac5.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.61c5642a.js": {
-    "file": "assets/vendor.61c5642a.js"
+  "_vendor.0fff6ac5.js": {
+    "file": "assets/vendor.0fff6ac5.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.d92eab32.js",
+    "file": "assets/empty.b7822ed9.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.61c5642a.js"
+      "_vendor.0fff6ac5.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.889a3d9c.js",
+    "file": "assets/_...all_.789b0e71.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.61c5642a.js",
+      "_vendor.0fff6ac5.js",
       "index.html"
     ],
     "css": [
