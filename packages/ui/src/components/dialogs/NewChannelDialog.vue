@@ -99,7 +99,7 @@ onMounted(async () => {
               type="number"
               debounce="200"
               :rules="[(val) => +val > 0 || 'Invalid value',
-                       (val) => +val < CHANNEL_MAX_MESSAGES + 1 || 'Max messages 20000']"
+                       (val) => +val < CHANNEL_MAX_MESSAGES + 1 || `Max messages ${CHANNEL_MAX_MESSAGES}`]"
             />
             <div class="messages-cost">
               {{ messagesCostFormat }}
