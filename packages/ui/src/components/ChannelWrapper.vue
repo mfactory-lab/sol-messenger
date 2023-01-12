@@ -3,11 +3,11 @@ import type { PublicKey } from '@solana/web3.js'
 import { useDebounceFn } from '@vueuse/core'
 import { useWallet } from 'solana-wallets-vue'
 
-defineProps({
+const messageProps = defineProps({
   postMessageState: { type: Object },
 })
 
-const emit = defineEmits(['sendMessage'])
+const emit = defineEmits(['sendMessage', 'deleteMessage'])
 
 const wallet = useWallet()
 const { state } = useMessengerStore()
@@ -37,7 +37,7 @@ const messages = computed(() => {
   let prev: any
   for (const msg of filterDuplicateMessages.value) {
     if (prev && `${msg.sender}` === `${prev}`) {
-      data[i - 1].text.push(msg.content)
+      data[i - 1].text.push(`<div data-id='${msg.id}'>${msg.content}</div>`)
     } else {
       prev = msg.sender
       const sender = state.channelMembers.find(
@@ -47,8 +47,10 @@ const messages = computed(() => {
         id: msg.id,
         sender: msg.sender,
         senderDisplayName:
-          sender?.data.name !== '' && !channel.isPublicChannel ? sender?.data.name : msg.senderDisplayName,
-        text: [msg.content],
+          sender?.data.name !== '' && !channel.isPublicChannel
+            ? sender?.data.name
+            : msg.senderDisplayName,
+        text: [`<div data-id='${msg.id}'>${msg.content}</div>`],
         date: msg.createdAt,
       })
       i++
@@ -60,6 +62,16 @@ const messages = computed(() => {
 const isAllowSend = computed(() => channel.canPostMessage)
 
 const sendMessage = (message: any) => emit('sendMessage', message)
+
+const handleEditMessage = (msg: any) => {
+  messageProps.postMessageState!.message = msg.text
+  messageProps.postMessageState!.edit = true
+  messageProps.postMessageState!.messageId = msg.messageId
+}
+
+const handleDeleteMessage = (messageId: number) => {
+  emit('deleteMessage', messageId)
+}
 
 const chat = ref<HTMLElement>()
 const mes = ref<HTMLElement>()
@@ -118,11 +130,20 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
           <q-chat-message
             v-for="msg in messages"
             :key="msg.id"
+            text-html
             :name="msg.senderDisplayName"
-            :text="msg.text"
             :sent="isSomeoneMessage(msg.sender)"
             :class="!isSomeoneMessage(msg.sender) ? 'sender' : 'others'"
-          />
+          >
+            <div v-for="(text, j) in msg.text" :key="j" class="message">
+              <channel-message
+                :text="text"
+                :sender="!!isSomeoneMessage(msg.sender)"
+                @handle-edit="handleEditMessage"
+                @handle-delete="handleDeleteMessage"
+              />
+            </div>
+          </q-chat-message>
         </div>
         <div v-else class="messenger-empty">
           No messages
@@ -140,7 +161,7 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
     </div>
 
     <channel-form
-      :message="postMessageState.message"
+      :message="postMessageState"
       :sending="channel.isSendMessage"
       :disabled="!isAllowSend"
       @submit="sendMessage"
@@ -211,6 +232,34 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
   }
 }
 
+.message {
+  &:hover {
+    .message-actions {
+      opacity: 1;
+    }
+  }
+  &-wrapper {
+    padding: 15px 17px 15px 12px;
+  }
+  &-actions {
+    opacity: 0;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    svg {
+      opacity: 0.6;
+      transition: 0.3s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 .messenger-card.show-scroll {
   ::-webkit-scrollbar {
     width: 3px;
@@ -228,19 +277,24 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
 .sender,
 .others {
   .q-message-text {
-    padding: 10px 12px;
+    padding: 0;
+    &:last-child {
+      display: flex;
+      align-items: center;
+      min-height: auto;
+    }
   }
 }
 
 .sender {
-  .q-message-text {
-    padding: 10px 12px;
-  }
   .q-message-text--received {
     color: $primary;
+    width: fit-content;
   }
   .q-message-text-content--received {
     color: #fff;
+    width: 100%;
+    height: 100%;
   }
 }
 

@@ -15,6 +15,7 @@ declare module '@vue/runtime-core' {
     BackupDeviceTab: typeof import('./../src/components/instructions/BackupDeviceTab.vue')['default']
     ChannelControl: typeof import('./../src/components/ChannelControl.vue')['default']
     ChannelForm: typeof import('./../src/components/ChannelForm.vue')['default']
+    ChannelMessage: typeof import('./../src/components/ChannelMessage.vue')['default']
     ChannelWrapper: typeof import('./../src/components/ChannelWrapper.vue')['default']
     ClusterSelector: typeof import('./../src/components/ClusterSelector.vue')['default']
     ConnectWallet: typeof import('./../src/components/ConnectWallet.vue')['default']
