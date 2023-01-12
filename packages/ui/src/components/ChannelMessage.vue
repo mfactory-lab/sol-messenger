@@ -4,8 +4,6 @@ import { PencilIcon, XIcon } from 'vue-tabler-icons'
 defineProps({
   text: String,
   sender: Boolean,
-  messageId: Number,
-  messagesCount: Number,
 })
 
 const emit = defineEmits(['handleEdit', 'handleDelete'])

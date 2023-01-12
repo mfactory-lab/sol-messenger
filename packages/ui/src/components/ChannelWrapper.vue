@@ -137,8 +137,6 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
           >
             <div v-for="(text, j) in msg.text" :key="j" class="message">
               <channel-message
-                :messages-count="msg.text.length"
-                :message-id="msg.id"
                 :text="text"
                 :sender="!!isSomeoneMessage(msg.sender)"
                 @handle-edit="handleEditMessage"
