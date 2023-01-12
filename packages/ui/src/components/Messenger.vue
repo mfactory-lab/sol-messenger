@@ -5,7 +5,7 @@ import type { AllChannels } from '@/store/messenger'
 
 const wallet = useWallet()
 
-const { state, postMessage, loadChannel, refreshList, channelAuthorityDevice }
+const { state, postMessage, editMessage, deleteMessage, loadChannel, refreshList, channelAuthorityDevice }
   = useMessengerStore()
 const channel = useChannelStore()
 const mobileStore = useMobileStore()
@@ -18,14 +18,23 @@ const deleteMember = useChannelDeleteMember()
 const deleteChannel = useChannelDelete()
 const leaveChannel = useChannelLeave()
 
-const postMessageState = reactive({ message: '' })
+const postMessageState = reactive({ message: '', edit: false, messageId: 0 })
 const allChannels = computed(() => state.allChannels)
 const searchChannels = ref<AllChannels[]>([])
 const searchWord = ref('')
 
-async function sendMessage(message: any) {
-  await postMessage(message.value)
-  postMessageState.message = ''
+async function sendMessage() {
+  const { message, edit, messageId } = postMessageState
+  if (!edit) {
+    await postMessage(postMessageState.message)
+    postMessageState.message = ''
+  } else {
+    editMemberMessage(message, messageId)
+  }
+}
+
+async function editMemberMessage(message: string, id: number) {
+  await editMessage(message, id)
 }
 
 const onSearch = (val: string) => {
@@ -128,7 +137,9 @@ onMounted(() => {
       <channel-wrapper
         :style="{ 'z-index': isMobileMessages }"
         :post-message-state="postMessageState"
+        @edit-member-message="editMessage"
         @send-message="sendMessage"
+        @delete-message="deleteMessage"
       />
       <q-inner-loading :showing="state.loading" color="primary" />
     </div>
