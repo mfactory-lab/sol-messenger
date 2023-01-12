@@ -37,7 +37,7 @@ const messages = computed(() => {
   let prev: any
   for (const msg of filterDuplicateMessages.value) {
     if (prev && `${msg.sender}` === `${prev}`) {
-      data[i - 1].text.push(msg.content)
+      data[i - 1].text.push(`<div data-id='${msg.id}'>${msg.content}</div>`)
     } else {
       prev = msg.sender
       const sender = state.channelMembers.find(
@@ -50,7 +50,7 @@ const messages = computed(() => {
           sender?.data.name !== '' && !channel.isPublicChannel
             ? sender?.data.name
             : msg.senderDisplayName,
-        text: [msg.content],
+        text: [`<div data-id='${msg.id}'>${msg.content}</div>`],
         date: msg.createdAt,
       })
       i++
@@ -63,14 +63,10 @@ const isAllowSend = computed(() => channel.canPostMessage)
 
 const sendMessage = (message: any) => emit('sendMessage', message)
 
-const handleEditMessage = (text: string) => {
-  const msg = state.channelMessages.find(
-    m =>
-      String(m.sender) === String(wallet.publicKey.value) && m.content === text,
-  )
-  messageProps.postMessageState!.message = msg?.content
+const handleEditMessage = (msg: any) => {
+  messageProps.postMessageState!.message = msg.text
   messageProps.postMessageState!.edit = true
-  messageProps.postMessageState!.messageId = msg?.id
+  messageProps.postMessageState!.messageId = msg.messageId
 }
 
 const handleDeleteMessage = (messageId: number) => {
@@ -134,16 +130,19 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
           <q-chat-message
             v-for="msg in messages"
             :key="msg.id"
+            text-html
             :name="msg.senderDisplayName"
             :sent="isSomeoneMessage(msg.sender)"
             :class="!isSomeoneMessage(msg.sender) ? 'sender' : 'others'"
           >
             <div v-for="(text, j) in msg.text" :key="j" class="message">
               <channel-message
+                :messages-count="msg.text.length"
+                :message-id="msg.id"
                 :text="text"
                 :sender="!!isSomeoneMessage(msg.sender)"
                 @handle-edit="handleEditMessage"
-                @handle-delete="handleDeleteMessage(msg.id)"
+                @handle-delete="handleDeleteMessage"
               />
             </div>
           </q-chat-message>
@@ -236,7 +235,6 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
 }
 
 .message {
-
   &:hover {
     .message-actions {
       opacity: 1;
@@ -251,11 +249,11 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
     top: 2px;
     right: 2px;
     cursor: pointer;
-    transition: .3s;
+    transition: 0.3s;
 
     svg {
-      opacity: .6;
-      transition: .3s;
+      opacity: 0.6;
+      transition: 0.3s;
 
       &:hover {
         opacity: 1;

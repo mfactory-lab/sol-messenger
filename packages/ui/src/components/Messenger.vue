@@ -27,10 +27,12 @@ async function sendMessage() {
   const { message, edit, messageId } = postMessageState
   if (!edit) {
     await postMessage(postMessageState.message)
-    postMessageState.message = ''
   } else {
     editMemberMessage(message, messageId)
   }
+  postMessageState.message = ''
+  postMessageState.edit = false
+  postMessageState.messageId = 0
 }
 
 async function editMemberMessage(message: string, id: number) {
