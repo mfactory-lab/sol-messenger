@@ -47,6 +47,10 @@
     "file": "assets/discord.4c88a6e4.svg",
     "src": "src/assets/img/discord.svg"
   },
+  "src/assets/img/help-btn.svg": {
+    "file": "assets/help-btn.06005d5c.svg",
+    "src": "src/assets/img/help-btn.svg"
+  },
   "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2"
@@ -87,10 +91,6 @@
     "file": "assets/Eva-Icons.ba7db2a0.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
-  "src/assets/img/help-btn.svg": {
-    "file": "assets/help-btn.06005d5c.svg",
-    "src": "src/assets/img/help-btn.svg"
-  },
   "src/assets/img/instructions/add/step_2.png": {
     "file": "assets/step_2.80ee96fc.png",
     "src": "src/assets/img/instructions/add/step_2.png"
@@ -108,18 +108,18 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.2e21bc85.js",
+    "file": "assets/index.1105e0b4.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.0fff6ac5.js"
+      "_vendor.929b15f6.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.8bef03d2.css"
+      "assets/index.4eaa8b05.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.0fff6ac5.js": {
-    "file": "assets/vendor.0fff6ac5.js"
+  "_vendor.929b15f6.js": {
+    "file": "assets/vendor.929b15f6.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.b7822ed9.js",
+    "file": "assets/empty.f6a73db4.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.0fff6ac5.js"
+      "_vendor.929b15f6.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.789b0e71.js",
+    "file": "assets/_...all_.4912aa7e.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.0fff6ac5.js",
+      "_vendor.929b15f6.js",
       "index.html"
     ],
     "css": [
@@ -180,7 +180,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.8bef03d2.css",
+    "file": "assets/index.4eaa8b05.css",
     "src": "index.css"
   }
 }
