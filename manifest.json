@@ -108,11 +108,11 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.1105e0b4.js",
+    "file": "assets/index.d6858658.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.929b15f6.js"
+      "_vendor.e27e228c.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.929b15f6.js": {
-    "file": "assets/vendor.929b15f6.js"
+  "_vendor.e27e228c.js": {
+    "file": "assets/vendor.e27e228c.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.f6a73db4.js",
+    "file": "assets/empty.c87cc4c1.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.929b15f6.js"
+      "_vendor.e27e228c.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.4912aa7e.js",
+    "file": "assets/_...all_.aebed4f6.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.929b15f6.js",
+      "_vendor.e27e228c.js",
       "index.html"
     ],
     "css": [
