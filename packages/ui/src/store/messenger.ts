@@ -167,6 +167,18 @@ export const useMessengerStore = defineStore('messenger', () => {
         content,
       })
     }))
+    listeners.push(client.addEventListener('UpdateMessageEvent', async (e) => {
+      console.log('[Event] UpdateMessageEvent', e)
+      if (`${e.channel}` === `${state.channelAddr}`) {
+        loadChannelMessages().then()
+      }
+    }))
+    listeners.push(client.addEventListener('DeleteMessageEvent', async (e) => {
+      console.log('[Event] DeleteMessageEvent', e)
+      if (`${e.channel}` === `${state.channelAddr}`) {
+        loadChannelMessages().then()
+      }
+    }))
     listeners.push(client.addEventListener('AuthorizeMemberEvent', async (e) => {
       console.log('[Event] AuthorizeMemberEvent', e)
       if (`${e.authority}` === `${wallet.value?.publicKey}`) {
@@ -394,7 +406,10 @@ export const useMessengerStore = defineStore('messenger', () => {
       const data = { channel: state.channelAddr, messageId, newMessage, encrypt: true }
       state.sending = true
       await client.updateMessage(data)
-      await loadChannelMessages()
+      const messageIndex = findMessageIndex(data.messageId)
+      if (messageIndex !== -1) {
+        state.channelMessages[messageIndex].content = newMessage
+      }
     } finally {
       state.sending = false
     }
@@ -405,11 +420,16 @@ export const useMessengerStore = defineStore('messenger', () => {
       console.log('Please select a channel')
       return
     }
+    const data = { channel: state.channelAddr, messageId }
     try {
-      const data = { channel: state.channelAddr, messageId }
       state.sending = true
       await client.deleteMessage(data)
-      await loadChannelMessages()
+      const messageIndex = findMessageIndex(data.messageId)
+      if (messageIndex !== -1) {
+        state.channelMessages.splice(messageId, 1)
+      }
+    } catch (err) {
+      console.log(`[Error: DeleteMessage] ${err}`)
     } finally {
       state.sending = false
     }
@@ -496,6 +516,10 @@ export const useMessengerStore = defineStore('messenger', () => {
 
   async function selectChannel(addr: any) {
     state.channelAddr = addr
+  }
+
+  function findMessageIndex(messageId: number | string) {
+    return state.channelMessages.findIndex(m => m.id === Number(messageId))
   }
 
   function deleteChannelFromChannels(addr: PublicKey | string) {
