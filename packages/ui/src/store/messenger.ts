@@ -80,7 +80,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
   }, { immediate: true })
 
-  watch([deviceKey, () => state.allChannels], () => {
+  watch([deviceKey, state.allChannels], () => {
     initOwnChannels().then()
   }, { immediate: true })
 
@@ -269,9 +269,11 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function leaveChannel(channel: PublicKey) {
-    console.log('leaveChannel channel === ', channel.toBase58())
     await client.leaveChannel({ channel })
-    deleteChannelFromChannels(channel)
+    const channelIdx = state.ownChannels.findIndex(ch => ch.pubkey === channel.toString())
+    state.ownChannels.splice(channelIdx, 1)
+    state.channelMessages = []
+    state.channel = undefined
   }
 
   async function joinChannel(addr: Address, name: string) {
@@ -523,8 +525,8 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   function deleteChannelFromChannels(addr: PublicKey | string) {
-    const channelIdx = state.ownChannels.findIndex(ch => ch.pubkey === addr.toString())
-    state.ownChannels.splice(channelIdx, 1)
+    const channelIdx = state.allChannels.findIndex(ch => ch.pubkey.toBase58() === addr.toString())
+    state.allChannels.splice(channelIdx, 1)
     state.channelMessages = []
     state.channel = undefined
   }

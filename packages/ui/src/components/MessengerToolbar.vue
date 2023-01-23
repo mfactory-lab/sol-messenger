@@ -55,7 +55,6 @@ const messageCount = computed(() => {
 
 const onSearch = (value: string) => emit('search', value)
 const showMembers = () => emit('showMembers')
-const onDeleteChannel = () => emit('deleteChannel')
 const onAddMember = () => emit('addMember')
 
 const pendingUsersCount = computed(() => {
