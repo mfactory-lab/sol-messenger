@@ -14,6 +14,7 @@ import {
   channelDeviceDiscriminator,
   channelDiscriminator,
   channelMembershipDiscriminator,
+  channelMetaDiscriminator,
   createAddDeviceInstruction,
   createAddMemberInstruction,
   createAddMetaInstruction,
@@ -29,8 +30,7 @@ import {
   createLeaveChannelInstruction,
   createPostMessageInstruction,
   createReadMessageInstruction,
-  createUpdateMessageInstruction,
-  errorFromCode, errorFromName,
+  createUpdateMessageInstruction, errorFromCode, errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -67,7 +67,7 @@ const META_SEED = 'meta'
 export class MessengerClient {
   programId = PROGRAM_ID
   constants = constants
-  workspace = import.meta.env.VITE_PROJECT_NAME // import.meta.env.VITE_PROJECT_NAME
+  workspace = '' // import.meta.env.VITE_PROJECT_NAME
 
   _coder: BorshCoder
   _events: EventManager
@@ -183,6 +183,25 @@ export class MessengerClient {
       return {
         pubkey: acc.pubkey,
         data: ChannelMembership.fromAccountInfo(acc.account)[0],
+      }
+    })
+  }
+
+  /**
+   * Load list of {@link ChannelMeta}
+   */
+  async loadMetas(channel: PublicKey) {
+    const request = ChannelMeta.gpaBuilder()
+      .addFilter('accountDiscriminator', channelMetaDiscriminator)
+      .addFilter('channel', channel)
+      .addFilter('authority', this.provider.publicKey)
+
+    const accounts = await request.run(this.provider.connection)
+
+    return accounts.map((acc) => {
+      return {
+        pubkey: acc.pubkey,
+        data: ChannelMeta.fromAccountInfo(acc.account)[0],
       }
     })
   }
