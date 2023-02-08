@@ -127,7 +127,7 @@ describe('messenger', () => {
     })
 
     it('can delete a meta', async () => {
-      const data = { channel: channel.publicKey, key: 1, value: 'test123' }
+      const data = { channel: channel.publicKey, key: 1 }
       await client.deleteMeta(data)
       const [metaAddr] = await client.getMetaPDA(channel.publicKey, data.key)
       try {
