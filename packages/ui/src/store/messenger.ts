@@ -80,7 +80,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
   }, { immediate: true })
 
-  watch([deviceKey, () => state.allChannels], () => {
+  watch([deviceKey, state.allChannels], () => {
     initOwnChannels().then()
   }, { immediate: true })
 
@@ -166,6 +166,18 @@ export const useMessengerStore = defineStore('messenger', () => {
         ...e.message,
         content,
       })
+    }))
+    listeners.push(client.addEventListener('UpdateMessageEvent', async (e) => {
+      console.log('[Event] UpdateMessageEvent', e)
+      if (`${e.channel}` === `${state.channelAddr}`) {
+        loadChannelMessages().then()
+      }
+    }))
+    listeners.push(client.addEventListener('DeleteMessageEvent', async (e) => {
+      console.log('[Event] DeleteMessageEvent', e)
+      if (`${e.channel}` === `${state.channelAddr}`) {
+        loadChannelMessages().then()
+      }
     }))
     listeners.push(client.addEventListener('AuthorizeMemberEvent', async (e) => {
       console.log('[Event] AuthorizeMemberEvent', e)
@@ -257,9 +269,11 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function leaveChannel(channel: PublicKey) {
-    console.log('leaveChannel channel === ', channel.toBase58())
     await client.leaveChannel({ channel })
-    deleteChannelFromChannels(channel)
+    const channelIdx = state.ownChannels.findIndex(ch => ch.pubkey === channel.toString())
+    state.ownChannels.splice(channelIdx, 1)
+    state.channelMessages = []
+    state.channel = undefined
   }
 
   async function joinChannel(addr: Address, name: string) {
@@ -385,6 +399,44 @@ export const useMessengerStore = defineStore('messenger', () => {
     }
   }
 
+  async function editMessage(newMessage: string, messageId: number) {
+    if (!state.channelAddr) {
+      console.log('Please select a channel')
+      return
+    }
+    try {
+      const data = { channel: state.channelAddr, messageId, newMessage, encrypt: true }
+      state.sending = true
+      await client.updateMessage(data)
+      const messageIndex = findMessageIndex(data.messageId)
+      if (messageIndex !== -1) {
+        state.channelMessages[messageIndex].content = newMessage
+      }
+    } finally {
+      state.sending = false
+    }
+  }
+
+  async function deleteMessage(messageId: number) {
+    if (!state.channelAddr) {
+      console.log('Please select a channel')
+      return
+    }
+    const data = { channel: state.channelAddr, messageId }
+    try {
+      state.sending = true
+      await client.deleteMessage(data)
+      const messageIndex = findMessageIndex(data.messageId)
+      if (messageIndex !== -1) {
+        state.channelMessages.splice(messageId, 1)
+      }
+    } catch (err) {
+      console.log(`[Error: DeleteMessage] ${err}`)
+    } finally {
+      state.sending = false
+    }
+  }
+
   async function addMember(invitee: Address, key?: Address, name?: string, flags?: number) {
     if (!state.channelAddr) {
       console.log('Invalid channel')
@@ -468,6 +520,10 @@ export const useMessengerStore = defineStore('messenger', () => {
     state.channelAddr = addr
   }
 
+  function findMessageIndex(messageId: number | string) {
+    return state.channelMessages.findIndex(m => m.id === Number(messageId))
+  }
+
   function deleteChannelFromChannels(addr: PublicKey | string) {
     const channelIdx = state.allChannels.findIndex(ch => ch.pubkey.toBase58() === addr.toString())
     state.allChannels.splice(channelIdx, 1)
@@ -512,6 +568,8 @@ export const useMessengerStore = defineStore('messenger', () => {
     createChannel,
     deleteChannel,
     postMessage,
+    editMessage,
+    deleteMessage,
     addMember,
     deleteMember,
     authorizeMember,

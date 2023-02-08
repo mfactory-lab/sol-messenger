@@ -2,7 +2,7 @@
 import { useQuasar } from 'quasar'
 
 const props = defineProps({
-  message: { type: String, default: '' },
+  message: { type: Object },
   disabled: { type: Boolean, default: false },
   sending: { type: Boolean, default: false },
 })
@@ -11,15 +11,13 @@ const emit = defineEmits(['submit'])
 
 const { notify } = useQuasar()
 
-const message = ref(props.message)
-
 const sendMessage = () => {
-  emit('submit', message)
-  message.value = ''
+  emit('submit')
+  props.message!.message = ''
 }
 
 let timer: any
-let countDowm = 12
+let countDowm = 59
 
 const stopInterval = () => {
   clearInterval(timer)
@@ -62,7 +60,7 @@ watch(
             message: 'Transaction expires',
             type: 'negative',
           })
-          countDowm = 12
+          countDowm = 59
           return
         }
         if (countDowm === 10) {
@@ -72,7 +70,7 @@ watch(
       }, 1000)
     } else {
       stopInterval()
-      countDowm = 12
+      countDowm = 59
     }
   },
 )
@@ -83,7 +81,7 @@ watch(
     <q-toolbar class="row message-control">
       <q-input
         ref="inputFocus"
-        v-model="message"
+        v-model="message.message"
         class="col-grow message-input"
         placeholder="Type a message"
         maxlength="201"
@@ -100,7 +98,7 @@ watch(
         square
         flat
         type="submit"
-        :disable="disabled || !message.length"
+        :disable="disabled || !message.message.length"
         :loading="sending"
       >
         Send

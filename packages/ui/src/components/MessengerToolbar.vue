@@ -28,6 +28,7 @@ const isWalletConnected = computed(() => !!wallet.publicKey.value)
 
 const searchText = ref<string>('')
 const channel = computed(() => state.channel)
+
 const memberCount = computed(() => {
   if (
     channel.value?.memberCount === null
@@ -49,12 +50,11 @@ const messageCount = computed(() => {
   ) {
     return ''
   }
-  return `${channel.value?.messageCount}\xA0messages`
+  return `${state.channelMessages.length}\xA0messages`
 })
 
 const onSearch = (value: string) => emit('search', value)
 const showMembers = () => emit('showMembers')
-const onDeleteChannel = () => emit('deleteChannel')
 const onAddMember = () => emit('addMember')
 
 const pendingUsersCount = computed(() => {
