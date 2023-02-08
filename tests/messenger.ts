@@ -114,6 +114,29 @@ describe('messenger', () => {
       }
     })
 
+    it('can add new meta', async () => {
+      const data = { channel: channel.publicKey, key: 1, value: 'test123' }
+      await client.addMeta(data)
+
+      const [metaAddr] = await client.getMetaPDA(channel.publicKey, data.key)
+      const meta = await client.loadMeta(metaAddr)
+      assert.deepEqual(meta.authority, sender.publicKey)
+      assert.deepEqual(meta.channel, channel.publicKey)
+      assert.deepEqual(meta.key, data.key)
+      assert.equal(new TextDecoder().decode(meta.value), data.value)
+    })
+
+    it('can delete a meta', async () => {
+      const data = { channel: channel.publicKey, key: 1, value: 'test123' }
+      await client.deleteMeta(data)
+      const [metaAddr] = await client.getMetaPDA(channel.publicKey, data.key)
+      try {
+        await client.loadMeta(metaAddr)
+      } catch (e: any) {
+        assert.ok(e.message.startsWith('Unable to find ChannelMeta account'))
+      }
+    })
+
     it('can add new device', async () => {
       const kp = Keypair.generate()
       await client.addDevice({ channel: channel.publicKey, key: kp.publicKey })

@@ -306,6 +306,70 @@
       "args": []
     },
     {
+      "name": "addMeta",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "meta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "data",
+          "type": {
+            "defined": "AddMetaData"
+          }
+        }
+      ]
+    },
+    {
+      "name": "deleteMeta",
+      "accounts": [
+        {
+          "name": "channel",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "meta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metaAuthority",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "addDevice",
       "accounts": [
         {
@@ -504,6 +568,34 @@
     }
   ],
   "accounts": [
+    {
+      "name": "ChannelMeta",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "channel",
+            "type": "publicKey"
+          },
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "key",
+            "type": "u16"
+          },
+          {
+            "name": "value",
+            "type": "bytes"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
     {
       "name": "Channel",
       "type": {
@@ -760,6 +852,22 @@
               "Device key"
             ],
             "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AddMetaData",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "u16"
+          },
+          {
+            "name": "value",
+            "type": "bytes"
           }
         ]
       }

@@ -1,5 +1,6 @@
 export * from './AddDeviceData'
 export * from './AddMemberData'
+export * from './AddMetaData'
 export * from './AuthorizeMemberData'
 export * from './CEKData'
 export * from './ChannelMembershipStatus'

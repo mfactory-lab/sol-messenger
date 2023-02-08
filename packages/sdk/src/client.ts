@@ -9,24 +9,28 @@ import {
   ChannelDevice,
   ChannelMembership,
   ChannelMembershipStatus,
+  ChannelMeta,
   PROGRAM_ID,
   channelDeviceDiscriminator,
   channelDiscriminator,
   channelMembershipDiscriminator,
   createAddDeviceInstruction,
   createAddMemberInstruction,
+  createAddMetaInstruction,
   createAuthorizeMemberInstruction,
   createDeleteChannelInstruction,
   createDeleteDeviceInstruction,
   createDeleteMemberInstruction,
   createDeleteMessageInstruction,
+  createDeleteMetaInstruction,
   createGrantAccessMemberInstruction,
   createInitChannelInstruction,
   createJoinChannelInstruction,
   createLeaveChannelInstruction,
   createPostMessageInstruction,
   createReadMessageInstruction,
-  createUpdateMessageInstruction, errorFromCode, errorFromName,
+  createUpdateMessageInstruction,
+  errorFromCode, errorFromName,
 } from './generated'
 import type { CEK } from './utils'
 import { decryptCEK, decryptMessage, encryptCEK, encryptMessage, generateCEK } from './utils'
@@ -57,6 +61,8 @@ const constants = {
   maxMessageLength: 400,
   maxCEKLength: 100,
 }
+
+const META_SEED = 'meta'
 
 export class MessengerClient {
   programId = PROGRAM_ID
@@ -244,6 +250,26 @@ export class MessengerClient {
   async getDevicePDA(membership: PublicKey, addr?: PublicKey) {
     addr = addr ?? this.keypair!.publicKey
     return await PublicKey.findProgramAddress([membership.toBuffer(), addr.toBuffer()], this.programId)
+  }
+
+  /**
+   * Load {@link ChannelMeta} by {@link addr}
+   */
+  async loadMeta(addr: PublicKey, commitment?: Commitment) {
+    return ChannelMeta.fromAccountAddress(this.provider.connection, addr, commitment)
+  }
+
+  /**
+   * Get channel meta PDA
+   */
+  async getMetaPDA(channel: PublicKey, key: number, addr?: PublicKey) {
+    addr = addr ?? this.keypair!.publicKey
+    return await PublicKey.findProgramAddress([
+      Buffer.from(META_SEED),
+      channel.toBuffer(),
+      addr.toBuffer(),
+      Uint8Array.from([key & 0xFF, (key >> 8) & 0xFF]),
+    ], this.programId)
   }
 
   /**
@@ -662,6 +688,62 @@ export class MessengerClient {
   }
 
   /**
+   * Delete meta
+   */
+  async deleteMeta(props: DeleteMetaProps, opts?: ConfirmOptions) {
+    const metaAuthority = props.authority ?? this.provider.publicKey
+    const [meta] = await this.getMetaPDA(props.channel, props.key)
+
+    const tx = new Transaction()
+
+    tx.add(
+      createDeleteMetaInstruction({
+        channel: props.channel,
+        authority: this.provider.publicKey,
+        metaAuthority,
+        meta,
+      }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
+   * Add new meta info for account and channel
+   */
+  async addMeta(props: AddMetaProps, opts?: ConfirmOptions) {
+    const [meta] = await this.getMetaPDA(props.channel, props.key)
+
+    const tx = new Transaction()
+
+    tx.add(
+      createAddMetaInstruction({
+        channel: props.channel,
+        authority: this.provider.publicKey,
+        meta,
+      }, { data: { key: props.key, value: Buffer.from(props.value) } }),
+    )
+
+    let signature: string
+
+    try {
+      signature = await this.provider.sendAndConfirm(tx, undefined, opts)
+    } catch (e: any) {
+      throw errorFromCode(e.code) ?? e
+    }
+
+    return { signature }
+  }
+
+  /**
    * Add new message to the channel
    */
   async postMessage(props: PostMessageProps, opts?: ConfirmOptions) {
@@ -910,6 +992,18 @@ interface GrantAccessMemberProps {
 interface DeleteMemberProps {
   channel: PublicKey
   authority: PublicKey
+}
+
+interface DeleteMetaProps {
+  channel: PublicKey
+  key: number
+  authority?: PublicKey
+}
+
+interface AddMetaProps {
+  channel: PublicKey
+  key: number
+  value: string | Uint8Array
 }
 
 interface AddDeviceProps {
