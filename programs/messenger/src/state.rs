@@ -5,6 +5,23 @@ use anchor_lang::prelude::*;
 use crate::{constants::*, MessengerError};
 
 #[account]
+pub struct ChannelMeta {
+    pub channel: Pubkey,
+    pub authority: Pubkey,
+    pub key: u16,
+    pub value: Vec<u8>,
+    pub bump: u8,
+}
+
+impl ChannelMeta {
+    pub const SEED: &'static [u8] = b"meta";
+
+    pub fn space(value_len: usize) -> usize {
+        8 + 32 + 32 + 2 + (4 + value_len) + 1
+    }
+}
+
+#[account]
 pub struct Channel {
     /// Workspace used to group channels
     pub workspace: String,

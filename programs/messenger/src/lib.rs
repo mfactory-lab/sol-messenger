@@ -49,6 +49,14 @@ pub mod messenger {
         delete_member::handler(ctx)
     }
 
+    pub fn add_meta(ctx: Context<AddMeta>, data: AddMetaData) -> Result<()> {
+        add_meta::handler(ctx, data)
+    }
+
+    pub fn delete_meta(ctx: Context<DeleteMeta>) -> Result<()> {
+        delete_meta::handler(ctx)
+    }
+
     pub fn add_device(ctx: Context<AddDevice>, data: AddDeviceData) -> Result<()> {
         add_device::handler(ctx, data)
     }
