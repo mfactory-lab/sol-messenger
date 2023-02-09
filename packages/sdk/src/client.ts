@@ -371,6 +371,19 @@ export class MessengerClient {
       }),
     )
 
+    if (props.meta) {
+      for (const { key, value } of props.meta) {
+        const [meta] = await this.getMetaPDA(channel.publicKey, key)
+        tx.add(
+          createAddMetaInstruction({
+            channel: channel.publicKey,
+            authority: this.provider.publicKey,
+            meta,
+          }, { data: { key, value: Buffer.from(value) } }),
+        )
+      }
+    }
+
     let signature: string
 
     try {
@@ -978,6 +991,10 @@ interface InitChannelProps {
   memberName?: string
   maxMessages: number
   channel?: Keypair
+  meta?: {
+    key: number
+    value: string | Uint8Array
+  }[]
 }
 
 interface JoinChannelProps {
