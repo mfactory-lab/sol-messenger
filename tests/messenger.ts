@@ -104,6 +104,15 @@ describe('messenger', () => {
       assert.equal(channelInfo.maxMessages, data.maxMessages)
     })
 
+    it('can init channel with meta', async () => {
+      const data = { name: 'test2', maxMessages: 10, meta: [{ key: 1, value: 'test' }] }
+      const keypair = Keypair.generate()
+      const { channel: newChannel } = await getClient(sender, keypair).initChannel(data)
+      const channelInfo = await client.loadChannel(newChannel.publicKey)
+      assert.equal(channelInfo.name, data.name)
+      assert.equal(channelInfo.maxMessages, data.maxMessages)
+    })
+
     it('cannot init channel with existing account', async () => {
       const data = { name: 'test', maxMessages: 10, channel }
       try {

@@ -29,7 +29,6 @@ pub struct AddMetaData {
 #[derive(Accounts)]
 #[instruction(data: AddMetaData)]
 pub struct AddMeta<'info> {
-    #[account(mut)]
     pub channel: Box<Account<'info, Channel>>,
 
     #[account(
