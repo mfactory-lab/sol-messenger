@@ -190,13 +190,16 @@ export class MessengerClient {
   /**
    * Load list of {@link ChannelMeta}
    */
-  async loadMetas(channel: PublicKey) {
-    const request = ChannelMeta.gpaBuilder()
+  async loadMetas(filter: { channel?: PublicKey } = {}) {
+    const builder = ChannelMeta.gpaBuilder()
       .addFilter('accountDiscriminator', channelMetaDiscriminator)
-      .addFilter('channel', channel)
       .addFilter('authority', this.provider.publicKey)
 
-    const accounts = await request.run(this.provider.connection)
+    if (filter.channel) {
+      builder.addFilter('channel', filter.channel)
+    }
+
+    const accounts = await builder.run(this.provider.connection)
 
     return accounts.map((acc) => {
       return {
