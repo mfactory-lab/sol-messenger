@@ -42,6 +42,14 @@ pub struct DeleteMessageEvent {
 }
 
 #[event]
+pub struct ReadMessageEvent {
+    #[index]
+    pub channel: Pubkey,
+    pub authority: Pubkey,
+    pub id: u64,
+}
+
+#[event]
 pub struct JoinChannelEvent {
     #[index]
     pub channel: Pubkey,
