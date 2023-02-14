@@ -37,7 +37,7 @@ export const addMetaStruct = new beet.FixableBeetArgsStruct<
 /**
  * Accounts required by the _addMeta_ instruction
  *
- * @property [_writable_] channel
+ * @property [] channel
  * @property [_writable_] meta
  * @property [_writable_, **signer**] authority
  * @category Instructions
@@ -78,7 +78,7 @@ export function createAddMetaInstruction(
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.channel,
-      isWritable: true,
+      isWritable: false,
       isSigner: false,
     },
     {
