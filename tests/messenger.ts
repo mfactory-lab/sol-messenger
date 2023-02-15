@@ -104,13 +104,35 @@ describe('messenger', () => {
       assert.equal(channelInfo.maxMessages, data.maxMessages)
     })
 
-    it('can init channel with meta', async () => {
-      const data = { name: 'test2', maxMessages: 10, meta: [{ key: 1, value: 'test' }] }
-      const keypair = Keypair.generate()
-      const { channel: newChannel } = await getClient(sender, keypair).initChannel(data)
-      const channelInfo = await client.loadChannel(newChannel.publicKey)
-      assert.equal(channelInfo.name, data.name)
-      assert.equal(channelInfo.maxMessages, data.maxMessages)
+    describe('with meta', () => {
+      let channel: Keypair
+      it('can init channel', async () => {
+        const data = {
+          name: 'test2',
+          maxMessages: 10,
+          meta: [{
+            key: 1,
+            value: 'test',
+          }],
+        }
+        const keypair = Keypair.generate()
+        const { channel: newChannel } = await getClient(sender, keypair).initChannel(data)
+        const channelInfo = await client.loadChannel(newChannel.publicKey)
+        assert.equal(channelInfo.name, data.name)
+        assert.equal(channelInfo.maxMessages, data.maxMessages)
+        channel = newChannel
+      })
+      it('can delete a channel', async () => {
+        try {
+          await client.deleteChannel({
+            channel: channel.publicKey,
+            metas: [{ key: 1 }],
+          })
+          await client.loadChannel(channel.publicKey)
+        } catch (e: any) {
+          assert.ok(e.message.startsWith('Unable to find Channel account'))
+        }
+      })
     })
 
     it('cannot init channel with existing account', async () => {

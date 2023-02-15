@@ -405,21 +405,23 @@ export class MessengerClient {
   /**
    * Delete channel
    */
-  async deleteChannel({ channel, meta }: DeleteChannelProps, opts?: ConfirmOptions) {
+  async deleteChannel({ channel, metas }: DeleteChannelProps, opts?: ConfirmOptions) {
     const authority = this.provider.publicKey
     const [authorityMembership] = await this.getMembershipPDA(channel)
 
     const tx = new Transaction()
 
+    if (metas) {
+      for (const meta of metas) {
+        tx.add(
+          await this.createDeleteMetaInstruction({ channel, ...meta }),
+        )
+      }
+    }
+
     tx.add(
       createDeleteChannelInstruction({ channel, authority, authorityMembership }),
     )
-
-    if (meta) {
-      tx.add(
-        await this.getDeleteMetaInstruction(meta),
-      )
-    }
 
     let signature: string
 
@@ -738,7 +740,7 @@ export class MessengerClient {
   /**
    * Delete meta instructions
    */
-  async getDeleteMetaInstruction(props: DeleteMetaProps) {
+  async createDeleteMetaInstruction(props: DeleteMetaProps) {
     const metaAuthority = props.authority ?? this.provider.publicKey
     const [meta] = await this.getMetaPDA(props.channel, props.key)
 
@@ -757,7 +759,7 @@ export class MessengerClient {
     const tx = new Transaction()
 
     tx.add(
-      await this.getDeleteMetaInstruction(props),
+      await this.createDeleteMetaInstruction(props),
     )
 
     let signature: string
@@ -1001,7 +1003,7 @@ export class MessengerClient {
 
 interface DeleteChannelProps {
   channel: PublicKey
-  meta?: DeleteMetaProps
+  metas?: Array<Omit<DeleteMetaProps, 'channel'>>
 }
 
 interface InitChannelProps {
