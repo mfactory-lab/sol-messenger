@@ -67,7 +67,6 @@ const META_SEED = 'meta'
 export class MessengerClient {
   programId = PROGRAM_ID
   constants = constants
-  workspace = '' // import.meta.env.VITE_PROJECT_NAME
 
   _coder: BorshCoder
   _events: EventManager
@@ -75,6 +74,7 @@ export class MessengerClient {
   constructor(
     private readonly provider: AnchorProvider,
     private keypair?: Keypair,
+    private workspace?: string,
   ) {
     this._coder = new BorshCoder(idl as any)
     this._events = new EventManager(this.programId, provider, this._coder)
@@ -134,6 +134,13 @@ export class MessengerClient {
    */
   setKeypair(keypair: Keypair) {
     this.keypair = keypair
+  }
+
+  /**
+   * Set workspace
+   */
+  setWorkspace(workspace: string) {
+    this.workspace = workspace
   }
 
   /**
@@ -398,7 +405,7 @@ export class MessengerClient {
   /**
    * Delete channel
    */
-  async deleteChannel({ channel }: DeleteChannelProps, opts?: ConfirmOptions) {
+  async deleteChannel({ channel, meta }: DeleteChannelProps, opts?: ConfirmOptions) {
     const authority = this.provider.publicKey
     const [authorityMembership] = await this.getMembershipPDA(channel)
 
@@ -407,6 +414,12 @@ export class MessengerClient {
     tx.add(
       createDeleteChannelInstruction({ channel, authority, authorityMembership }),
     )
+
+    if (meta) {
+      tx.add(
+        await this.getDeleteMetaInstruction(meta),
+      )
+    }
 
     let signature: string
 
@@ -723,21 +736,28 @@ export class MessengerClient {
   }
 
   /**
-   * Delete meta
+   * Delete meta instructions
    */
-  async deleteMeta(props: DeleteMetaProps, opts?: ConfirmOptions) {
+  async getDeleteMetaInstruction(props: DeleteMetaProps) {
     const metaAuthority = props.authority ?? this.provider.publicKey
     const [meta] = await this.getMetaPDA(props.channel, props.key)
 
+    return createDeleteMetaInstruction({
+      channel: props.channel,
+      authority: this.provider.publicKey,
+      metaAuthority,
+      meta,
+    })
+  }
+
+  /**
+   * Delete meta
+   */
+  async deleteMeta(props: DeleteMetaProps, opts?: ConfirmOptions) {
     const tx = new Transaction()
 
     tx.add(
-      createDeleteMetaInstruction({
-        channel: props.channel,
-        authority: this.provider.publicKey,
-        metaAuthority,
-        meta,
-      }),
+      await this.getDeleteMetaInstruction(props),
     )
 
     let signature: string
@@ -981,6 +1001,7 @@ export class MessengerClient {
 
 interface DeleteChannelProps {
   channel: PublicKey
+  meta?: DeleteMetaProps
 }
 
 interface InitChannelProps {

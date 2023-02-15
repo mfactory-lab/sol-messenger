@@ -67,7 +67,10 @@ export const useMessengerStore = defineStore('messenger', () => {
         connectionStore.connection,
         wallet.value ?? { publicKey: PublicKey.default } as never,
         AnchorProvider.defaultOptions(),
-      ), userStore.keypair as Keypair)
+      ),
+      userStore.keypair as Keypair,
+      PROJECT_NAME,
+    )
   })
 
   let listeners: number[] = []
