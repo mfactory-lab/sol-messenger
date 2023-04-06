@@ -2,11 +2,12 @@
 import type { Channel } from '@app/sdk'
 import type { PropType } from 'vue'
 import { useWallet } from 'solana-wallets-vue'
+import type { PublicKey } from '@solana/web3.js'
 import { getBadgeColor } from '@/utils'
 
 const props = defineProps({
   pubkey: {
-    type: Object as PropType<string>,
+    type: Object as PropType<PublicKey>,
     required: true,
   },
   channel: {
@@ -23,7 +24,7 @@ const wallet = useWallet()
 
 const memberStatus = computed(
   () =>
-    state.ownChannels.find(ch => ch.pubkey === props.pubkey.toString())
+    state.ownChannels.find(ch => ch.pubkey === props.pubkey.toBase58())
       ?.status,
 )
 const isPending = computed(() => memberStatus.value === 1)

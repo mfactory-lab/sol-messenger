@@ -3,11 +3,15 @@ import type { PropType } from 'vue'
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
-  defaultState: Object as PropType<{ name: any; wallet: string; key: string }>,
+  defaultState: {
+    type: Object as PropType<{ [key: string]: any }>,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['submit', 'reset'])
-const state = ref(props.defaultState)
+
+const state = toRef(props, 'defaultState')
 
 const addMember = () => emit('submit', state.value)
 </script>

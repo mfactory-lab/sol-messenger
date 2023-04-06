@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useWallet } from 'solana-wallets-vue'
+import { PublicKey } from '@solana/web3.js'
 import DebugBtn from '@/components/DebugBtn.vue'
 import type { AllChannels } from '@/store/messenger'
 
@@ -19,7 +20,6 @@ const deleteChannel = useChannelDelete()
 const leaveChannel = useChannelLeave()
 
 const postMessageState = reactive({ message: '', edit: false, messageId: 0 })
-const allChannels = computed(() => state.allChannels)
 const searchChannels = ref<AllChannels[]>([])
 const searchWord = ref('')
 
@@ -36,7 +36,7 @@ async function sendMessage() {
 }
 
 async function editMemberMessage(message: string, id: number) {
-  await editMessage(message, id)
+  await editMessage(message, Number(id))
 }
 
 const onSearch = (val: string) => {
@@ -105,8 +105,8 @@ onMounted(() => {
     <messenger-toolbar
       @search="onSearch"
       @show-members="authorizeMember.state.dialog = true"
-      @delete-channel="deleteChannel.submit(state.channelAddr)"
-      @leave-channel="leaveChannel.submit(state.channelAddr)"
+      @delete-channel="deleteChannel.submit()"
+      @leave-channel="leaveChannel.submit()"
       @add-member="addMember.state.dialog = true"
       @show-device-key="showDeviceKeyDialog = true"
     />
@@ -116,7 +116,7 @@ onMounted(() => {
           <q-list separator class="channels-list">
             <messenger-channel
               v-for="ch in filterChannels"
-              :key="ch.name"
+              :key="ch.data.name"
               :pubkey="ch.pubkey"
               :channel="ch.data"
               active-class="select-channel"
@@ -166,7 +166,6 @@ onMounted(() => {
   <join-channel-dialog
     v-model="joinChannel.state.dialog"
     :loading="joinChannel.state.loading"
-    :default-state="joinChannel.state"
     @submit="handleJoinToChannel"
     @reset="joinChannel.reset"
   />
@@ -183,7 +182,7 @@ onMounted(() => {
   <devices-dialog
     v-model="showDeviceKeyDialog"
     :authority-device="authorityDevice"
-    @load-channel="loadChannel(state.channelAddr)"
+    @load-channel="loadChannel(state.channelAddr as PublicKey)"
   />
 
   <event-channel-dialog :channel-event="state.channelEvent" />
