@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { PlusIcon, RefreshIcon, SearchIcon } from 'vue-tabler-icons'
 import { useQuasar } from 'quasar'
+import helpIcon from '@/assets/img/help.svg?raw'
+import { CGRAM_DOCS_URL } from '@/config/common'
 
 defineProps({
   isLoading: { type: Boolean },
@@ -12,15 +14,8 @@ const channelEmit = defineEmits([
 ])
 
 const channelStore = useChannelStore()
-const { isWalletConnected } = useHelper()
 
 const { notify } = useQuasar()
-
-/* const canJoinChannel = computed<boolean>(
-  () => channelStore.canJoinChannel && !channelStore.isPublicChannel,
-) */
-const isPendingMember = computed<boolean>(() => channelStore.isPendingMember)
-const canCreateChannel = computed<boolean>(() => channelStore.canCreateChannel)
 
 const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
   if (!channelStore.isWalletConnected) {
@@ -38,32 +33,20 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 <template>
   <q-item class="channel-control-wrapper q-pa-none">
     <q-item-section class="button-wrapper">
-      <q-btn
-        class="control-button"
-        :class="{ 'refresh-btn': isLoading }"
-        square
-        flat
-        @click="handleEmit('refreshList')"
-      >
+      <a class="control-button" :href="CGRAM_DOCS_URL" target="_blank">
+        <i class="help-icon" v-html="helpIcon" />
+        <custom-tooltip text="Documentation" />
+      </a>
+      <q-btn class="control-button" :class="{ 'refresh-btn': isLoading }" square flat @click="handleEmit('refreshList')">
         <refresh-icon style="color: #fff" />
         <custom-tooltip text="Refresh channels" />
       </q-btn>
-      <q-btn
-        class="control-button"
-        square
-        flat
-        @click="handleEmit('createChannel')"
-      >
+      <q-btn class="control-button" square flat @click="handleEmit('createChannel')">
         <plus-icon style="color: #fff" />
         <custom-tooltip text="Create a channel" />
       </q-btn>
       <!-- v-if="canJoinChannel && !channelStore.isChannelLoading" -->
-      <q-btn
-        class="control-button"
-        square
-        flat
-        @click="handleEmit('joinChannel')"
-      >
+      <q-btn class="control-button" square flat @click="handleEmit('joinChannel')">
         <search-icon style="color: #fff" />
         <custom-tooltip text="Browse channels" />
       </q-btn>
@@ -83,7 +66,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
   }
 
   .control-button {
-    width: 33%;
+    width: 70px;
     height: 42px;
     background: #516670;
     display: flex;
@@ -94,6 +77,22 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
     &:hover {
       opacity: 0.8;
     }
+
+    @media(max-width: $breakpoint-xs) {
+      width: 24.6%;
+    }
+
   }
 }
+</style>
+
+<style lang="scss">
+.help-icon {
+      width: 22px;
+      height: 22px;
+
+      svg {
+        fill: #fff;
+      }
+    }
 </style>
