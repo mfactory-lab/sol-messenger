@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { ChannelDevice } from '@app/sdk'
 import {
   evaClose,
   evaCopyOutline,
 } from '@quasar/extras/eva-icons'
 import type { PublicKey } from '@solana/web3.js'
-import type { PropType } from '@vue/runtime-core'
 import { Screen, copyToClipboard } from 'quasar'
 import { shortenAddress } from '@/utils'
 
@@ -22,8 +20,6 @@ const emit = defineEmits([
 const userStore = useUserStore()
 const { state } = useMessengerStore()
 
-const { ok } = useHelper()
-
 const addDevice = useAddDevice()
 const deleteDevice = useDeleteDevice()
 
@@ -39,7 +35,7 @@ const devices = computed(() => state.memberDevices)
 
 const userDeviceKey = computed(() =>
   Screen.xs
-    ? shortenAddress(userStore.keypair?.publicKey, 12)
+    ? shortenAddress(String(userStore.keypair?.publicKey), 12)
     : userStore.keypair?.publicKey,
 )
 
@@ -83,7 +79,7 @@ const handleDelete = (key: PublicKey) => {
           <q-btn class="copy-btn" size="12px" flat round dense :icon="evaCopyOutline" @click="copy">
             <custom-tooltip text="Copy to clipboard" />
           </q-btn>
-          <span class="text-body2" :title="userStore.keypair?.publicKey">{{
+          <span class="text-body2" :title="String(userStore.keypair?.publicKey)">{{
             userDeviceKey
           }}</span>
         </div>

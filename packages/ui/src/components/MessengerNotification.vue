@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { pendingChannels, showInfo, showDialog } = useNotifications()
+const { pendingChannels, showInfo } = useNotifications()
 const { state } = useNotificationsStore()
 
 const notifications = $computed(() => pendingChannels.value?.length ?? 0)
@@ -35,13 +35,12 @@ const showPendingDialog = () => {
       class="panel-notifications__details"
       :style="infoWidth"
     >
-      channels are awaiting user confirmation
+      channel(s) with pending user authorization
     </div>
 
     <pending-users-dialog
       v-model="state.showDialog"
       :pending-channels="pendingChannels"
-      @close-dialog="isShow.value = false"
     />
   </div>
 </template>
