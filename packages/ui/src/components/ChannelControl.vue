@@ -33,7 +33,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 <template>
   <q-item class="channel-control-wrapper q-pa-none">
     <q-item-section class="button-wrapper">
-      <a class="control-button" :href="CGRAM_DOCS_URL" target="_blank">
+      <a class="control-button documentation-link" :href="CGRAM_DOCS_URL" target="_blank">
         <i class="help-icon" v-html="helpIcon" />
         <custom-tooltip text="Documentation" />
       </a>
@@ -68,7 +68,7 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
   .control-button {
     width: 70px;
     height: 42px;
-    background: #516670;
+    background: $gray;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -81,18 +81,20 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
     @media(max-width: $breakpoint-xs) {
       width: 24.6%;
     }
-
   }
+  .documentation-link {
+      background: $secondary;
+    }
 }
 </style>
 
 <style lang="scss">
 .help-icon {
-      width: 22px;
-      height: 22px;
+  width: 22px;
+  height: 22px;
 
-      svg {
-        fill: #fff;
-      }
-    }
+  svg {
+    fill: $gray;
+  }
+}
 </style>
