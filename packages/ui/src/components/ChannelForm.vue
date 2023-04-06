@@ -1,19 +1,26 @@
 <script lang="ts" setup>
 import { useQuasar } from 'quasar'
+import type { PropType } from 'vue'
+import type { MessageState } from '@/store/messenger'
 
 const props = defineProps({
-  message: { type: Object },
+  message: {
+    type: Object as PropType<MessageState>,
+    required: true,
+  },
   disabled: { type: Boolean, default: false },
   sending: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['submit'])
 
+const message = toRef(props, 'message')
+
 const { notify } = useQuasar()
 
 const sendMessage = () => {
   emit('submit')
-  props.message!.message = ''
+  message.value.message = ''
 }
 
 let timer: any

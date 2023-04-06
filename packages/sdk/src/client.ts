@@ -284,12 +284,12 @@ export class MessengerClient {
   /**
    * Get channel meta PDA
    */
-  async getMetaPDA(channel: PublicKey, key: number, addr?: PublicKey) {
-    addr = addr ?? this.keypair!.publicKey
+  async getMetaPDA(channel: PublicKey, key: number, authority?: PublicKey) {
+    authority = authority ?? this.provider.publicKey
     return await PublicKey.findProgramAddress([
       Buffer.from(META_SEED),
       channel.toBuffer(),
-      addr.toBuffer(),
+      authority.toBuffer(),
       Uint8Array.from([key & 0xFF, (key >> 8) & 0xFF]),
     ], this.programId)
   }
@@ -370,6 +370,19 @@ export class MessengerClient {
         },
       }),
     )
+
+    if (props.meta) {
+      for (const { key, value } of props.meta) {
+        const [meta] = await this.getMetaPDA(channel.publicKey, key)
+        tx.add(
+          createAddMetaInstruction({
+            channel: channel.publicKey,
+            authority: this.provider.publicKey,
+            meta,
+          }, { data: { key, value: Buffer.from(value) } }),
+        )
+      }
+    }
 
     let signature: string
 
@@ -978,6 +991,10 @@ interface InitChannelProps {
   memberName?: string
   maxMessages: number
   channel?: Keypair
+  meta?: {
+    key: number
+    value: string | Uint8Array
+  }[]
 }
 
 interface JoinChannelProps {

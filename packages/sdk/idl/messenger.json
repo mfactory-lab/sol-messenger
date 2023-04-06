@@ -1,5 +1,5 @@
 {
-  "version": "0.0.13",
+  "version": "0.0.15",
   "name": "messenger",
   "instructions": [
     {
@@ -310,7 +310,7 @@
       "accounts": [
         {
           "name": "channel",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -1133,6 +1133,26 @@
     },
     {
       "name": "DeleteMessageEvent",
+      "fields": [
+        {
+          "name": "channel",
+          "type": "publicKey",
+          "index": true
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "id",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "ReadMessageEvent",
       "fields": [
         {
           "name": "channel",

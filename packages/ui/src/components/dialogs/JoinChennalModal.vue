@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import type { Channel } from '@app/sdk'
-import type { PropType } from '@vue/runtime-core'
-
-const emit = defineEmits(['join'])
+defineEmits(['join'])
 const name = ref('')
 </script>
 
@@ -19,7 +16,7 @@ const name = ref('')
             label="Member name *"
             lazy-rules
             :rules="[
-              (val) => (val && val.length > 2) || 'Please type something',
+              (val) => (val && val.length > 2) || 'Your name',
             ]"
           />
           <br>

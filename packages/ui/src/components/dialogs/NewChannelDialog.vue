@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { useQuasar } from 'quasar'
 import { DEFAULT_MAX_MESSAGES } from '../../hooks/messenger'
 import type { useChannelCreate } from '@/hooks/messenger'
 import { CHANNEL_INFO, CHANNEL_INPUT_MAX_LENGTH, CHANNEL_MAX_MESSAGES } from '@/config'
@@ -12,18 +11,20 @@ type State = Omit<
 
 const props = defineProps({
   loading: { type: Boolean, default: false },
-  defaultState: Object as PropType<State>,
+  defaultState: {
+    type: Object as PropType<State>,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['submit', 'reset'])
 
-const { error, noSol } = useHelper()
+const { noSol } = useHelper()
 
 const { channelMessagesCost } = useMessengerStore()
 const userStore = useUserStore()
-const { notify } = useQuasar()
 
-const state = ref(props.defaultState)
+const state = toRef(props, 'defaultState')
 
 const messagesCost = ref<string | number>(0)
 
@@ -138,7 +139,7 @@ onMounted(async () => {
             square
             flat
           >
-            Create the Channel
+            Create Channel
           </q-btn>
         </q-form>
         <q-inner-loading :showing="loading" />

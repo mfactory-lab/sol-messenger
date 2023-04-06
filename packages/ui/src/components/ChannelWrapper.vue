@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import type { PublicKey } from '@solana/web3.js'
 import { useDebounceFn } from '@vueuse/core'
 import { useWallet } from 'solana-wallets-vue'
+import type { PropType } from 'vue'
+import type { MessageState } from '@/store/messenger'
 
 const messageProps = defineProps({
-  postMessageState: { type: Object },
+  postMessageState: {
+    type: Object as PropType<MessageState>,
+    required: true,
+  },
 })
-
 const emit = defineEmits(['sendMessage', 'deleteMessage'])
 
 const wallet = useWallet()
@@ -82,8 +85,6 @@ watch(mes, (c) => {
   }
 })
 
-let showScrollTimer: any
-
 const isScroll = ref(false)
 
 const debouncedFn = useDebounceFn(() => {
@@ -129,7 +130,7 @@ const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
         <div v-if="messages.length > 0" ref="mes" class="messenger-messages">
           <q-chat-message
             v-for="msg in messages"
-            :key="msg.id"
+            :key="Number(msg.id)"
             text-html
             :name="msg.senderDisplayName"
             :sent="isSomeoneMessage(msg.sender)"

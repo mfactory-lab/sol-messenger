@@ -1,7 +1,6 @@
 <script setup lang='ts'>
 import type { PropType } from '@vue/runtime-core'
 import { FileDownloadIcon, FileImportIcon, PlusIcon } from 'vue-tabler-icons'
-import { evaQuestionMark } from '@quasar/extras/eva-icons'
 import type { ChannelDevices } from '../store/messenger'
 import helpIcon from '@/assets/img/help-btn.svg'
 

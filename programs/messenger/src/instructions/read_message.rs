@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{state::*, MessengerError};
+use crate::{events::ReadMessageEvent, state::*, MessengerError};
 
 pub fn handler(ctx: Context<ReadMessage>, message_id: u64) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
@@ -29,6 +29,12 @@ pub fn handler(ctx: Context<ReadMessage>, message_id: u64) -> Result<()> {
     }
 
     membership.last_read_message_id = message_id;
+
+    emit!(ReadMessageEvent {
+        channel: channel.key(),
+        authority: membership.authority,
+        id: message_id,
+    });
 
     Ok(())
 }

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { PropType } from 'vue'
 import { CheckIcon, RefreshIcon, TransferInIcon } from 'vue-tabler-icons'
 import type { PublicKey } from '@solana/web3.js'
 import type { Channel } from '@app/sdk'
@@ -13,12 +12,9 @@ interface OwnChannel {
 
 const props = defineProps({
   loading: { type: Boolean },
-  defaultState: Object as PropType<{ name: any; authority: string }>,
 })
 
 const joinEmit = defineEmits(['submit', 'reset'])
-
-const state = ref(props.defaultState)
 
 const {
   state: messengerStore,
@@ -116,7 +112,7 @@ const isInChat = (ch: OwnChannel) => {
         >
           <q-item
             v-for="ch in filterChannels"
-            :key="ch"
+            :key="ch.data.name"
             v-ripple
             active-class="bg-blue-grey-8 text-white"
             class="privat-channels-item"

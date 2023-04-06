@@ -27,8 +27,8 @@ const isAuthorityDevice = (key: PublicKey) => {
   </div>
   <q-list bordered separator class="devices-list">
     <q-item
-      v-for="d in devices"
-      :key="d"
+      v-for="(d, idx) in devices"
+      :key="idx"
       active-class="bg-blue-grey-8 text-white active"
       class="devices-item"
       :class="{ 'authority-device': isAuthorityDevice(d.data.key) }"

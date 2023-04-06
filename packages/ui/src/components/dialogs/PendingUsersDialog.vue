@@ -2,11 +2,9 @@
 import type { PublicKey } from '@solana/web3.js'
 import { formatMemberName } from '@/utils'
 
-const dialogProps = defineProps({
+defineProps({
   pendingChannels: Object,
 })
-
-const showDialog = ref(false)
 
 const { state } = useMessengerStore()
 const authorizeMember = useChannelAuthorizeMember()
@@ -88,7 +86,7 @@ const isDelete = computed(() => deleteMember.state.loading)
                     :disabled="isDelete"
                     @click="handleDelete(member.data.authority, ch.channel.pubkey)"
                   >
-                    Delete
+                    Remove
                   </q-btn>
                 </q-item-section>
               </q-item>

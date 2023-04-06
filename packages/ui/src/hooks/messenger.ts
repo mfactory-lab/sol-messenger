@@ -2,7 +2,6 @@ import type { PublicKey } from '@solana/web3.js'
 import type { QNotifyCreateOptions } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useWallet } from 'solana-wallets-vue'
-import { ClockPauseIcon } from 'vue-tabler-icons'
 
 export const DEFAULT_MAX_MESSAGES = 15
 
@@ -125,6 +124,9 @@ export function useChannelAddMember() {
   const state = reactive({
     dialog: false,
     loading: false,
+    name: '',
+    wallet: '',
+    key: '',
   })
 
   async function submit(data: { wallet: string; name: string; key: string }) {

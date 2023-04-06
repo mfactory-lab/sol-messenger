@@ -229,7 +229,6 @@ export const useMessengerStore = defineStore('messenger', () => {
     await initEvents()
     state.allChannels = channels as any
     state.loading = false
-    console.log(state)
   }
 
   function reset() {
@@ -304,11 +303,11 @@ export const useMessengerStore = defineStore('messenger', () => {
           state.channelMembershipAddr = membershipAddr
           state.channelMembership = await client.loadMembership(membershipAddr)
         } catch (e) {
-          console.log(e)
           state.channelMembershipAddr = undefined
           state.channelMembership = undefined
         }
       }
+
       await loadMemberDevices()
       await loadChannelMembers()
       await loadChannelMessages()
@@ -405,8 +404,9 @@ export const useMessengerStore = defineStore('messenger', () => {
       return
     }
     try {
-      const data = { channel: state.channelAddr, messageId, newMessage, encrypt: true }
+      const data = { channel: state.channelAddr, messageId, newMessage }
       state.sending = true
+
       await client.updateMessage(data)
       const messageIndex = findMessageIndex(data.messageId)
       if (messageIndex !== -1) {
@@ -489,7 +489,8 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 
   async function loadMemberDevices() {
-    if (state.channelAddr && state.channelMembership) {
+    const currentChannel = state.allChannels.find(ch => ch.pubkey.toBase58() === state.channelAddr?.toBase58())
+    if (state.channelAddr && state.channelMembership && currentChannel?.data.flags !== 1) {
       state.memberDevices = await client.loadDevices(state.channelAddr, state.channelMembership.authority)
     }
   }
@@ -587,4 +588,10 @@ export interface AllChannels {
 export interface ChannelDevices {
   data: ChannelDevice
   pubkey: PublicKey
+}
+
+export interface MessageState {
+  edit: boolean
+  message: string
+  messageId: number
 }

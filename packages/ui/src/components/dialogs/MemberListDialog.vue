@@ -7,7 +7,7 @@ defineProps({
   deleteMemberState: { type: Object },
   wallet: { type: Object },
 })
-const emit = defineEmits(['submit', 'deleteMember'])
+defineEmits(['submit', 'deleteMember'])
 
 const { state } = useMessengerStore()
 const channel = useChannelStore()
@@ -91,7 +91,7 @@ const isOwner = (name: string) => state.channel?.creator.toBase58() === name
                 "
                 @click="$emit('deleteMember', m.data.authority)"
               >
-                Delete
+                Remove
               </q-btn>
             </div>
           </q-item>
