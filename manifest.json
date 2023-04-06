@@ -27,13 +27,13 @@
     "file": "assets/star.073c274c.svg",
     "src": "src/assets/img/star.svg"
   },
-  "src/assets/img/solana-logo.svg": {
-    "file": "assets/solana-logo.3caace62.svg",
-    "src": "src/assets/img/solana-logo.svg"
-  },
   "src/assets/img/info.svg": {
     "file": "assets/info.bfade5eb.svg",
     "src": "src/assets/img/info.svg"
+  },
+  "src/assets/img/solana-logo.svg": {
+    "file": "assets/solana-logo.3caace62.svg",
+    "src": "src/assets/img/solana-logo.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -46,6 +46,10 @@
   "src/assets/img/discord.svg": {
     "file": "assets/discord.4c88a6e4.svg",
     "src": "src/assets/img/discord.svg"
+  },
+  "src/assets/img/help-btn.svg": {
+    "file": "assets/help-btn.06005d5c.svg",
+    "src": "src/assets/img/help-btn.svg"
   },
   "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
@@ -87,10 +91,6 @@
     "file": "assets/Eva-Icons.ba7db2a0.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
-  "src/assets/img/help-btn.svg": {
-    "file": "assets/help-btn.06005d5c.svg",
-    "src": "src/assets/img/help-btn.svg"
-  },
   "src/assets/img/instructions/add/step_2.png": {
     "file": "assets/step_2.80ee96fc.png",
     "src": "src/assets/img/instructions/add/step_2.png"
@@ -108,18 +108,18 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.1e9b5b8e.js",
+    "file": "assets/index.60683f95.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.a1ecef17.js"
+      "_vendor.6042a531.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.4eaa8b05.css"
+      "assets/index.e246c780.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.a1ecef17.js": {
-    "file": "assets/vendor.a1ecef17.js"
+  "_vendor.6042a531.js": {
+    "file": "assets/vendor.6042a531.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.4883fc9f.js",
+    "file": "assets/empty.4f4e6979.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.a1ecef17.js"
+      "_vendor.6042a531.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.0fd3d00b.js",
+    "file": "assets/_...all_.d44e3a35.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.a1ecef17.js",
+      "_vendor.6042a531.js",
       "index.html"
     ],
     "css": [
@@ -180,7 +180,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.4eaa8b05.css",
+    "file": "assets/index.e246c780.css",
     "src": "index.css"
   }
 }
