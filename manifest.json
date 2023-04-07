@@ -27,13 +27,13 @@
     "file": "assets/star.073c274c.svg",
     "src": "src/assets/img/star.svg"
   },
-  "src/assets/img/info.svg": {
-    "file": "assets/info.bfade5eb.svg",
-    "src": "src/assets/img/info.svg"
-  },
   "src/assets/img/solana-logo.svg": {
     "file": "assets/solana-logo.3caace62.svg",
     "src": "src/assets/img/solana-logo.svg"
+  },
+  "src/assets/img/info.svg": {
+    "file": "assets/info.bfade5eb.svg",
+    "src": "src/assets/img/info.svg"
   },
   "src/assets/img/telegram.svg": {
     "file": "assets/telegram.360d0c59.svg",
@@ -46,10 +46,6 @@
   "src/assets/img/discord.svg": {
     "file": "assets/discord.4c88a6e4.svg",
     "src": "src/assets/img/discord.svg"
-  },
-  "src/assets/img/help-btn.svg": {
-    "file": "assets/help-btn.06005d5c.svg",
-    "src": "src/assets/img/help-btn.svg"
   },
   "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff2": {
     "file": "assets/Eva-Icons.f19a427f.woff2",
@@ -91,6 +87,10 @@
     "file": "assets/Eva-Icons.ba7db2a0.woff",
     "src": "../../node_modules/.pnpm/@quasar+extras@1.15.7/node_modules/@quasar/extras/eva-icons/Eva-Icons.woff"
   },
+  "src/assets/img/help-btn.svg": {
+    "file": "assets/help-btn.06005d5c.svg",
+    "src": "src/assets/img/help-btn.svg"
+  },
   "src/assets/img/instructions/add/step_2.png": {
     "file": "assets/step_2.80ee96fc.png",
     "src": "src/assets/img/instructions/add/step_2.png"
@@ -108,18 +108,18 @@
     "src": "src/assets/img/instructions/add/step_6.png"
   },
   "index.html": {
-    "file": "assets/index.8cc59933.js",
+    "file": "assets/index.c7a3afda.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.56e8ddf1.js"
+      "_vendor.b352d4f8.js"
     ],
     "dynamicImports": [
       "src/layouts/empty.vue",
       "src/pages/[...all].vue"
     ],
     "css": [
-      "assets/index.a16ff1e6.css"
+      "assets/index.3722e5c3.css"
     ],
     "assets": [
       "assets/clover.968404b0.svg",
@@ -151,24 +151,24 @@
       "assets/logo-bg.5bc3938a.svg"
     ]
   },
-  "_vendor.56e8ddf1.js": {
-    "file": "assets/vendor.56e8ddf1.js"
+  "_vendor.b352d4f8.js": {
+    "file": "assets/vendor.b352d4f8.js"
   },
   "src/layouts/empty.vue": {
-    "file": "assets/empty.fcda7dd7.js",
+    "file": "assets/empty.419226c9.js",
     "src": "src/layouts/empty.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_vendor.56e8ddf1.js"
+      "_vendor.b352d4f8.js"
     ]
   },
   "src/pages/[...all].vue": {
-    "file": "assets/_...all_.968fc99a.js",
+    "file": "assets/_...all_.7c956e80.js",
     "src": "src/pages/[...all].vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.56e8ddf1.js",
+      "_vendor.b352d4f8.js",
       "index.html"
     ],
     "css": [
@@ -180,7 +180,7 @@
     "src": "src/pages/[...all].css"
   },
   "index.css": {
-    "file": "assets/index.a16ff1e6.css",
+    "file": "assets/index.3722e5c3.css",
     "src": "index.css"
   }
 }
