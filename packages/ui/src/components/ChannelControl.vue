@@ -90,11 +90,12 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
 
 <style lang="scss">
 .help-icon {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 
   svg {
-    fill: $gray;
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

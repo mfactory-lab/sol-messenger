@@ -10,6 +10,7 @@ import { defineStore } from 'pinia'
 import { useAnchorWallet } from 'solana-wallets-vue'
 import { shortenAddress } from '@/utils'
 import { CHANNEL_MAX_MESSAGES } from '@/config'
+import { MESSENGER_WORKSPACE } from '@/config/common'
 
 interface MessengerStoreState {
   allChannels: AllChannels[]
@@ -67,7 +68,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         connectionStore.connection,
         wallet.value ?? { publicKey: PublicKey.default } as never,
         AnchorProvider.defaultOptions(),
-      ), userStore.keypair as Keypair)
+      ), userStore.keypair as Keypair, MESSENGER_WORKSPACE)
   })
 
   let listeners: number[] = []
@@ -146,7 +147,7 @@ export const useMessengerStore = defineStore('messenger', () => {
         }
       }
     }))
-    listeners.push(client.addEventListener('NewMessageEvent', async (e, slot, sig) => {
+    listeners.push(client.addEventListener('NewMessageEvent', async (e) => {
       console.log('[Event] NewMessageEvent', e)
       if (`${e.channel}` !== `${state.channelAddr}`) {
         return

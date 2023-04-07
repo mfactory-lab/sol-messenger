@@ -67,7 +67,6 @@ const META_SEED = 'meta'
 export class MessengerClient {
   programId = PROGRAM_ID
   constants = constants
-  workspace = '' // import.meta.env.VITE_PROJECT_NAME
 
   _coder: BorshCoder
   _events: EventManager
@@ -75,6 +74,7 @@ export class MessengerClient {
   constructor(
     private readonly provider: AnchorProvider,
     private keypair?: Keypair,
+    private workspace?: string,
   ) {
     this._coder = new BorshCoder(idl as any)
     this._events = new EventManager(this.programId, provider, this._coder)
