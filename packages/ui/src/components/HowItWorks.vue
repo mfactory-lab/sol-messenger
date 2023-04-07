@@ -59,14 +59,24 @@ const create = [
 
 <style lang="scss">
 .how-it-works {
+  width: 90vw;
   margin: 0 auto;
   padding-bottom: 28px;
   position: relative;
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: $breakpoint-xs) {
+    flex-direction: column;
+    margin: 30px auto 10px;
 }
+
+}
+
 .app-info {
   color: $primary;
   padding: 38px 0 0;
-  width: 100%;
+  width: 45%;
 
   @media (max-width: $breakpoint-xs) {
     width: 95%;
