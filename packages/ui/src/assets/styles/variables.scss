@@ -9,6 +9,7 @@ $negative   : #dd282b;
 $info       : #609ecc;
 $warning    : #ffdf75;
 $gray-blue  : #AABEC8;
+$gray       : #516670;
 
 $yellow     : #FFD140;
 
@@ -25,3 +26,11 @@ $btn-shadow: 0 2px 5px rgb($color: #000000, $alpha: .3);
 
 $font-primary: 'Roboto', sans-serif;
 $font-secondary:  "Montserrat", sans-serif;
+
+// media size
+
+$breakpoint-lg: 1173px;
+$breakpoint-md: 1024px;
+$breakpoint-sm: 900px;
+$breakpoint-xs: 650px;
+$breakpoint-tn: 450px;
