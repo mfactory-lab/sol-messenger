@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { PlusIcon, SearchIcon, TransferInIcon } from 'vue-tabler-icons'
 import searchIcon from '@/assets/img/search.svg'
 import transferIcon from '@/assets/img/transfer.svg'
 import plusIcon from '@/assets/img/plus.svg'
