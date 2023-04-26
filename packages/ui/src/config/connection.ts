@@ -3,12 +3,12 @@ import type { Commitment } from '@solana/web3.js'
 import type { Endpoint } from '@/store/connection'
 
 export const ENDPOINTS: Endpoint[] = [
-  // {
-  //   id: 'jpool-mainnet',
-  //   name: 'Jpool RPC',
-  //   cluster: 'mainnet-beta',
-  //   url: 'https://jpoolone.genesysgo.net/',
-  // },
+  {
+    id: 'jpool-mainnet',
+    name: 'Jpool RPC',
+    cluster: 'mainnet-beta',
+    url: 'https://jpoolone.genesysgo.net/',
+  },
   // {
   //   id: 'serum-mainnet',
   //   name: 'Serum RPC',
