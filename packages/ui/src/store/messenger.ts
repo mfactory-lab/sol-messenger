@@ -30,7 +30,6 @@ interface MessengerStoreState {
 }
 
 const mockEncrypted = (_msg: string) => '***** *** *** *** *******'
-const PROJECT_NAME = import.meta.env.VITE_PROJECT_NAME
 
 export const useMessengerStore = defineStore('messenger', () => {
   const connectionStore = useConnectionStore()
@@ -240,7 +239,7 @@ export const useMessengerStore = defineStore('messenger', () => {
     try {
       state.creating = true
       const { channel } = await client.initChannel({
-        workspace: PROJECT_NAME,
+        workspace: MESSENGER_WORKSPACE,
         name,
         memberName,
         maxMessages: Number(opts.maxMessages),
