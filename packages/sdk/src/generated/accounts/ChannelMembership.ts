@@ -110,7 +110,7 @@ export class ChannelMembership implements ChannelMembershipArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      '4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw',
+      'CgRaMXqqRHNT3Zo2uVZfX72TuxUgcLb8E3A8KrXnbXAC',
     ),
   ) {
     return beetSolana.GpaBuilder.fromStruct(programId, channelMembershipBeet)

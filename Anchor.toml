@@ -9,7 +9,7 @@ test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
 [provider]
 cluster = "localnet"
-wallet = "./target/deploy/messenger-manager.json"
+wallet = "./.secrets/messenger-authority.json"
 
 [programs.localnet]
-messenger = "4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw"
+messenger = "CgRaMXqqRHNT3Zo2uVZfX72TuxUgcLb8E3A8KrXnbXAC"

@@ -69,7 +69,7 @@ export const updateMessageInstructionDiscriminator = [
 export function createUpdateMessageInstruction(
   accounts: UpdateMessageInstructionAccounts,
   args: UpdateMessageInstructionArgs,
-  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
+  programId = new web3.PublicKey('CgRaMXqqRHNT3Zo2uVZfX72TuxUgcLb8E3A8KrXnbXAC'),
 ) {
   const [data] = updateMessageStruct.serialize({
     instructionDiscriminator: updateMessageInstructionDiscriminator,
