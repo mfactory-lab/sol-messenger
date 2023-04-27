@@ -1,6 +1,6 @@
 export const CHANNEL_INFO = [
     `<span>Public channels</span> are non-encrypted and available to anyone, both for reading and writing.</br></br>
-    <span>Public channels</span> are encrypted, and new users need to request approval to join them.</br>
+    <span>Private channels</span> are encrypted, and new users need to request approval to join them.</br>
     Depending on the ‘Members can approve’ setting, such requests can be approved either by channel’s 
     owner/admin only, or by any authorized member of the channel.
     `,

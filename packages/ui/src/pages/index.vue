@@ -3,9 +3,7 @@
     <div class="messenger-container">
       <messenger />
     </div>
-    <div class="container">
-      <how-it-works />
-    </div>
+    <how-it-works />
   </div>
 </template>
 
