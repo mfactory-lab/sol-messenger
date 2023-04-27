@@ -67,7 +67,7 @@ export const deleteMessageInstructionDiscriminator = [
 export function createDeleteMessageInstruction(
   accounts: DeleteMessageInstructionAccounts,
   args: DeleteMessageInstructionArgs,
-  programId = new web3.PublicKey('4AnSBTc21f4wTBHmnFyarbosr28Qk4CgGFBHcRh4kYPw'),
+  programId = new web3.PublicKey('CgRaMXqqRHNT3Zo2uVZfX72TuxUgcLb8E3A8KrXnbXAC'),
 ) {
   const [data] = deleteMessageStruct.serialize({
     instructionDiscriminator: deleteMessageInstructionDiscriminator,
