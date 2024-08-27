@@ -6,9 +6,9 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-import type { CEKData } from './CEKData'
-import { cEKDataBeet } from './CEKData'
-export interface AuthorizeMemberData {
+import { CEKData, cEKDataBeet } from './CEKData'
+
+export type AuthorizeMemberData = {
   cek: CEKData
 }
 

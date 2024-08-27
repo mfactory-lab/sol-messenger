@@ -6,9 +6,10 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-import type * as web3 from '@solana/web3.js'
+import * as web3 from '@solana/web3.js'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-export interface Message {
+
+export type Message = {
   id: beet.bignum
   sender: web3.PublicKey
   createdAt: beet.bignum

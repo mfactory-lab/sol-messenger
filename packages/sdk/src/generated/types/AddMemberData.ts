@@ -5,12 +5,12 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import type * as web3 from '@solana/web3.js'
+import * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-import type { CEKData } from './CEKData'
-import { cEKDataBeet } from './CEKData'
-export interface AddMemberData {
+import { CEKData, cEKDataBeet } from './CEKData'
+
+export type AddMemberData = {
   name: string
   flags: number
   cek: CEKData

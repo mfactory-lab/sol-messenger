@@ -31,7 +31,7 @@ export const deleteMemberStruct = new beet.BeetArgsStruct<{
  * @category DeleteMember
  * @category generated
  */
-export interface DeleteMemberInstructionAccounts {
+export type DeleteMemberInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   membershipAuthority: web3.PublicKey

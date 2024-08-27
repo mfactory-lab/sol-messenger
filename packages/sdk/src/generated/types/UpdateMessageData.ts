@@ -6,7 +6,8 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-export interface UpdateMessageData {
+
+export type UpdateMessageData = {
   id: beet.bignum
   content: string
 }

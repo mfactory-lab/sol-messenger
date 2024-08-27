@@ -7,15 +7,14 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { AddMetaData } from '../types/AddMetaData'
-import { addMetaDataBeet } from '../types/AddMetaData'
+import { AddMetaData, addMetaDataBeet } from '../types/AddMetaData'
 
 /**
  * @category Instructions
  * @category AddMeta
  * @category generated
  */
-export interface AddMetaInstructionArgs {
+export type AddMetaInstructionArgs = {
   data: AddMetaData
 }
 /**
@@ -44,7 +43,7 @@ export const addMetaStruct = new beet.FixableBeetArgsStruct<
  * @category AddMeta
  * @category generated
  */
-export interface AddMetaInstructionAccounts {
+export type AddMetaInstructionAccounts = {
   channel: web3.PublicKey
   meta: web3.PublicKey
   authority: web3.PublicKey

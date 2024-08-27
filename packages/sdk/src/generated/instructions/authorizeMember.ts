@@ -7,8 +7,8 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { AuthorizeMemberData } from '../types/AuthorizeMemberData'
 import {
+  AuthorizeMemberData,
   authorizeMemberDataBeet,
 } from '../types/AuthorizeMemberData'
 
@@ -17,7 +17,7 @@ import {
  * @category AuthorizeMember
  * @category generated
  */
-export interface AuthorizeMemberInstructionArgs {
+export type AuthorizeMemberInstructionArgs = {
   data: AuthorizeMemberData
 }
 /**
@@ -48,7 +48,7 @@ export const authorizeMemberStruct = new beet.FixableBeetArgsStruct<
  * @category AuthorizeMember
  * @category generated
  */
-export interface AuthorizeMemberInstructionAccounts {
+export type AuthorizeMemberInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   device: web3.PublicKey

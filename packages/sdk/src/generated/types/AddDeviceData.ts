@@ -5,12 +5,12 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import type * as web3 from '@solana/web3.js'
+import * as web3 from '@solana/web3.js'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
 import * as beet from '@metaplex-foundation/beet'
-import type { CEKData } from './CEKData'
-import { cEKDataBeet } from './CEKData'
-export interface AddDeviceData {
+import { CEKData, cEKDataBeet } from './CEKData'
+
+export type AddDeviceData = {
   key: web3.PublicKey
   cek: CEKData
 }

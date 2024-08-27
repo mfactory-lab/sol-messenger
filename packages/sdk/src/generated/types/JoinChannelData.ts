@@ -5,10 +5,11 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import type * as web3 from '@solana/web3.js'
+import * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-export interface JoinChannelData {
+
+export type JoinChannelData = {
   name: string
   authority: beet.COption<web3.PublicKey>
 }

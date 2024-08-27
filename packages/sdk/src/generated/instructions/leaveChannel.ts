@@ -29,7 +29,7 @@ export const leaveChannelStruct = new beet.BeetArgsStruct<{
  * @category LeaveChannel
  * @category generated
  */
-export interface LeaveChannelInstructionAccounts {
+export type LeaveChannelInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authority: web3.PublicKey

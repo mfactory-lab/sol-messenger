@@ -6,7 +6,8 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-export interface CEKData {
+
+export type CEKData = {
   header: string
   encryptedKey: string
 }

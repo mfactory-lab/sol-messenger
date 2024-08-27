@@ -18,7 +18,7 @@ import {
  * @category Accounts
  * @category generated
  */
-export interface ChannelMembershipArgs {
+export type ChannelMembershipArgs = {
   channel: web3.PublicKey
   authority: web3.PublicKey
   status: ChannelMembershipStatus
@@ -33,6 +33,7 @@ export interface ChannelMembershipArgs {
 export const channelMembershipDiscriminator = [
   238, 149, 255, 251, 116, 131, 86, 170,
 ]
+
 /**
  * Holds the data for the {@link ChannelMembership} Account and provides de/serialization
  * functionality for that data
@@ -51,7 +52,8 @@ export class ChannelMembership implements ChannelMembershipArgs {
     readonly createdAt: beet.bignum,
     readonly flags: number,
     readonly bump: number,
-  ) {}
+  ) {
+  }
 
   /**
    * Creates a {@link ChannelMembership} instance from the provided args.

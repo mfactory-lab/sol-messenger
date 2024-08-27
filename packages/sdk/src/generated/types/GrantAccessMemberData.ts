@@ -6,7 +6,8 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-export interface GrantAccessMemberData {
+
+export type GrantAccessMemberData = {
   flags: number
 }
 

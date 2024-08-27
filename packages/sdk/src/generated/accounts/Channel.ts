@@ -8,15 +8,14 @@
 import * as web3 from '@solana/web3.js'
 import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-import type { Message } from '../types/Message'
-import { messageBeet } from '../types/Message'
+import { Message, messageBeet } from '../types/Message'
 
 /**
  * Arguments used to create {@link Channel}
  * @category Accounts
  * @category generated
  */
-export interface ChannelArgs {
+export type ChannelArgs = {
   workspace: string
   name: string
   creator: web3.PublicKey
@@ -30,6 +29,7 @@ export interface ChannelArgs {
 }
 
 export const channelDiscriminator = [49, 159, 99, 106, 220, 87, 219, 88]
+
 /**
  * Holds the data for the {@link Channel} Account and provides de/serialization
  * functionality for that data
@@ -49,7 +49,8 @@ export class Channel implements ChannelArgs {
     readonly messageCount: beet.bignum,
     readonly maxMessages: number,
     readonly messages: Message[],
-  ) {}
+  ) {
+  }
 
   /**
    * Creates a {@link Channel} instance from the provided args.

@@ -7,15 +7,14 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { JoinChannelData } from '../types/JoinChannelData'
-import { joinChannelDataBeet } from '../types/JoinChannelData'
+import { JoinChannelData, joinChannelDataBeet } from '../types/JoinChannelData'
 
 /**
  * @category Instructions
  * @category JoinChannel
  * @category generated
  */
-export interface JoinChannelInstructionArgs {
+export type JoinChannelInstructionArgs = {
   data: JoinChannelData
 }
 /**
@@ -46,7 +45,7 @@ export const joinChannelStruct = new beet.FixableBeetArgsStruct<
  * @category JoinChannel
  * @category generated
  */
-export interface JoinChannelInstructionAccounts {
+export type JoinChannelInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   device: web3.PublicKey

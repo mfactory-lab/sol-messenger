@@ -7,8 +7,8 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { GrantAccessMemberData } from '../types/GrantAccessMemberData'
 import {
+  GrantAccessMemberData,
   grantAccessMemberDataBeet,
 } from '../types/GrantAccessMemberData'
 
@@ -17,7 +17,7 @@ import {
  * @category GrantAccessMember
  * @category generated
  */
-export interface GrantAccessMemberInstructionArgs {
+export type GrantAccessMemberInstructionArgs = {
   data: GrantAccessMemberData
 }
 /**
@@ -47,7 +47,7 @@ export const grantAccessMemberStruct = new beet.BeetArgsStruct<
  * @category GrantAccessMember
  * @category generated
  */
-export interface GrantAccessMemberInstructionAccounts {
+export type GrantAccessMemberInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authorityMembership: web3.PublicKey

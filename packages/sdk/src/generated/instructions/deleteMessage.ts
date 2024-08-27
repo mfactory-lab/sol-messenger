@@ -13,7 +13,7 @@ import * as web3 from '@solana/web3.js'
  * @category DeleteMessage
  * @category generated
  */
-export interface DeleteMessageInstructionArgs {
+export type DeleteMessageInstructionArgs = {
   id: beet.bignum
 }
 /**
@@ -42,7 +42,7 @@ export const deleteMessageStruct = new beet.BeetArgsStruct<
  * @category DeleteMessage
  * @category generated
  */
-export interface DeleteMessageInstructionAccounts {
+export type DeleteMessageInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authority: web3.PublicKey

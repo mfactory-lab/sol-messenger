@@ -13,7 +13,7 @@ import * as web3 from '@solana/web3.js'
  * @category UpdateMessage
  * @category generated
  */
-export interface UpdateMessageInstructionArgs {
+export type UpdateMessageInstructionArgs = {
   id: beet.bignum
   message: string
 }
@@ -44,7 +44,7 @@ export const updateMessageStruct = new beet.FixableBeetArgsStruct<
  * @category UpdateMessage
  * @category generated
  */
-export interface UpdateMessageInstructionAccounts {
+export type UpdateMessageInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authority: web3.PublicKey

@@ -7,15 +7,14 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { AddMemberData } from '../types/AddMemberData'
-import { addMemberDataBeet } from '../types/AddMemberData'
+import { AddMemberData, addMemberDataBeet } from '../types/AddMemberData'
 
 /**
  * @category Instructions
  * @category AddMember
  * @category generated
  */
-export interface AddMemberInstructionArgs {
+export type AddMemberInstructionArgs = {
   data: AddMemberData
 }
 /**
@@ -47,7 +46,7 @@ export const addMemberStruct = new beet.FixableBeetArgsStruct<
  * @category AddMember
  * @category generated
  */
-export interface AddMemberInstructionAccounts {
+export type AddMemberInstructionAccounts = {
   channel: web3.PublicKey
   invitee: web3.PublicKey
   inviteeMembership: web3.PublicKey

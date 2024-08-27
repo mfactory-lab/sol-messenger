@@ -14,7 +14,7 @@ import * as beet from '@metaplex-foundation/beet'
  * @category Accounts
  * @category generated
  */
-export interface ChannelMetaArgs {
+export type ChannelMetaArgs = {
   channel: web3.PublicKey
   authority: web3.PublicKey
   key: number
@@ -23,6 +23,7 @@ export interface ChannelMetaArgs {
 }
 
 export const channelMetaDiscriminator = [40, 109, 247, 198, 79, 121, 252, 126]
+
 /**
  * Holds the data for the {@link ChannelMeta} Account and provides de/serialization
  * functionality for that data
@@ -37,7 +38,8 @@ export class ChannelMeta implements ChannelMetaArgs {
     readonly key: number,
     readonly value: Uint8Array,
     readonly bump: number,
-  ) {}
+  ) {
+  }
 
   /**
    * Creates a {@link ChannelMeta} instance from the provided args.

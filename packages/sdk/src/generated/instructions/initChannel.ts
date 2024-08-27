@@ -7,15 +7,14 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { InitChannelData } from '../types/InitChannelData'
-import { initChannelDataBeet } from '../types/InitChannelData'
+import { InitChannelData, initChannelDataBeet } from '../types/InitChannelData'
 
 /**
  * @category Instructions
  * @category InitChannel
  * @category generated
  */
-export interface InitChannelInstructionArgs {
+export type InitChannelInstructionArgs = {
   data: InitChannelData
 }
 /**
@@ -46,7 +45,7 @@ export const initChannelStruct = new beet.FixableBeetArgsStruct<
  * @category InitChannel
  * @category generated
  */
-export interface InitChannelInstructionAccounts {
+export type InitChannelInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   device: web3.PublicKey

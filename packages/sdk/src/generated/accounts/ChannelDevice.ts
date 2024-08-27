@@ -8,15 +8,14 @@
 import * as web3 from '@solana/web3.js'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
 import * as beet from '@metaplex-foundation/beet'
-import type { CEKData } from '../types/CEKData'
-import { cEKDataBeet } from '../types/CEKData'
+import { CEKData, cEKDataBeet } from '../types/CEKData'
 
 /**
  * Arguments used to create {@link ChannelDevice}
  * @category Accounts
  * @category generated
  */
-export interface ChannelDeviceArgs {
+export type ChannelDeviceArgs = {
   channel: web3.PublicKey
   authority: web3.PublicKey
   key: web3.PublicKey
@@ -25,6 +24,7 @@ export interface ChannelDeviceArgs {
 }
 
 export const channelDeviceDiscriminator = [163, 153, 9, 169, 176, 51, 204, 146]
+
 /**
  * Holds the data for the {@link ChannelDevice} Account and provides de/serialization
  * functionality for that data
@@ -39,7 +39,8 @@ export class ChannelDevice implements ChannelDeviceArgs {
     readonly key: web3.PublicKey,
     readonly cek: CEKData,
     readonly bump: number,
-  ) {}
+  ) {
+  }
 
   /**
    * Creates a {@link ChannelDevice} instance from the provided args.

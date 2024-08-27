@@ -6,7 +6,8 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-export interface AddMetaData {
+
+export type AddMetaData = {
   key: number
   value: Uint8Array
 }

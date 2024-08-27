@@ -13,7 +13,7 @@ import * as web3 from '@solana/web3.js'
  * @category ReadMessage
  * @category generated
  */
-export interface ReadMessageInstructionArgs {
+export type ReadMessageInstructionArgs = {
   messageId: beet.bignum
 }
 /**
@@ -42,7 +42,7 @@ export const readMessageStruct = new beet.BeetArgsStruct<
  * @category ReadMessage
  * @category generated
  */
-export interface ReadMessageInstructionAccounts {
+export type ReadMessageInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authority: web3.PublicKey

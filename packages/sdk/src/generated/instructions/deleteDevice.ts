@@ -30,7 +30,7 @@ export const deleteDeviceStruct = new beet.BeetArgsStruct<{
  * @category DeleteDevice
  * @category generated
  */
-export interface DeleteDeviceInstructionAccounts {
+export type DeleteDeviceInstructionAccounts = {
   channel: web3.PublicKey
   device: web3.PublicKey
   deviceAuthority: web3.PublicKey

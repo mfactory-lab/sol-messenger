@@ -1,5 +1,5 @@
 {
-  "version": "0.0.15",
+  "version": "0.0.16",
   "name": "messenger",
   "instructions": [
     {
@@ -1397,7 +1397,7 @@
   "metadata": {
     "address": "CgRaMXqqRHNT3Zo2uVZfX72TuxUgcLb8E3A8KrXnbXAC",
     "origin": "anchor",
-    "binaryVersion": "0.25.0",
-    "libVersion": "0.25.0"
+    "binaryVersion": "0.29.0",
+    "libVersion": "0.29.0"
   }
 }

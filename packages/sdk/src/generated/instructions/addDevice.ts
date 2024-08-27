@@ -7,15 +7,14 @@
 
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
-import type { AddDeviceData } from '../types/AddDeviceData'
-import { addDeviceDataBeet } from '../types/AddDeviceData'
+import { AddDeviceData, addDeviceDataBeet } from '../types/AddDeviceData'
 
 /**
  * @category Instructions
  * @category AddDevice
  * @category generated
  */
-export interface AddDeviceInstructionArgs {
+export type AddDeviceInstructionArgs = {
   data: AddDeviceData
 }
 /**
@@ -45,7 +44,7 @@ export const addDeviceStruct = new beet.FixableBeetArgsStruct<
  * @category AddDevice
  * @category generated
  */
-export interface AddDeviceInstructionAccounts {
+export type AddDeviceInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   device: web3.PublicKey

@@ -29,7 +29,7 @@ export type CEK = Uint8Array
  * Create a Solana keypair object from a x25519 private key
  * @param privateKey
  */
-export const makeKeypair = (privateKey: PrivateKey): Keypair => {
+export function makeKeypair(privateKey: PrivateKey): Keypair {
   if (Array.isArray(privateKey)) {
     return Keypair.fromSecretKey(Buffer.from(privateKey))
   }
@@ -44,7 +44,7 @@ export const makeKeypair = (privateKey: PrivateKey): Keypair => {
 /**
  * Create a CEK
  */
-export const generateCEK = async (length = 32): Promise<CEK> => {
+export async function generateCEK(length = 32): Promise<CEK> {
   const cek = randomBytes(length)
   return Promise.resolve(cek)
 }
@@ -52,10 +52,8 @@ export const generateCEK = async (length = 32): Promise<CEK> => {
 /**
  * Encrypt the CEK for PublicKey
  */
-export const encryptCEK = async (
-  cek: CEK,
-  pubKey: PublicKey,
-): Promise<CEKData> => {
+export async function encryptCEK(cek: CEK,
+  pubKey: PublicKey): Promise<CEKData> {
   const res = await x25519xc20pKeyWrap(convertPublicKey(pubKey.toBytes()))(cek)
   return {
     header: bytesToBase64(u8a.concat([res.iv, res.tag, res.epPubKey])),
@@ -66,10 +64,8 @@ export const encryptCEK = async (
 /**
  * Decrypt an encrypted CEK for the with the key that was used to encrypt it
  */
-export const decryptCEK = async (
-  encryptedCEK: CEKData,
-  privateKey: PrivateKey,
-): Promise<CEK> => {
+export async function decryptCEK(encryptedCEK: CEKData,
+  privateKey: PrivateKey): Promise<CEK> {
   const encodedHeader = base64ToBytes(encryptedCEK.header)
   const iv = encodedHeader.subarray(0, XC20P_IV_LENGTH)
   const tag = encodedHeader.subarray(XC20P_IV_LENGTH, XC20P_IV_LENGTH + XC20P_TAG_LENGTH)
@@ -97,7 +93,7 @@ export const decryptCEK = async (
 /**
  * Encrypt a message with a CEK
  */
-export const encryptMessage = async (message: string, cek: CEK): Promise<string> => {
+export async function encryptMessage(message: string, cek: CEK): Promise<string> {
   const encryptMessage = await xc20pEncrypter(cek)(stringToBytes(message))
   return bytesToBase64(
     u8a.concat([
@@ -111,7 +107,7 @@ export const encryptMessage = async (message: string, cek: CEK): Promise<string>
 /**
  * Decrypt a message with the CEK used to encrypt it
  */
-export const decryptMessage = async (encryptedMessage: string, cek: CEK): Promise<string> => {
+export async function decryptMessage(encryptedMessage: string, cek: CEK): Promise<string> {
   const encMessage = base64ToBytes(encryptedMessage)
   const iv = encMessage.subarray(0, XC20P_IV_LENGTH)
   const ciphertext = encMessage.subarray(XC20P_IV_LENGTH, -XC20P_TAG_LENGTH)

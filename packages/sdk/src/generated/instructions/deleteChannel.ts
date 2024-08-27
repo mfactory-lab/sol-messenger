@@ -29,7 +29,7 @@ export const deleteChannelStruct = new beet.BeetArgsStruct<{
  * @category DeleteChannel
  * @category generated
  */
-export interface DeleteChannelInstructionAccounts {
+export type DeleteChannelInstructionAccounts = {
   channel: web3.PublicKey
   authorityMembership: web3.PublicKey
   authority: web3.PublicKey

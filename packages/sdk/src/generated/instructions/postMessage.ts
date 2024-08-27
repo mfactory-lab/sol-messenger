@@ -13,7 +13,7 @@ import * as web3 from '@solana/web3.js'
  * @category PostMessage
  * @category generated
  */
-export interface PostMessageInstructionArgs {
+export type PostMessageInstructionArgs = {
   message: string
 }
 /**
@@ -42,7 +42,7 @@ export const postMessageStruct = new beet.FixableBeetArgsStruct<
  * @category PostMessage
  * @category generated
  */
-export interface PostMessageInstructionAccounts {
+export type PostMessageInstructionAccounts = {
   channel: web3.PublicKey
   membership: web3.PublicKey
   authority: web3.PublicKey
