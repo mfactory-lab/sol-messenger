@@ -2,13 +2,8 @@
 
 cwd = $(shell pwd)
 
-#cluster = mainnet
+cluster = mainnet-beta
 #cluster = devnet
-cluster = testnet
-#cluster = https://solana-api.projectserum.com
-#cluster = https://mainnet.rpcpool.com
-#cluster = https://devnet.genesysgo.net
-#cluster = "https://devnet.rpcpool.com"
 
 program = messenger
 program_id = $(shell sed -n 's/^ *${program}.*=.*"\([^"]*\)".*/\1/p' Anchor.toml | head -1)
