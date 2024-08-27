@@ -129,7 +129,7 @@ export function useChannelAddMember() {
     key: '',
   })
 
-  async function submit(data: { wallet: string; name: string; key: string }) {
+  async function submit(data: { wallet: string, name: string, key: string }) {
     state.loading = true
     if (!messengerState.channelAddr) {
       info('Please select a channel')

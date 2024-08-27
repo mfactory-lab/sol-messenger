@@ -10,11 +10,11 @@ const { state } = useMessengerStore()
 const authorizeMember = useChannelAuthorizeMember()
 const deleteMember = useChannelDeleteMember()
 
-const handleAuthorize = async (key: PublicKey, addr: PublicKey) => {
+async function handleAuthorize(key: PublicKey, addr: PublicKey) {
   state.channelAddr = addr
   await authorizeMember.submit(key)
 }
-const handleDelete = async (key: PublicKey, addr: PublicKey) => {
+async function handleDelete(key: PublicKey, addr: PublicKey) {
   state.channelAddr = addr
   await deleteMember.submit(key)
 }

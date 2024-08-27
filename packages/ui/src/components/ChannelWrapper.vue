@@ -66,13 +66,13 @@ const isAllowSend = computed(() => channel.canPostMessage)
 
 const sendMessage = (message: any) => emit('sendMessage', message)
 
-const handleEditMessage = (msg: any) => {
+function handleEditMessage(msg: any) {
   messageProps.postMessageState!.message = msg.text
   messageProps.postMessageState!.edit = true
   messageProps.postMessageState!.messageId = msg.messageId
 }
 
-const handleDeleteMessage = (messageId: number) => {
+function handleDeleteMessage(messageId: number) {
   emit('deleteMessage', messageId)
 }
 
@@ -91,7 +91,7 @@ const debouncedFn = useDebounceFn(() => {
   isScroll.value = false
 }, 2000)
 
-const handleScrollbar = (e: any, hide?: boolean, scroll?: boolean) => {
+function handleScrollbar(e: any, hide?: boolean, scroll?: boolean) {
   if (hide) {
     isScroll.value = false
     return

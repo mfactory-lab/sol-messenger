@@ -1,17 +1,17 @@
 <script lang='ts' setup>
-import type { PropType } from '@vue/runtime-core'
+import type { PropType } from 'vue'
 import { AlertTriangleIcon, CheckIcon } from 'vue-tabler-icons'
 
 const deleteMemberProps = defineProps({
   channelEvent: Object as PropType<{
-    channel: String
-    address: String
-    event: String
+    channel: string
+    address: string
+    event: string
   }>,
 })
 
 const isModel = ref(false)
-const event = ref<String>('')
+const event = ref<string>('')
 
 const isDeleteEvent = computed(() => event.value === 'delete')
 

@@ -30,8 +30,8 @@ export const useChannelStore = defineStore('channel', () => {
         !!state.ownChannels.find(
           myCh => myCh.pubkey === ch.pubkey.toBase58(),
         )
-      || ch.data.flags === 1
-      || ch.data.creator.toBase58() === String(wallet.value?.publicKey),
+        || ch.data.flags === 1
+        || ch.data.creator.toBase58() === String(wallet.value?.publicKey),
     ),
   )
 

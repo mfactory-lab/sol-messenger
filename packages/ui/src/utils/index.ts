@@ -1,7 +1,7 @@
 export * from './web3'
 export * from './format'
 
-export const getBadgeColor = (text: string) => {
+export function getBadgeColor(text: string) {
   if (!text) {
     return { background: '#000' }
   }

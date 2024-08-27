@@ -74,7 +74,7 @@ const isArrowBack = computed(
   () => mobileStore.isMobile && mobileStore.state.searchOrInfo === 'info',
 )
 
-const handleAppSize = () => {
+function handleAppSize() {
   if (!channelStore.isWalletConnected) {
     return notify({
       type: 'negative',
@@ -101,7 +101,7 @@ watch(
   <div class="panel-toolbar" :class="mobileStore.state.searchOrInfo">
     <messenger-notification />
 
-    <arrow-left-icon
+    <ArrowLeftIcon
       v-if="isArrowBack"
       class="back-arrow"
       @click="mobileStore.state.searchOrInfo = 'search'"
@@ -125,7 +125,7 @@ watch(
         @click="handleAppSize"
       >
         <custom-tooltip text="Full" />
-        <arrows-maximize-icon />
+        <ArrowsMaximizeIcon />
       </div>
       <div
         v-else
@@ -133,7 +133,7 @@ watch(
         @click="appSizeStore.state.mode = AppSize[1]"
       >
         <custom-tooltip text="Compact" />
-        <arrows-minimize-icon />
+        <ArrowsMinimizeIcon />
       </div>
     </div>
 
@@ -154,7 +154,7 @@ watch(
 
       <div>
         <q-btn class="chat-menu" flat square :disabled="!isWalletConnected">
-          <dots-icon size="18" />
+          <DotsIcon size="18" />
           <q-menu anchor="bottom middle" self="top middle">
             <q-list style="min-width: 120px" bordered>
               <q-item

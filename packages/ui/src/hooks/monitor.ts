@@ -125,7 +125,7 @@ export function useMonitorTransaction() {
   return { monitorTransaction, sending }
 }
 
-interface MonitorTransactionParams {
+type MonitorTransactionParams = {
   onSuccess?: (signature: string) => void
   onError?: (reason: string) => void
   commitment?: Commitment

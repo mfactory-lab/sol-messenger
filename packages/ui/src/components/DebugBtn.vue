@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useChannelStore } from '@/store/channel'
+
 const props = defineProps({
   isDebugOpen: {
     type: Boolean,

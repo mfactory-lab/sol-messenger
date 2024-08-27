@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import type { PropType } from '@vue/runtime-core'
+import type { PropType } from 'vue'
 import { FileDownloadIcon, FileImportIcon, PlusIcon } from 'vue-tabler-icons'
 import type { ChannelDevices } from '../store/messenger'
 import helpIcon from '@/assets/img/help-btn.svg'
@@ -16,7 +16,7 @@ const isAddModal = ref(false)
 const isImportModal = ref(false)
 const isInstructions = ref(false)
 
-const handleAddDevice = async (val: string) => {
+async function handleAddDevice(val: string) {
   await emit('handleAddDevice', val)
 }
 watch(
@@ -31,7 +31,7 @@ watch(
 const handleImport = (key: string) => emit('handleImport', key)
 const closeImportModal = () => (isImportModal.value = false)
 
-const saveJson = () => {
+function saveJson() {
   emit('handleExport')
 }
 </script>
@@ -58,7 +58,7 @@ const saveJson = () => {
       @click="isAddModal = true"
     >
       <custom-tooltip text="Add new device" />
-      <plus-icon />
+      <PlusIcon />
     </q-btn>
     <q-btn
       class="control-btn device-btn"
@@ -67,7 +67,7 @@ const saveJson = () => {
       @click="isImportModal = true"
     >
       <custom-tooltip text="Import device key" />
-      <file-import-icon />
+      <FileImportIcon />
     </q-btn>
     <q-btn
       class="control-btn device-btn"
@@ -77,7 +77,7 @@ const saveJson = () => {
       @click="saveJson"
     >
       <custom-tooltip text="Export device key" />
-      <file-download-icon />
+      <FileDownloadIcon />
     </q-btn>
   </div>
 

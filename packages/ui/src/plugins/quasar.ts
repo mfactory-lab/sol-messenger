@@ -8,7 +8,7 @@ import type { App } from 'vue'
 // import '@quasar/extras/eva-icons/eva-icons.css';
 // import '@quasar/extras/roboto-font/roboto-font.css';
 
-export const install = ({ app }: { app: App<Element> }) => {
+export function install({ app }: { app: App<Element> }) {
   app.use(Quasar, {
     plugins: {
       Dark,

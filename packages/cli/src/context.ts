@@ -1,12 +1,12 @@
-import { Buffer } from 'buffer'
-import fs from 'fs'
-import { MessengerClient } from '@app/sdk'
-import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor'
+import { Buffer } from 'node:buffer'
+import fs from 'node:fs'
+import { MessengerClient } from '@cgram/sdk'
+import { AnchorProvider, Wallet, web3 } from '@coral-xyz/anchor'
 import type { Cluster } from '@solana/web3.js'
 import { Keypair } from '@solana/web3.js'
 import { clusterUrl } from './utils'
 
-export interface Context {
+export type Context = {
   cluster: Cluster | string
   provider: AnchorProvider
   client: MessengerClient
@@ -14,7 +14,7 @@ export interface Context {
 
 const context = {} as Context
 
-export function initContext({ cluster, keypair }: { cluster: Cluster; keypair: string }) {
+export function initContext({ cluster, keypair }: { cluster: Cluster, keypair: string }) {
   const opts = AnchorProvider.defaultOptions()
   const endpoint = cluster.startsWith('http') ? cluster : clusterUrl(cluster)
   const connection = new web3.Connection(endpoint, opts.commitment)

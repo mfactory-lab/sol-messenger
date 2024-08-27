@@ -17,7 +17,7 @@ const channelStore = useChannelStore()
 
 const { notify } = useQuasar()
 
-const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
+function handleEmit(emit: 'createChannel' | 'joinChannel' | 'refreshList') {
   if (!channelStore.isWalletConnected) {
     notify({
       message: 'Please connect wallet',
@@ -38,16 +38,16 @@ const handleEmit = (emit: 'createChannel' | 'joinChannel' | 'refreshList') => {
         <custom-tooltip text="Documentation" />
       </a>
       <q-btn class="control-button" :class="{ 'refresh-btn': isLoading }" square flat @click="handleEmit('refreshList')">
-        <refresh-icon style="color: #fff" />
+        <RefreshIcon style="color: #fff" />
         <custom-tooltip text="Refresh channels" />
       </q-btn>
       <q-btn class="control-button" square flat @click="handleEmit('createChannel')">
-        <plus-icon style="color: #fff" />
+        <PlusIcon style="color: #fff" />
         <custom-tooltip text="Create a channel" />
       </q-btn>
       <!-- v-if="canJoinChannel && !channelStore.isChannelLoading" -->
       <q-btn class="control-button" square flat @click="handleEmit('joinChannel')">
-        <search-icon style="color: #fff" />
+        <SearchIcon style="color: #fff" />
         <custom-tooltip text="Browse channels" />
       </q-btn>
     </q-item-section>

@@ -2,7 +2,7 @@
 /// <reference types="vite-plugin-vue-layouts/client" />
 /// <reference types="vite-plugin-pages/client" />
 
-interface ImportMetaEnv {
+type ImportMetaEnv = {
   readonly MODE: 'production' | 'development' | 'staging' | 'testing' | 'preview'
 
   readonly VERSION: string

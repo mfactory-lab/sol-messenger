@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { ChannelDevice } from '@app/sdk'
+import type { ChannelDevice } from '@cgram/sdk'
 import { evaClose } from '@quasar/extras/eva-icons'
 import type { PublicKey } from '@solana/web3.js'
-import type { PropType } from '@vue/runtime-core'
+import type { PropType } from 'vue'
 
 const props = defineProps({
   selectDevicekey: Object as PropType<PublicKey>,
@@ -16,7 +16,7 @@ const emit = defineEmits(['handleSelect', 'handleDelete'])
 const handleSelect = (val: PublicKey) => emit('handleSelect', val)
 const handleDelete = (val: PublicKey) => emit('handleDelete', val)
 
-const isAuthorityDevice = (key: PublicKey) => {
+function isAuthorityDevice(key: PublicKey) {
   return key.toBase58() === props.authorityDevice
 }
 </script>

@@ -1,4 +1,4 @@
-import type { ChannelMembership } from '@app/sdk'
+import type { ChannelMembership } from '@cgram/sdk'
 import { shortenAddress } from './web3'
 
 export function formatMemberName(member: ChannelMembership) {

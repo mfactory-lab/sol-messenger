@@ -39,7 +39,7 @@ async function editMemberMessage(message: string, id: number) {
   await editMessage(message, Number(id))
 }
 
-const onSearch = (val: string) => {
+function onSearch(val: string) {
   if (val === '') {
     searchChannels.value = []
     searchWord.value = ''
@@ -55,7 +55,7 @@ const onSearch = (val: string) => {
 
 const isLoading = computed(() => state.loading)
 
-const showDeviceKeyDialog = ref<Boolean>(false)
+const showDeviceKeyDialog = ref<boolean>(false)
 
 const filterChannels = computed(() =>
   searchChannels.value.length > 0 || searchWord.value.length > 0
@@ -65,7 +65,7 @@ const filterChannels = computed(() =>
 
 const handleAddMember = (val: any) => addMember.submit(val)
 
-const handleJoinToChannel = (name: string) => {
+function handleJoinToChannel(name: string) {
   joinChannel.state.name = name
   joinChannel.submit()
 }
@@ -187,7 +187,7 @@ onMounted(() => {
 
   <event-channel-dialog :channel-event="state.channelEvent" />
 
-  <debug-btn :is-debug-open="isDebugOpen" @handle-debug-btn="handleDebugBtn" />
+  <DebugBtn :is-debug-open="isDebugOpen" @handle-debug-btn="handleDebugBtn" />
 </template>
 
 <style lang="scss">

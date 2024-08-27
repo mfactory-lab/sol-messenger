@@ -18,7 +18,7 @@ const message = toRef(props, 'message')
 
 const { notify } = useQuasar()
 
-const sendMessage = () => {
+function sendMessage() {
   emit('submit')
   message.value.message = ''
 }
@@ -26,11 +26,11 @@ const sendMessage = () => {
 let timer: any
 let countDowm = 59
 
-const stopInterval = () => {
+function stopInterval() {
   clearInterval(timer)
 }
 
-const showNotif = () => {
+function showNotif() {
   const notif = notify({
     group: false,
     timeout: 0,

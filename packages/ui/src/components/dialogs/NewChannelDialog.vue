@@ -28,7 +28,7 @@ const state = toRef(props, 'defaultState')
 
 const messagesCost = ref<string | number>(0)
 
-const createNewChannel = async () => {
+async function createNewChannel() {
   if (await messagesCost.value > userStore.balance) {
     noSol()
     return
@@ -50,7 +50,7 @@ watch(
   },
 )
 
-const chechNicknameLength = (val: string) => {
+function chechNicknameLength(val: string) {
   if (val === '') {
     return true
   }

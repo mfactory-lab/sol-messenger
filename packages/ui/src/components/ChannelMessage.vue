@@ -8,8 +8,8 @@ defineProps({
 
 const emit = defineEmits(['handleEdit', 'handleDelete'])
 
-const handleEdit = (msg: { messageId: number; text: string }) => emit('handleEdit', msg)
-const handleDelete = (messageId: Number) => emit('handleDelete', messageId)
+const handleEdit = (msg: { messageId: number, text: string }) => emit('handleEdit', msg)
+const handleDelete = (messageId: number) => emit('handleDelete', messageId)
 
 const message = ref(null)
 </script>
@@ -17,14 +17,14 @@ const message = ref(null)
 <template>
   <div class="message-wrapper">
     <div v-if="!sender" class="message-actions">
-      <pencil-icon
+      <PencilIcon
         width="12"
         height="12"
         @click="
           handleEdit({ messageId: message.lastChild.dataset.id, text: message.lastChild.innerHTML })
         "
       />
-      <x-icon
+      <XIcon
         width="12"
         height="12"
         @click="handleDelete(message.lastChild.dataset.id)"

@@ -1,7 +1,7 @@
-import type { Channel, ChannelDevice, ChannelMembership, Message } from '@app/sdk'
-import { MessengerClient } from '@app/sdk'
-import type { Address } from '@project-serum/anchor'
-import { AnchorProvider } from '@project-serum/anchor'
+import type { Channel, ChannelDevice, ChannelMembership, Message } from '@cgram/sdk'
+import { MessengerClient } from '@cgram/sdk'
+import type { Address } from '@coral-xyz/anchor'
+import { AnchorProvider } from '@coral-xyz/anchor'
 
 import type { Keypair } from '@solana/web3.js'
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
@@ -12,18 +12,18 @@ import { shortenAddress } from '@/utils'
 import { CHANNEL_MAX_MESSAGES } from '@/config'
 import { MESSENGER_WORKSPACE } from '@/config/common'
 
-interface MessengerStoreState {
+type MessengerStoreState = {
   allChannels: AllChannels[]
-  ownChannels: { pubkey: string; status: number }[]
+  ownChannels: { pubkey: string, status: number }[]
   channel?: Channel
   channelAddr?: PublicKey
   channelMembershipAddr?: PublicKey
   channelMembership?: ChannelMembership
-  channelMembers: { pubkey: PublicKey; data: ChannelMembership }[]
+  channelMembers: { pubkey: PublicKey, data: ChannelMembership }[]
   channelMessages: Array<Message & { senderDisplayName: string }>
   channelLoading: boolean
   memberDevices: Array<ChannelDevices>
-  channelEvent?: { channel: String; address: String; event: String }
+  channelEvent?: { channel: string, address: string, event: string }
   loading: boolean
   creating: boolean
   sending: boolean
@@ -580,17 +580,17 @@ export const useMessengerStore = defineStore('messenger', () => {
   }
 })
 
-export interface AllChannels {
+export type AllChannels = {
   pubkey: PublicKey
   data: Channel
 }
 
-export interface ChannelDevices {
+export type ChannelDevices = {
   data: ChannelDevice
   pubkey: PublicKey
 }
 
-export interface MessageState {
+export type MessageState = {
   edit: boolean
   message: string
   messageId: number

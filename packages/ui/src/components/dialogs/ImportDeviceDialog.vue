@@ -4,7 +4,7 @@ const { ok, error } = useHelper()
 
 const secretKeyJSON = ref()
 
-const handleImport = () => {
+function handleImport() {
   const file = secretKeyJSON.value[0]
 
   const reader = new FileReader()

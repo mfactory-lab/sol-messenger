@@ -5,10 +5,10 @@
     "cli": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "@app/sdk": "workspace:*",
+    "@cgram/sdk": "workspace:*",
     "commander": "^9.3.0",
-    "loglevel": "^1.8.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "loglevel": "^1.8.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.182"

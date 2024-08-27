@@ -12,7 +12,7 @@ defineEmits(['submit', 'deleteMember'])
 const { state } = useMessengerStore()
 const channel = useChannelStore()
 
-const getStatusClass = (status: number) => {
+function getStatusClass(status: number) {
   return status > 0 ? 'pending' : 'authorized'
 }
 

@@ -44,7 +44,7 @@ export const useConnectionStore = defineStore({
 
 export type ExtendedCluster = Cluster | 'localnet'
 
-export interface Endpoint {
+export type Endpoint = {
   id: string
   name: string
   cluster: ExtendedCluster

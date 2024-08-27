@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { CheckIcon, RefreshIcon, TransferInIcon } from 'vue-tabler-icons'
 import type { PublicKey } from '@solana/web3.js'
-import type { Channel } from '@app/sdk'
+import type { Channel } from '@cgram/sdk'
 import type { AllChannels } from '../../store/messenger'
 import { getBadgeColor } from '@/utils'
 
-interface OwnChannel {
+type OwnChannel = {
   pubkey: PublicKey
   data: Channel
 }
@@ -38,7 +38,7 @@ const isLoading = computed(() => messengerStore.loading)
 
 const initials = (channel: Channel) => channel.name.slice(0, 2)
 
-const search = () => {
+function search() {
   if (searchWord.value === '') {
     searchChannels.value = []
     searchWord.value = ''
@@ -49,10 +49,10 @@ const search = () => {
       ch.data.name
         .toLocaleLowerCase()
         .includes(searchWord.value.toLocaleLowerCase())
-      || ch.pubkey
-        .toBase58()
-        .toLocaleLowerCase()
-        .includes(searchWord.value.toLocaleLowerCase()),
+        || ch.pubkey
+          .toBase58()
+          .toLocaleLowerCase()
+          .includes(searchWord.value.toLocaleLowerCase()),
   )
 }
 
@@ -60,7 +60,7 @@ const filterChannels = computed(() =>
   searchWord.value?.length > 0 ? searchChannels.value : privateChannels.value,
 )
 
-const joinToChannel = (name: string) => {
+function joinToChannel(name: string) {
   joinEmit('submit', name)
 }
 
@@ -77,7 +77,7 @@ watch(
   },
 )
 
-const isInChat = (ch: OwnChannel) => {
+function isInChat(ch: OwnChannel) {
   return channelStore.ownChannels.find(
     (c: OwnChannel) => String(c.pubkey) === String(ch.pubkey),
   )
@@ -133,7 +133,7 @@ const isInChat = (ch: OwnChannel) => {
             </q-item-section>
             <div v-if="isInChat(ch)" class="already-in-chat">
               <custom-tooltip text="already in channel" />
-              <check-icon size="18" />
+              <CheckIcon size="18" />
             </div>
           </q-item>
         </q-list>
@@ -155,7 +155,7 @@ const isInChat = (ch: OwnChannel) => {
           :class="{ 'refresh-btn': isLoading }"
           @click="refreshList"
         >
-          <refresh-icon style="color: #fff" />
+          <RefreshIcon style="color: #fff" />
           <custom-tooltip text="Refresh channels" />
         </q-btn>
         <q-btn
@@ -165,7 +165,7 @@ const isInChat = (ch: OwnChannel) => {
           :disable="!messengerStore.channelAddr"
           @click="isModal = true"
         >
-          <transfer-in-icon style="color: #fff" />
+          <TransferInIcon style="color: #fff" />
           <custom-tooltip text="Request to join" />
         </q-btn>
 

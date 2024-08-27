@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { AppSize } from '../store/app-size'
 import {
   DISCORD_URL,
   JFACTORY_URL,
@@ -35,7 +34,7 @@ const socialLinks = [
 
 const isUpIcon = ref(true)
 
-const handleArrow = () => {
+function handleArrow() {
   state.isFooter = !state.isFooter
   setTimeout(() => (isUpIcon.value = !isUpIcon.value), 500)
 }

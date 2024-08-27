@@ -13,6 +13,6 @@ const router = createRouter({
   routes,
 })
 
-export const install = ({ app }: { app: App<Element> }) => {
+export function install({ app }: { app: App<Element> }) {
   app.use(router)
 }

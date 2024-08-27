@@ -10,7 +10,7 @@ import cloverSvg from '@/assets/img/wallets/clover.svg'
 import ledgerDarkSvg from '@/assets/img/wallets/ledger.svg'
 import mathWalletDarkSvg from '@/assets/img/wallets/mathwallet.svg'
 
-interface WalletSettings {
+type WalletSettings = {
   priority: Record<string, number>
   icons: Record<string, string>
   darkIcons: Record<string, string>
@@ -45,10 +45,11 @@ const icons = {
   close: evaClose,
 }
 
-const isActiveWallet = (w: Wallet) =>
-  ['Installed', 'Loadable'].includes(
+function isActiveWallet(w: Wallet) {
+  return ['Installed', 'Loadable'].includes(
     w.readyState,
   )
+}
 
 const { dark } = useQuasar()
 const wallet = useWallet()
@@ -68,7 +69,7 @@ if (isWebView.value) {
   }
 }
 
-type ExtendedWallet = Wallet & { icon: string; darkIcon: string; deepLink: string }
+type ExtendedWallet = Wallet & { icon: string, darkIcon: string, deepLink: string }
 const walletAddress = computed(() => wallet.publicKey.value?.toBase58() ?? '')
 const walletShortAddress = computed(() => shortenAddress(walletAddress.value))
 const wallets = computed<ExtendedWallet[]>(() =>
@@ -258,4 +259,3 @@ function ok() {
   }
 }
 </style>
-

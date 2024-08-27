@@ -41,20 +41,20 @@ const userDeviceKey = computed(() =>
 
 const handleSelect = (val: PublicKey) => (selectDevicekey.value = val)
 
-const handleAddDevice = (key: string) => {
+function handleAddDevice(key: string) {
   addDevice.submit(key)
 }
 
-const handleExport = () => {
+function handleExport() {
   userStore.exportKey()
 }
 
-const handleImport = (key: string) => {
+function handleImport(key: string) {
   userStore.importKey(key)
   setTimeout(() => emit('loadChannel'), 1000)
 }
 
-const handleDelete = (key: PublicKey) => {
+function handleDelete(key: PublicKey) {
   deleteDevice.submit(key)
 }
 </script>

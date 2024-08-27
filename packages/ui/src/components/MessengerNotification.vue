@@ -11,7 +11,7 @@ const infoWidth = computed(() => {
     : 'width: 0; padding-right: 0;'
 })
 
-const showPendingDialog = () => {
+function showPendingDialog() {
   if (!isNotifications.value) {
     return
   }

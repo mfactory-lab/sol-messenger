@@ -12,7 +12,7 @@ const groups = [
 ]
 const endpoint = computed(() => connectionStore.endpoint)
 
-const select = (e: Endpoint) => {
+function select(e: Endpoint) {
   if (connected && connectionStore.cluster !== e.cluster) {
     disconnect()
     if (autoConnect.value) {

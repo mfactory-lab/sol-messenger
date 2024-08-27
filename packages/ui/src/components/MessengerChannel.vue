@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Channel } from '@app/sdk'
+import type { Channel } from '@cgram/sdk'
 import type { PropType } from 'vue'
 import { useWallet } from 'solana-wallets-vue'
 import type { PublicKey } from '@solana/web3.js'
