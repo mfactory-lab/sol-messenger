@@ -19,9 +19,10 @@ pub fn assert_valid_membership<'info>(
     account: &AccountInfo<'info>,
     channel: &Pubkey,
     authority: &Pubkey,
-) -> Result<Account<'info, ChannelMembership>> {
-    let membership: Account<'info, ChannelMembership> =
-        Account::try_from(account).map_err(|_e| MessengerError::InvalidMembership)?;
+) -> Result<ChannelMembership> {
+    let mut data: &[u8] = &account.try_borrow_data()?;
+    let membership = ChannelMembership::try_deserialize(&mut data).map_err(|_e| MessengerError::InvalidMembership)?;
+
     if membership.channel != channel.key() {
         msg!("Error: Invalid membership channel");
         return Err(MessengerError::InvalidMembership.into());
@@ -34,12 +35,12 @@ pub fn assert_valid_membership<'info>(
 }
 
 pub fn assert_valid_device<'info>(
-    account: &AccountInfo<'info>,
+    account: &'info AccountInfo<'info>,
     channel: &Pubkey,
     authority: &Pubkey,
-) -> Result<Account<'info, ChannelDevice>> {
-    let device: Account<'info, ChannelDevice> =
-        Account::try_from(account).map_err(|_e| MessengerError::InvalidDevice)?;
+) -> Result<ChannelDevice> {
+    let mut data: &[u8] = &account.try_borrow_data()?;
+    let device = ChannelDevice::try_deserialize(&mut data).map_err(|_e| MessengerError::InvalidDevice)?;
     if device.channel != channel.key() {
         msg!("Error: Invalid device channel");
         return Err(MessengerError::InvalidDevice.into());

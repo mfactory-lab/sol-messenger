@@ -1,6 +1,6 @@
 [package]
 name = "messenger"
-version = "0.0.15"
+version = "0.0.16"
 description = "On-chain messenger"
 authors = ["Vladyslav Korniienko <vk.tiamo@gmail.com>"]
 homepage = "https://jfactory.ch"
@@ -22,4 +22,4 @@ default = []
 overflow-checks = true
 
 [dependencies]
-anchor-lang = "0.25.0"
+anchor-lang = "0.29.0"

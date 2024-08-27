@@ -1,6 +1,6 @@
 pub const ADMIN_AUTHORITY: &[&str] = &[
     // messenger manager
-    "HUsJRv7yzLECt4mTR3NY5u9TX2ZJc5E89xHW9uWr2Dr7",
+    "AuthxkATW25YDWX4kyDLh5qFMV1VhxKtRC9FBHh2JwZR",
 ];
 
 pub const MAX_WORKSPACE_LENGTH: usize = 32;

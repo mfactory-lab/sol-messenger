@@ -7,7 +7,7 @@ use crate::{
     utils::{assert_valid_device, close},
 };
 
-pub fn handler<'info>(ctx: Context<'_, '_, '_, 'info, LeaveChannel<'info>>) -> Result<()> {
+pub fn handler<'info>(ctx: Context<'_, '_, 'info, 'info, LeaveChannel<'info>>) -> Result<()> {
     let channel = &mut ctx.accounts.channel;
 
     if channel.to_account_info().data_is_empty() {
@@ -20,8 +20,8 @@ pub fn handler<'info>(ctx: Context<'_, '_, '_, 'info, LeaveChannel<'info>>) -> R
     // delete devices
     if !ctx.remaining_accounts.is_empty() {
         for acc in ctx.remaining_accounts {
-            let device = assert_valid_device(acc, &channel.key(), authority.key)?;
-            close(device.to_account_info(), authority.to_account_info())?;
+            assert_valid_device(acc, &channel.key(), authority.key)?;
+            close(acc.to_account_info(), authority.to_account_info())?;
         }
     }
 

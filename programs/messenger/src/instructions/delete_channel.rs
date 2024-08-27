@@ -22,7 +22,7 @@ pub fn handler(ctx: Context<DeleteChannel>) -> Result<()> {
             return Err(MessengerError::Unauthorized.into());
         }
         close(
-            auth_membership.to_account_info(),
+            ctx.accounts.authority_membership.to_account_info(),
             ctx.accounts.authority.to_account_info(),
         )?;
     }

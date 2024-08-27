@@ -42,14 +42,14 @@ pub fn handler(ctx: Context<InitChannel>, data: InitChannelData) -> Result<()> {
     membership.status = ChannelMembershipStatus::Authorized;
     membership.created_at = timestamp;
     membership.flags = ChannelMembershipAccess::Owner;
-    membership.bump = ctx.bumps["membership"];
+    membership.bump = ctx.bumps.membership;
 
     let device = &mut ctx.accounts.device;
     device.channel = channel.key();
     device.authority = authority.key();
     device.key = ctx.accounts.key.key();
     device.cek = data.cek;
-    device.bump = ctx.bumps["device"];
+    device.bump = ctx.bumps.device;
 
     emit!(NewChannelEvent {
         channel: channel.key(),

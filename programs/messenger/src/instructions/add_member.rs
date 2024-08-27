@@ -48,14 +48,14 @@ pub fn handler(ctx: Context<AddMember>, data: AddMemberData) -> Result<()> {
     membership.created_at = timestamp;
     membership.status = ChannelMembershipStatus::Authorized;
     membership.status_target = Some(ctx.accounts.authority.key());
-    membership.bump = ctx.bumps["invitee_membership"];
+    membership.bump = ctx.bumps.invitee_membership;
 
     let device = &mut ctx.accounts.invitee_device;
     device.channel = channel.key();
     device.authority = ctx.accounts.invitee.key();
     device.key = data.key;
     device.cek = data.cek;
-    device.bump = ctx.bumps["invitee_device"];
+    device.bump = ctx.bumps.invitee_device;
 
     channel.member_count = channel.member_count.saturating_add(1);
 

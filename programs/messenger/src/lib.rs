@@ -11,7 +11,7 @@ use anchor_lang::prelude::*;
 use errors::*;
 use instructions::*;
 
-declare_id!("CgRaMXqqRHNT3Zo2uVZfX72TuxUgcLb8E3A8KrXnbXAC");
+declare_id!("CGRAmxwrfg86KGaPJ3jD1ePgpebP6UJwSUHVZ1UQs78q");
 
 #[program]
 pub mod messenger {
@@ -29,7 +29,7 @@ pub mod messenger {
         join_channel::handler(ctx, data)
     }
 
-    pub fn leave_channel<'info>(ctx: Context<'_, '_, '_, 'info, LeaveChannel<'info>>) -> Result<()> {
+    pub fn leave_channel<'info>(ctx: Context<'_, '_, 'info, 'info, LeaveChannel<'info>>) -> Result<()> {
         leave_channel::handler(ctx)
     }
 
@@ -45,7 +45,7 @@ pub mod messenger {
         authorize_member::handler(ctx, data)
     }
 
-    pub fn delete_member<'info>(ctx: Context<'_, '_, '_, 'info, DeleteMember<'info>>) -> Result<()> {
+    pub fn delete_member<'info>(ctx: Context<'_, '_, 'info, 'info, DeleteMember<'info>>) -> Result<()> {
         delete_member::handler(ctx)
     }
 

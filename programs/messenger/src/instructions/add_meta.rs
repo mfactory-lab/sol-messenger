@@ -15,7 +15,7 @@ pub fn handler(ctx: Context<AddMeta>, data: AddMetaData) -> Result<()> {
     meta.authority = authority.key();
     meta.key = data.key;
     meta.value = data.value;
-    meta.bump = ctx.bumps["meta"];
+    meta.bump = ctx.bumps.meta;
 
     Ok(())
 }

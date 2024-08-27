@@ -15,7 +15,7 @@ pub fn handler(ctx: Context<AddDevice>, data: AddDeviceData) -> Result<()> {
     device.authority = authority.key();
     device.key = data.key;
     device.cek = data.cek;
-    device.bump = ctx.bumps["device"];
+    device.bump = ctx.bumps.device;
 
     let timestamp = Clock::get()?.unix_timestamp;
 

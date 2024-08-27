@@ -23,14 +23,14 @@ pub fn handler(ctx: Context<JoinChannel>, data: JoinChannelData) -> Result<()> {
     membership.flags = 0;
     membership.status = ChannelMembershipStatus::Pending;
     membership.status_target = data.authority;
-    membership.bump = ctx.bumps["membership"];
+    membership.bump = ctx.bumps.membership;
 
     let device = &mut ctx.accounts.device;
     device.channel = channel.key();
     device.authority = ctx.accounts.authority.key();
     device.key = ctx.accounts.key.key();
     device.cek = CEKData::empty();
-    device.bump = ctx.bumps["device"];
+    device.bump = ctx.bumps.device;
 
     emit!(JoinChannelEvent {
         channel: channel.key(),
