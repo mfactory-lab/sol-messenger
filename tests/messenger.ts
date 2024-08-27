@@ -1,9 +1,9 @@
-import * as assert from 'assert'
-import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor'
-import type { ConfirmOptions, PublicKey } from '@solana/web3.js'
-import { Keypair } from '@solana/web3.js'
+import * as assert from 'node:assert'
+import { web3 } from '@coral-xyz/anchor'
+import { Keypair, PublicKey } from '@solana/web3.js'
 import { ChannelMembershipStatus, MessengerClient } from '../packages/sdk'
-import adminKeypair from '../target/deploy/messenger-manager.json'
+import adminKeypair from '../.secrets/admin.json'
+import { initProvider, requestAirdrop } from './utils'
 
 // TODO: super admin tests
 
@@ -17,22 +17,15 @@ describe('messenger', () => {
   const member3 = web3.Keypair.generate()
 
   function getClient(wallet: web3.Keypair, sender?: web3.Keypair) {
-    const opts: ConfirmOptions = AnchorProvider.defaultOptions()
-    const provider = new AnchorProvider(
-      new web3.Connection('http://localhost:8899', opts),
-      new Wallet(wallet),
-      opts,
-    )
-    return new MessengerClient(provider, sender ?? wallet)
+    return new MessengerClient(initProvider(wallet), sender ?? wallet)
   }
 
   before(async () => {
     console.log('Airdropping some lamports...')
     for (const { publicKey } of [admin, sender, member1, member2, member3]) {
-      await client.connection.confirmTransaction(
-        await client.connection.requestAirdrop(publicKey, web3.LAMPORTS_PER_SOL),
-      )
+      await requestAirdrop(client.connection, publicKey, 10)
     }
+    console.log('Done')
   })
 
   console.log(`Program ID: ${client.programId}`)
@@ -83,14 +76,14 @@ describe('messenger', () => {
       assert.equal(channelInfo.maxMessages, data.maxMessages)
       assert.deepEqual(channelInfo.creator, sender.publicKey)
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey)
 
       const membership = await client.loadMembership(membershipAddr)
       assert.deepEqual(membership.channel, channel.publicKey)
       assert.deepEqual(membership.authority, sender.publicKey)
       assert.equal(membership.name, data.memberName)
 
-      const device = await client.loadDevice((await client.getDevicePDA(membershipAddr))[0])
+      const device = await client.loadDevice((client.getDevicePDA(membershipAddr))[0])
       assert.deepEqual(device.key, sender.publicKey)
       assert.equal(device.cek.encryptedKey, cekEncrypted.encryptedKey)
     })
@@ -127,7 +120,7 @@ describe('messenger', () => {
       const data = { channel: channel.publicKey, key: 1, value: 'test123' }
       await client.addMeta(data)
 
-      const [metaAddr] = await client.getMetaPDA(channel.publicKey, data.key)
+      const [metaAddr] = client.getMetaPDA(channel.publicKey, data.key)
       const meta = await client.loadMeta(metaAddr)
       assert.deepEqual(meta.authority, sender.publicKey)
       assert.deepEqual(meta.channel, channel.publicKey)
@@ -138,7 +131,7 @@ describe('messenger', () => {
     it('can delete a meta', async () => {
       const data = { channel: channel.publicKey, key: 1 }
       await client.deleteMeta(data)
-      const [metaAddr] = await client.getMetaPDA(channel.publicKey, data.key)
+      const [metaAddr] = client.getMetaPDA(channel.publicKey, data.key)
       try {
         await client.loadMeta(metaAddr)
       } catch (e: any) {
@@ -150,8 +143,8 @@ describe('messenger', () => {
       const kp = Keypair.generate()
       await client.addDevice({ channel: channel.publicKey, key: kp.publicKey })
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
-      const [deviceAddr] = await client.getDevicePDA(membershipAddr, kp.publicKey)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = client.getDevicePDA(membershipAddr, kp.publicKey)
       const device = await client.loadDevice(deviceAddr)
       assert.deepEqual(device.authority, sender.publicKey)
       assert.deepEqual(device.channel, channel.publicKey)
@@ -165,8 +158,8 @@ describe('messenger', () => {
       const message = 'hello world'
       await client.postMessage({ channel: channel.publicKey, message, encrypt: true })
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
-      const [deviceAddr] = await client.getDevicePDA(membershipAddr)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = client.getDevicePDA(membershipAddr)
       const device = await client.loadDevice(deviceAddr)
 
       const cek = await client.decryptCEK(device.cek)
@@ -184,8 +177,8 @@ describe('messenger', () => {
       const newMessage = 'hello world v2'
       await client.updateMessage({ channel: channel.publicKey, messageId, newMessage, encrypt: true })
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
-      const [deviceAddr] = await client.getDevicePDA(membershipAddr)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = client.getDevicePDA(membershipAddr)
       const device = await client.loadDevice(deviceAddr)
 
       const cek = await client.decryptCEK(device.cek)
@@ -204,8 +197,8 @@ describe('messenger', () => {
       const channelInfo = await client.loadChannel(channel.publicKey)
       assert.equal(channelInfo.memberCount, 2)
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member1.publicKey)
-      const [deviceAddr] = await client.getDevicePDA(membershipAddr, member1.publicKey)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey, member1.publicKey)
+      const [deviceAddr] = client.getDevicePDA(membershipAddr, member1.publicKey)
       const membership = await client.loadMembership(membershipAddr)
       const device = await client.loadDevice(deviceAddr)
 
@@ -224,8 +217,8 @@ describe('messenger', () => {
 
     it('can read message from inviter', async () => {
       const channelInfo = await client.loadChannel(channel.publicKey)
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey)
-      const [deviceAddr] = await client.getDevicePDA(membershipAddr)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey)
+      const [deviceAddr] = client.getDevicePDA(membershipAddr)
       const device = await client.loadDevice(deviceAddr)
       const cek = await client.decryptCEK(device.cek, sender.secretKey)
       const message = await client.decryptMessage(channelInfo.messages[1].content, cek)
@@ -256,10 +249,10 @@ describe('messenger', () => {
       const channelInfo = await client.loadChannel(channel.publicKey)
       assert.equal(channelInfo.memberCount, 3)
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member2.publicKey)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey, member2.publicKey)
       const membership = await client.loadMembership(membershipAddr)
 
-      const [deviceAddr] = await client.getDevicePDA(membershipAddr, member2.publicKey)
+      const [deviceAddr] = client.getDevicePDA(membershipAddr, member2.publicKey)
       const device = await client.loadDevice(deviceAddr)
 
       assert.deepEqual(membership.authority, member2.publicKey)
@@ -283,7 +276,7 @@ describe('messenger', () => {
       const channelInfo = await client.loadChannel(channel.publicKey)
       assert.equal(channelInfo.memberCount, 4)
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member3.publicKey)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey, member3.publicKey)
       const membership = await client.loadMembership(membershipAddr)
 
       // const [deviceAddr] = await client.getDevicePDA(membershipAddr, member3.publicKey)
@@ -317,7 +310,7 @@ describe('messenger', () => {
       const data = { channel: channel.publicKey, authority: member2.publicKey }
       await getClient(member1).authorizeMember(data)
 
-      const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member2.publicKey)
+      const [membershipAddr] = client.getMembershipPDA(channel.publicKey, member2.publicKey)
       const membership = await client.loadMembership(membershipAddr)
 
       assert.equal(membership.status, ChannelMembershipStatus.Authorized)
@@ -337,7 +330,7 @@ describe('messenger', () => {
       const data = { channel: channel.publicKey }
       await getClient(member2).leaveChannel(data)
       try {
-        const [membershipAddr] = await client.getMembershipPDA(channel.publicKey, member2.publicKey)
+        const [membershipAddr] = client.getMembershipPDA(channel.publicKey, member2.publicKey)
         await client.loadMembership(membershipAddr)
       } catch (e: any) {
         assert.ok(e.message.startsWith('Unable to find ChannelMembership account'))
